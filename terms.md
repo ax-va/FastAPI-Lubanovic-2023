@@ -1,6 +1,4 @@
-#### RESTful
-
-REST = Representational State Transfer
+#### RESTful (REST = Representational State Transfer)
 
 - Usually uses HTTP 
 
