@@ -16,7 +16,6 @@ REST = Representational State Transfer
 
 - Layered system (intermediaries may exist between client and server)
 
-
 #### Three-tier model
 
 - Presentation Layer (e.g., by using React)
