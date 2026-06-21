@@ -20,7 +20,7 @@ $ uvicorn 01-1--hello-world:app --reload
 # and CTRL+C to shut down
 
 """
-`reload`
+Using `reload`
 - Development mode
 - Automatically restarts Uvicorn when source files changes
 - Not recommended for production 
