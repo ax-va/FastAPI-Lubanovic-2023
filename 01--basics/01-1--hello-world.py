@@ -3,8 +3,8 @@ from fastapi import FastAPI
 app = FastAPI()
 
 
-@app.get("/hi")
-def greet():
+@app.get("/hi")  # path decorator
+def greet():  # path function
     return "Hello World!"
 
 
