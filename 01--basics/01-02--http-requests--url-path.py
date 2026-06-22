@@ -11,12 +11,12 @@ def greet(who):
 # 1. Start Uvicorn internally
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("01-2--url-path:app", reload=True)
+    uvicorn.run("01-02--http-requests--url-path:app", reload=True)
 
 
 # Or start Uvicorn externally with the command line
 """
-$ uvicorn 01-2--url-path:app --reload
+$ uvicorn 01-02--http-requests--url-path:app --reload
 """
 # and CTRL+C to shut down
 

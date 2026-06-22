@@ -11,12 +11,12 @@ def greet():  # path function
 # 1. Start Uvicorn internally
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("01-1--hello-world:app", reload=True)
+    uvicorn.run("01-01--hello-world:app", reload=True)
 
 
 # Or start Uvicorn externally with the command line
 """
-$ uvicorn 01-1--hello-world:app --reload
+$ uvicorn 01-01--hello-world:app --reload
 """
 # and CTRL+C to shut down
 
