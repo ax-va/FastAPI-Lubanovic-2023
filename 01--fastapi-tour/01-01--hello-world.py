@@ -9,7 +9,11 @@ def greet():  # path function
     # After the path function returns,
     # FastAPI serializes the returned object
     # and wraps it in a `JSONResponse`:
-    # Request -> Path function returns a Python object -> FastAPI serializes it -> JSONResponse -> HTTP response
+    # 1. Request
+    # 2. Path function returns a Python object
+    # 3. FastAPI serializes it
+    # 4. JSONResponse
+    # 5. HTTP response
 
 
 # 1. Start Uvicorn internally
