@@ -25,7 +25,7 @@ $ uvicorn 01-02--http-requests--url-path:app --reload
 http://localhost:8000/hi/AxVa
 """
 
-# 3. Type in the command line
+# 3. Type the command line
 """
 $ http localhost:8000/hi/ax-va
 HTTP/1.1 200 OK

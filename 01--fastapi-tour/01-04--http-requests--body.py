@@ -14,7 +14,7 @@ if __name__ == "__main__":
     import uvicorn
     uvicorn.run("01-04--http-requests--body:app", reload=True)
 
-# 1. Type in the command line and use the single equal sign `=` to send JSON data.
+# 1. Type the command line and use the single equal sign `=` to send JSON data.
 # So HTTPie automatically recognize as the POST request.
 """
 $ http -v localhost:8000/hi who=AxVa

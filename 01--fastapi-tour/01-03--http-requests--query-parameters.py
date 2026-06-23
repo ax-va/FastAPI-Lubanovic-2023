@@ -25,7 +25,7 @@ $ uvicorn 01-03--http-requests--query-parameters:app --reload
 localhost:8000/hi?who=AxVa
 """
 
-# 3. Type in the command line
+# 3. Type the command line
 """
 $ http -b localhost:8000/hi?who=ax-va
 "Hello ax-va!"

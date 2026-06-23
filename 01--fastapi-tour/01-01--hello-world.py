@@ -6,6 +6,10 @@ app = FastAPI()
 @app.get("/hi")  # path decorator
 def greet():  # path function
     return "Hello World!"
+    # After the path function returns,
+    # FastAPI serializes the returned object
+    # and wraps it in a `JSONResponse`:
+    # Request -> Path function returns a Python object -> FastAPI serializes it -> JSONResponse -> HTTP response
 
 
 # 1. Start Uvicorn internally

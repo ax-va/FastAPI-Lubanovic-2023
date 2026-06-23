@@ -16,9 +16,9 @@ def agent(user_agent: str = Header()):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("01-05--http-requests--http-header:app", reload=True)
+    uvicorn.run("01-05--http-requests--header:app", reload=True)
 
-# Type in the command line
+# Type the command line
 """
 $ http -v POST localhost:8000/hi who:ax-va
 POST /hi HTTP/1.1
