@@ -2,13 +2,14 @@ from datetime import datetime, UTC
 
 from fastapi import FastAPI, HTTPException
 
-from model.tag import TagIn, Tag, TagOut
-from service.tag import create_tag, get_tag
+from model import TagIn, Tag, TagOut
+from service import create_tag, get_tag
 
 app = FastAPI()
 
 
-# Even though we returned a `Tag`, `response_model` will convert it to a `TagOut`
+# Even though the path functions return `Tag`,
+# `response_model` will convert it to a `TagOut`.
 
 @app.post('/', response_model=TagOut)
 def create_one(tag_in: TagIn) -> Tag:

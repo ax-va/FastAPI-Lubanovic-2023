@@ -1,6 +1,6 @@
 from typing import Dict
 
-from model.tag import Tag
+from model import Tag
 
 db: Dict[str, Tag] = {}
 # Note:

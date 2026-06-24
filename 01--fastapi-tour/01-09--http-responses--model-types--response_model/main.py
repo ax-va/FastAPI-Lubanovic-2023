@@ -2,7 +2,7 @@ if __name__ == "__main__":
 
     import uvicorn
 
-    uvicorn.run("web.tag:app", reload=True)
+    uvicorn.run("web:app", reload=True)
 
 
 # Type the command line
