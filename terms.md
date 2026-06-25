@@ -52,3 +52,9 @@
     - https://asgi.readthedocs.io/en/latest/
 
 
+#### Dependency Injection (DI)
+
+*Dependency Injection* is a design pattern in which an object or function receives its dependencies from the outside instead of creating them itself.
+Dependencies are injected, not installed.
+
+
