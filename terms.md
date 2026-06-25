@@ -54,7 +54,12 @@
 
 #### Dependency Injection (DI)
 
-*Dependency Injection* is a design pattern in which an object or function receives its dependencies from the outside instead of creating them itself.
+*Dependency Injection* is a design pattern in which an object or function receives its dependencies from the outside 
+instead of creating them itself.
+
 Dependencies are injected, not instantiated.
+
+FastAPI implements DI with `Depends()`: dependency functions are called automatically,
+and they return values are injected into your path operation function.
 
 
