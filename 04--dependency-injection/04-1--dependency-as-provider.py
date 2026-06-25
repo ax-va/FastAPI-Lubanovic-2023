@@ -1,15 +1,13 @@
 """
-# Dependency Injection (DI)
-
 - *Dependency Injection* is a design pattern in which an object or function receives its dependencies from the outside
 instead of creating them itself.
 
 - Dependencies are injected, not instantiated.
 
-- FastAPI implements DI with `Depends()`: dependency functions are called automatically,
-and they return values are injected into your path operation function.
-
-- In FastAPI, a dependency object needs to be of the type `Callable`.
+- FastAPI implements DI with `Depends()`:
+dependency functions are called automatically when your path operation function is called,
+and they (dependency functions) return values are injected into your path operation function.
+`Depends()` only tells FastAPI where that value comes from.
 
 - FastAPI's dependency injection is more than just passing objects.
 Dependency functions benefit from the same automatic validation, type conversion,
@@ -21,7 +19,7 @@ from fastapi import FastAPI, Depends, Query
 app = FastAPI()
 
 
-# dependency function (helper)
+# dependency function (provider)
 def user_dep(name: str = Query(...), password: str = Query(...)) -> dict:
     return {"name": name, "valid": True}
 
@@ -30,7 +28,7 @@ def user_dep(name: str = Query(...), password: str = Query(...)) -> dict:
 # that a parameter or field is required and has no default value.
 
 
-# path operation function / web endpoint
+# path operation function
 @app.get("/user")
 def get_user(user: dict = Depends(user_dep)) -> dict:
     return user
@@ -40,7 +38,7 @@ if __name__ == "__main__":
 
     import uvicorn
 
-    uvicorn.run("04-1--dependency-function:app", reload=True)
+    uvicorn.run("04-1--dependency-as-provider:app", reload=True)
 
 
 # HTTPie uses whitespaces and `==` for query parameters
