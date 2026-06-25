@@ -59,8 +59,11 @@ instead of creating them itself.
 
 - Dependencies are injected, not instantiated.
 
-- FastAPI implements DI with `Depends()`: dependency functions are called automatically,
-and they return values are injected into your path operation function.
+- FastAPI implements DI with `Depends()`: dependency functions are called automatically 
+when your path operation function is called,
+and they (dependency functions) return values are injected into your path operation function.
+
+- In FastAPI, a dependency object needs to be of the type `Callable`.
 
 - FastAPI's dependency injection is more than just passing objects. 
 Dependency functions benefit from the same automatic validation, type conversion,

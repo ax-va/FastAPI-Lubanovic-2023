@@ -1,10 +1,17 @@
+"""
+*Path operation functions*
+are the functions that are called
+when a request is made to a specific path and HTTP method.
+
+aka: endpoint functions, route functions
+"""
 from fastapi import FastAPI
 
 app = FastAPI()
 
 
 @app.get("/hi")  # path decorator
-def greet():  # path function
+def greet():  # path operation function
     return "Hello World!"
     # After the path function returns,
     # FastAPI serializes the returned object
@@ -28,12 +35,11 @@ $ uvicorn 01-01--hello-world:app --reload
 """
 # and CTRL+C to shut down
 
-"""
-Using `reload`
-- Development mode
-- Automatically restarts Uvicorn when source files changes
-- Not recommended for production 
-"""
+# Note:
+# Using `reload`
+# - Development mode
+# - Automatically restarts Uvicorn when source files changes
+# - Not recommended for production
 
 # 2. Then request with the command line
 """
@@ -90,4 +96,5 @@ http://localhost:8000/hi
 >>> r = httpx.get("http://localhost:8000/hi")
 >>> r.json()
 'Hello World!'
+
 """
