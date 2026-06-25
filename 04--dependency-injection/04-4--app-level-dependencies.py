@@ -1,3 +1,20 @@
+"""
+- *Dependency Injection* is a design pattern in which an object or function receives its dependencies from the outside
+instead of creating them itself.
+
+- Dependencies are injected, not instantiated.
+
+- FastAPI implements DI with `Depends()`:
+dependency functions are called automatically when your path operation function is called,
+and they (dependency functions) return values are injected into your path operation function.
+`Depends()` only tells FastAPI where that value comes from.
+
+- FastAPI's dependency injection is more than just passing objects.
+Dependency functions benefit from the same automatic validation, type conversion,
+and documentation generation as path operation functions.
+
+- In FastAPI, there are dependencies on three levels: endpoint, router, and application.
+"""
 from fastapi import FastAPI, Depends
 
 def dep1():

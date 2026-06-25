@@ -68,4 +68,6 @@ and they (dependency functions) return values are injected into your path operat
 Dependency functions benefit from the same automatic validation, type conversion,
 and documentation generation as path operation functions.
 
+- In FastAPI, there are dependencies on three levels: endpoint, router, and application.
+
 
