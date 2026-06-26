@@ -16,12 +16,11 @@
 
 #### Three-tier model
 
-- Presentation Layer (e.g., by using React)
+- Web Layer (FastAPI)
 
-- Business Logic Layer (e.g., by using FastAPI)
+- Business Logic Layer / Service Layer
 
-- Data Layer (e.g., by using PostgreSQL)
-
+- Data Layer (SQLAlchemy or SQLModel) ↔ Database (PostgreSQL)
 
 #### Server Gateway Interface
 
