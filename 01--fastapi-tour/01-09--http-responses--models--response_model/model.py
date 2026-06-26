@@ -14,7 +14,7 @@ class Tag(BaseModel):
     secret: str
 
 
-# public date
+# public data
 class TagOut(BaseModel):
     tag: str
     created: datetime
