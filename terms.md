@@ -80,3 +80,17 @@ and documentation generation as path operation functions.
 - PATCH: Partially update a resource
 
 - DELETE: Delete a resource
+
+Examples:
+
+- `GET /users`: Retrieve all users
+
+- `GET /users/25`: Retrieve the user with ID 25
+
+- `POST /users`: Create a new user
+
+- `PUT /users/25`: Completely replace the user with ID 25
+
+- `PATCH /uses/25`: Partially update the user with ID 25
+
+- `DELETE /users/25`: Delete the user with ID 25
