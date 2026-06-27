@@ -16,7 +16,7 @@
 
 #### Three-tier model
 
-- Web Layer (FastAPI)
+- Presentation / Web Layer (FastAPI)
 
 - Business Logic Layer / Service Layer
 
