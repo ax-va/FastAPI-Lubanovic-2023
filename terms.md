@@ -73,7 +73,7 @@ and documentation generation as path operation functions.
 
 - GET: Retrieve a resource
 
-- POST: Create a new resource, or trigger an action or operation
+- POST: Create a new resource, or trigger an action or operation (e.g., login, logout, checkout, send-email, calculate)
 
 - PUT: Completely replace a resource
 
