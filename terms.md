@@ -68,3 +68,15 @@ Dependency functions benefit from the same automatic validation, type conversion
 and documentation generation as path operation functions.
 
 - In FastAPI, there are dependencies on three levels: endpoint, router, and application.
+
+#### HTTP Methods (Verbs)
+
+- GET: Retrieve a resource
+
+- POST: Create a new resource, or trigger an action or operation
+
+- PUT: Completely replace a resource
+
+- PATCH: Partially update a resource
+
+- DELETE: Delete a resource
