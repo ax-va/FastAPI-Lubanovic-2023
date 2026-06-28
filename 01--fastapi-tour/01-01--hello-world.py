@@ -53,13 +53,14 @@ server: uvicorn
 "Hello World!"
 """
 
-# 3. Skip the response headers and print only the body
+# 3. Print only the response body
 """
 $ http -b localhost:8000/hi
 "Hello World!"
 """
+# The same is printed with `--body` or `-p b`.
 
-# 4. Get the whole request headers
+# 4. Print the whole request header and response header and body
 """
 $ http -v localhost:8000/hi
 GET /hi HTTP/1.1
