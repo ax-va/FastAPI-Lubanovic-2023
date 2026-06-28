@@ -1,21 +1,23 @@
 # FastAPI-Lubanovic-2023
 
-- Install the FastAPI framework
+## Used packages
+
+- The FastAPI framework
     ```shell
     $ pip install fastapi
     ```
 
-- Install the Uvicorn ASGI server
+- The Uvicorn ASGI server
     ```shell
     $ pip install uvicorn
     ```
 
-- Install the HTTPie command-line HTTP client
+- The HTTPie command-line HTTP client
     ```shell
     $ pip install httpie
     ```
 
-    Request and print (`-p`): request headers (`H`), request body (`B`), and response headers (`h`)
+    Example: request `http://example.com/` and print (`-p`) request headers (`H`), request body (`B`), and response headers (`h`)
     ```shell
     $ http -p HBh http://example.com/
     GET / HTTP/1.1
@@ -42,12 +44,12 @@
     
     ```
 
-- Install the Requests synchronous HTTP client package
+- The Requests synchronous HTTP client package
     ```shell
     $ pip install requests
     ```
 
-- Install the HTTPX synchronous/asynchronous HTTP client package
+- The HTTPX synchronous/asynchronous HTTP client package
     ```shell
     $ pip install httpx
     ```
