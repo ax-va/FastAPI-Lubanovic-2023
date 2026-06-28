@@ -1,6 +1,6 @@
 # FastAPI-Lubanovic-2023
 
-## Used packages
+## Packages to use
 
 - The FastAPI framework
     ```shell
