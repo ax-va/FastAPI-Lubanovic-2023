@@ -38,7 +38,7 @@ def check_dep(name: str = Query(...)) -> None:
 
 
 # path operation function
-@app.get("/check_user", dependencies=[Depends(check_dep)])
+@app.get("/users/check", dependencies=[Depends(check_dep)])
 def check_user() -> bool:
     return True
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
 
 """
-$ http http://localhost:8000/check_user name==AxVa
+$ http http://localhost:8000/users/check name==AxVa
 HTTP/1.1 200 OK
 content-length: 4
 content-type: application/json
@@ -60,7 +60,7 @@ server: uvicorn
 
 true
 
-$ http http://localhost:8000/check_user name==ax-va
+$ http http://localhost:8000/users/check name==ax-va
 HTTP/1.1 404 Not Found
 content-length: 27
 content-type: application/json

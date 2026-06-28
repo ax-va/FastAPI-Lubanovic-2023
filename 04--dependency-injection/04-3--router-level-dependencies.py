@@ -37,7 +37,7 @@ def check_dep(name: str = Query(...)) -> None:
 # that a parameter or field is required and has no default value.
 
 user_router = APIRouter(
-    prefix="/user",
+    prefix="/users",
     dependencies=[Depends(check_dep)],
 )
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
 
 """
-$ http http://localhost:8000/user/profile name==AxVa
+$ http http://localhost:8000/users/profile name==AxVa
 HTTP/1.1 200 OK
 content-length: 18
 content-type: application/json
@@ -74,7 +74,7 @@ server: uvicorn
     "page": "profile"
 }
 
-$ http http://localhost:8000/user/settings name==AxVa
+$ http http://localhost:8000/users/settings name==AxVa
 HTTP/1.1 200 OK
 content-length: 19
 content-type: application/json
@@ -85,7 +85,7 @@ server: uvicorn
     "page": "settings"
 }
 
-$ http http://localhost:8000/user/profile name==ax-va
+$ http http://localhost:8000/users/profile name==ax-va
 HTTP/1.1 404 Not Found
 content-length: 27
 content-type: application/json

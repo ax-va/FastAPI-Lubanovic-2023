@@ -31,7 +31,7 @@ def user_dep(name: str = Query(...), password: str = Query(...)) -> dict:
 
 
 # path operation function
-@app.get("/user")
+@app.get("/users")
 def get_user(user: dict = Depends(user_dep)) -> dict:
     return user
 
@@ -44,9 +44,9 @@ if __name__ == "__main__":
 
 
 # HTTPie uses whitespaces and `==` for query parameters
-# meaning `/user?name=AxVa&password=12345`.
+# meaning `/users?name=AxVa&password=12345`.
 """
-$ http http://localhost:8000/user name==AxVa password==12345
+$ http http://localhost:8000/users name==AxVa password==12345
 HTTP/1.1 200 OK
 content-length: 28
 content-type: application/json
