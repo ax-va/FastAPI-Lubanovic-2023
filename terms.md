@@ -10,9 +10,9 @@
 
 - Resource-based (resources identified by URIs)
 
-- Uniform interface (standard HTTP methods such as GET, POST, PUT, PATCH, DELETE)
+- Uniform interface (standard HTTP methods such as `GET`, `POST`, `PUT`, `PATCH`, `DELETE`)
 
-- Layered system (intermediaries may exist between client and server)
+- Layered system (intermediaries may exist between client and server; it has nothing to do with the three-tier model)
 
 #### Three-tier model
 
@@ -71,15 +71,15 @@ and documentation generation as path operation functions.
 
 #### HTTP Methods (Verbs)
 
-- GET: Retrieve a resource
+- `GET`: Retrieve a resource
 
-- POST: Create a new resource, or trigger an action or operation (e.g., login, logout, checkout, send-email, calculate)
+- `POST`: Create a new resource, or trigger an action or operation (e.g., login, logout, checkout, send-email, calculate)
 
-- PUT: Completely replace a resource
+- `PUT`: Completely replace a resource
 
-- PATCH: Partially update a resource
+- `PATCH`: Partially update a resource
 
-- DELETE: Delete a resource
+- `DELETE`: Delete a resource
 
 Examples:
 
