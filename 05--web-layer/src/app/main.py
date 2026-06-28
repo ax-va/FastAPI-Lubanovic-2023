@@ -36,7 +36,7 @@ INFO:     Application startup complete.
 """
 # Shut down the server
 """
-$ ps aux | grep main.py
+$ lsof -i :8000
 $ kill <pid>
 """
 
