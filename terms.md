@@ -93,7 +93,7 @@ Examples:
 
 - `GET /users?sort=country&offset=10&size=10`: Retrieve all users, sorted by country, in places 10 through 19
 
-- `POST /users/`: Create a new user
+- `POST /users name="AxVa" country="DE"`: Create a new user
 
 - `PUT /users/25`: Completely replace the user with ID 25
 
