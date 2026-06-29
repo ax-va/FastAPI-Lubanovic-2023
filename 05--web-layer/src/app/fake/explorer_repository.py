@@ -3,13 +3,11 @@ from app.models.explorer import Explorer
 # stubs, or fake data
 _explorers: dict[int, Explorer] = {
     1: Explorer(
-        id=1,
         name="Claude Hande",
         country="FR",
         description="Scarce during full moons",
     ),
     2: Explorer(
-        id=2,
         name="Noah Weiser",
         country="DE",
         description="Myopic machete man",
@@ -33,12 +31,12 @@ def create(explorer: Explorer) -> Explorer:
     return explorer
 
 
-def replace(explorer: Explorer) -> Explorer:
+def replace(explorer_id: int, explorer: Explorer) -> Explorer:
     """Completely replace an explorer"""
     return explorer
 
 
-def modify(explorer: Explorer) -> Explorer:
+def modify(explorer_id: int, explorer: Explorer) -> Explorer:
     """Partially modify an explorer"""
     return explorer
 

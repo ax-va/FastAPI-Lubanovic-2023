@@ -4,7 +4,6 @@ from app.models.creature import Creature
 # stubs, or fake data
 _creatures: dict[int, Creature] = {
     1: Creature(
-        id=1,
         name="Yeti",
         aka="Abominable Snowman",
         country="CN",
@@ -12,7 +11,6 @@ _creatures: dict[int, Creature] = {
         description="Hirsute Himalayan",
     ),
     2: Creature(
-        id=2,
         name="Bigfoot",
         description="Yeti's Cousin Eddie",
         country="US",
@@ -38,12 +36,12 @@ def create(creature: Creature) -> Creature:
     return creature
 
 
-def replace(creature: Creature) -> Creature:
+def replace(creature_id: int, creature: Creature) -> Creature:
     """Completely replace a creature"""
     return creature
 
 
-def modify(creature: Creature) -> Creature:
+def modify(creature_id: int, creature: Creature) -> Creature:
     """Partially modify a creature"""
     return creature
 

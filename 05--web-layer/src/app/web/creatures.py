@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.fake import creature_repository
+from app.fake import creature_repository as service
 from app.models.creature import Creature
 
 router = APIRouter(prefix="/creatures")
@@ -8,30 +8,30 @@ router = APIRouter(prefix="/creatures")
 
 @router.get("")
 def get_all() -> list[Creature]:
-    return creature_repository.get_all()
+    return service.get_all()
 
 
 @router.get("/{creature_id}")
 def get_one(creature_id: int) -> Creature | None:
-    return creature_repository.get_one(creature_id)
+    return service.get_one(creature_id)
 
 
 # all the remaining endpoints do nothing yet
 @router.post("")
 def create(creature: Creature) -> Creature:
-    return creature_repository.create(creature)
+    return service.create(creature)
 
 
 @router.put("")
-def replace(creature: Creature) -> Creature:
-    return creature_repository.replace(creature)
+def replace(creature_id: int, creature: Creature) -> Creature:
+    return service.replace(creature_id, creature)
 
 
 @router.patch("")
-def modify(creature: Creature) -> Creature:
-    return creature_repository.modify(creature)
+def modify(creature_id: int, creature: Creature) -> Creature:
+    return service.modify(creature_id, creature)
 
 
 @router.delete("/{creature_id}")
 def delete(creature_id: int) -> bool:
-    return creature_repository.delete(creature_id)
+    return service.delete(creature_id)
