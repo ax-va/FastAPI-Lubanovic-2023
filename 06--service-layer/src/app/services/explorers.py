@@ -1,0 +1,30 @@
+from typing import Any
+
+from app.models.explorer import Explorer
+from app.repositories import fake_explorers
+
+repository = fake_explorers
+
+
+def get_all() -> list[Explorer]:
+    return repository.get_all()
+
+
+def get_one(explorer_id: int) -> Explorer | None:
+    return repository.get(explorer_id)
+
+
+def create(explorer: Explorer) -> Explorer:
+    return repository.create(explorer)
+
+
+def replace(explorer_id: int, explorer: Explorer) -> Explorer:
+    return repository.replace(explorer_id, explorer)
+
+
+def modify(explorer_id: int, explorer: Explorer) -> Explorer:
+    return repository.modify(explorer_id, explorer)
+
+
+def delete(explorer_id: int) -> bool:
+    return repository.delete(explorer_id)
