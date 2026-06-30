@@ -21,10 +21,12 @@ bigfoot = Creature(
 
 class Test:
     def setup_method(self):
+        """Replace the original repository with the fake one before each test method."""
         self._original_repository = code.repository
         code.repository = fake_creatures
 
     def teardown_method(self):
+        """Replace the fake repository with the original one after each test method."""
         code.repository = self._original_repository
 
     @pytest.mark.parametrize(
