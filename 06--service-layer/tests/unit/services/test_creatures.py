@@ -29,6 +29,7 @@ class Test:
         """Replace the fake repository with the original one after each test method."""
         code.repository = self._original_repository
 
+    @pytest.mark.positive
     @pytest.mark.parametrize(
         "sample",
         [yeti, bigfoot]
@@ -52,7 +53,7 @@ class Test:
     @pytest.mark.negative
     @pytest.mark.parametrize(
         "creature_id",
-        [999, 1000]
+        [99, 100]
     )
     def test_get_one_negative(self, creature_id):
         result = code.get_one(creature_id)
