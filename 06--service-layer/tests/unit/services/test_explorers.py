@@ -55,4 +55,5 @@ class Test:
     )
     def test_get_one_negative(self, explorer_id):
         result = code.get_one(explorer_id)
-        assert result is  None
+
+        assert result is None
