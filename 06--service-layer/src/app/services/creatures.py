@@ -11,7 +11,7 @@ def get_all() -> list[Creature]:
 
 
 def get_one(creature_id: int) -> Creature | None:
-    return repository.get(creature_id)
+    return repository.get_one(creature_id)
 
 
 def create(creature: Creature) -> Creature:

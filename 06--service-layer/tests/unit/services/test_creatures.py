@@ -1,9 +1,9 @@
 from app.models.creature import Creature
 from app.repositories import fake_creatures
-from app.service import creatures as code
+from app.services import creatures as code
 
 sample = Creature(
-    name="yeti",
+    name="Yeti",
     country="CN",
     area="Himalayas",
     description="Hirsute Himalayan",

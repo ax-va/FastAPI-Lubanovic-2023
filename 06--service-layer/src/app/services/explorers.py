@@ -11,7 +11,7 @@ def get_all() -> list[Explorer]:
 
 
 def get_one(explorer_id: int) -> Explorer | None:
-    return repository.get(explorer_id)
+    return repository.get_one(explorer_id)
 
 
 def create(explorer: Explorer) -> Explorer:
