@@ -1,5 +1,3 @@
-from typing import Any
-
 from app.models.explorer import Explorer
 from app.repositories import fake_explorers
 

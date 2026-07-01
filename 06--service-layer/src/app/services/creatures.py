@@ -1,5 +1,3 @@
-from typing import Any
-
 from app.models.creature import Creature
 from app.repositories import fake_creatures
 
