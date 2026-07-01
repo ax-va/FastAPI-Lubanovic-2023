@@ -128,6 +128,7 @@ Example:
   
   conn = psycopg.connect(f"dbname=...")
   cursor = conn.cursor()
+  
   cursor.execute(
     "SELECT * FROM creatures WHERE id = %s", 
     (creature_id,),
