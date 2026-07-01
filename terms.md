@@ -109,18 +109,21 @@ It defines common objects and methods such as:
 - `connection` 
 - `cursor`
 - `execute()`
-- `fetchone()`
-- `fetchall()`
+- `fetchone()`: Returns one tuple or `None`
+- `fetchall()`: Returns a sequence of tuples
+- `fetchmany(num)`: Returns up to `num` tuples
 - `commit()`
 - `rollback()`
 - `close()`
 
 DB-API does not standardize placeholder syntax. 
-Each database driver defines its own parameter style (`?`, `%s`, `:name`, etc.), but all support parameterized queries.
-Never insert user input into SQL using f-strings, `%`-string formatting, or sting concatenation.
+Each database driver defines its own parameter style 
+(qmark: `?`; format: `%s`; numeric: `:<tuple_index>`; named: `:<dict_key>`, pyformat: `%(<dict_key>)s`), 
+but all support parameterized queries.
+Never insert user input into SQL using f-strings, `%`-string formatting, or string concatenation.
 Always use parameterized queries.
-SQL and parameter values are sent separately, so user input is treated as data,
-not as executable SQL code, preventing SQL injection.
+SQL and parameter values are sent separately, so user input is treated as data 
+rather than executable SQL code, preventing SQL injection.
 
 Example:  
   ```python
