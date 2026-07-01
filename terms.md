@@ -117,7 +117,7 @@ It defines common objects and methods such as:
 
 DB-API does not standardize placeholder syntax. 
 Each database driver defines its own parameter style (`?`, `%s`, `:name`, etc.), but all support parameterized queries.
-Never insert user input into SQL using f-strings, `%` string formatting, or sting concatenation.
+Never insert user input into SQL using f-strings, `%`-string formatting, or sting concatenation.
 Always use parameterized queries.
 SQL and parameter values are sent separately, so user input is treated as data,
 not as executable SQL code, preventing SQL injection.
