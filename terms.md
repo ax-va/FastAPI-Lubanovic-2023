@@ -118,7 +118,7 @@ It defines common objects and methods such as:
 
 DB-API does not standardize placeholder syntax. 
 Each database driver defines its own parameter style 
-(qmark: `?`; format: `%s`; numeric: `:<tuple_index>`; named: `:<dict_key>`, pyformat: `%(<dict_key>)s`), 
+(qmark: `?`; format: `%s`; numeric: `:<tuple_index>`; named: `:<dict_key>`; pyformat: `%(<dict_key>)s`), 
 but all support parameterized queries.
 Never insert user input into SQL using f-strings, `%`-string formatting, or string concatenation.
 Always use parameterized queries.
