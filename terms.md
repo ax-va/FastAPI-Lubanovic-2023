@@ -14,7 +14,7 @@
 
 - Layered system (intermediaries may exist between client and server; it has nothing to do with the three-tier model)
 
-#### Three-tier model
+#### Three-Tier Model
 
 - Presentation Layer / Web Layer (FastAPI)
 
@@ -49,7 +49,6 @@
     - Example: Browser ↔ Nginx (web server) ↔ Uvicorn (ASGI server) ↔ FastAPI App (web application)
   
     - https://asgi.readthedocs.io/en/latest/
-
 
 #### Dependency Injection (DI)
 
@@ -100,3 +99,51 @@ Examples:
 - `PATCH /uses/25`: Partially update the user with ID 25
 
 - `DELETE /users/25`: Delete the user with ID 25
+
+#### DB-API
+
+Python DB-API is a standard interface between Python code and relational database drivers.
+
+It defines common objects and methods such as:
+
+- `connection` 
+- `cursor`
+- `execute()`
+- `fetchone()`
+- `fetchall()`
+- `commit()`
+- `rollback()`
+- `close()`
+
+DB-API does not standardize placeholder syntax. 
+Each database driver defines its own parameter style (`?`, `%s`, `:name`, etc.), but all support parameterized queries.
+Never insert user input into SQL using f-strings, `%` string formatting, or sting concatenation.
+Always use parameterized queries.
+SQL and parameter values are sent separately, so user input is treated as data,
+not as executable SQL code, preventing SQL injection.
+
+Example:  
+  ```python
+  import psycopg
+  
+  conn = psycopg.connect(f"dbname=...")
+  cursor = conn.cursor()
+  cursor.execute(
+    "SELECT * FROM creatures WHERE id = %s", 
+    (creature_id,),
+  )
+  row = cursor.fetchone()
+
+  cursor.execute(
+    "UPDATE creatures SET country = %s WHERE id = %s", 
+    ("Germany", 1),
+  )
+  conn.commit()
+
+  cursor.close()
+  conn.close()
+  ```
+
+Database drivers like sqlite3 (SQLite), psycopg (PostgreSQL), PyMySQL (MySQL), and mariadb (MariaDB) implement DB-API.
+
+SQLAlchemy works on top of DB-API drivers.
