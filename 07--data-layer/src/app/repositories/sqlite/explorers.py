@@ -43,7 +43,7 @@ def create(explorer: Explorer) -> Explorer:
     db.cursor.execute(query, values)
     db.conn.commit()
 
-    inserted: Explorer | None = get_one(db.cursor.lastrowid)
+    inserted = get_one(db.cursor.lastrowid)
     if inserted is None:
         raise RuntimeError(f"Inserted explorer with id={db.cursor.lastrowid} could not be retrieved")
 
