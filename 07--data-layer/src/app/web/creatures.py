@@ -24,13 +24,13 @@ def create(creature: Creature) -> Creature:
 
 
 @router.put("")
-def replace(creature_id: int, creature: Creature) -> Creature:
+def replace(creature_id: int, creature: Creature) -> Creature | None:
     return service.replace(creature_id, creature)
 
 
 @router.patch("")
-def modify(creature_id: int, creature: Creature) -> Creature:
-    return service.modify(creature_id, creature)
+def modify(creature_id: int) -> Creature | None:
+    raise NotImplementedError()
 
 
 @router.delete("/{creature_id}")

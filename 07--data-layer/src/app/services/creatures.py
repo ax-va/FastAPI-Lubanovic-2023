@@ -16,12 +16,8 @@ def create(creature: Creature) -> Creature:
     return repository.create(creature)
 
 
-def replace(creature_id: int, creature: Creature) -> Creature:
+def replace(creature_id: int, creature: Creature) -> Creature | None:
     return repository.replace(creature_id, creature)
-
-
-def modify(creature_id: int, creature: Creature) -> Creature:
-    return repository.modify(creature_id, creature)
 
 
 def delete(creature_id: int) -> bool:

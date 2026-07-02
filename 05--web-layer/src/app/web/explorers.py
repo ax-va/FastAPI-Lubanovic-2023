@@ -24,13 +24,13 @@ def create(explorer: Explorer) -> Explorer:
 
 
 @router.put("")
-def replace(explorer: Explorer) -> Explorer:
+def replace(explorer_id: int, explorer: Explorer) -> Explorer | None:
     return service.replace(explorer)
 
 
 @router.patch("")
-def modify(explorer: Explorer) -> Explorer:
-    return service.modify(explorer)
+def modify(explorer_id: int) -> Explorer:
+    raise NotImplementedError()
 
 
 @router.delete("/{explorer_id}")

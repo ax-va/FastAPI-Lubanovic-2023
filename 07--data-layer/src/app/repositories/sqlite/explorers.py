@@ -1,5 +1,5 @@
 from app.models.explorer import Explorer
-from . import _database as db
+from . import database as db
 
 
 def row_to_model(row: tuple) -> Explorer:
@@ -22,6 +22,7 @@ def get_one(explorer_id: int) -> Explorer | None:
     values = {"id": explorer_id}
     db.cursor.execute(query, values)
     row = db.cursor.fetchone()
+
     return row_to_model(row) if row else None
 
 
@@ -40,15 +41,36 @@ def create(explorer: Explorer) -> Explorer:
     values = model_to_dict(explorer)
     db.cursor.execute(query, values)
     db.conn.commit()
-    return explorer
+
+    inserted: Explorer | None = get_one(db.cursor.lastrowid)
+    if inserted is None:
+        raise RuntimeError(f"Inserted explorer with id={db.cursor.lastrowid} could not be retrieved")
+
+    return inserted
 
 
-def replace(explorer_id: int, explorer: Explorer) -> Explorer:
-    return explorer
+def replace(explorer_id: int, explorer: Explorer) -> Explorer | None:
+    query = (
+        "UPDATE explorers "
+        "SET name=:name, "
+        "    country=:country, "
+        "    description=:description "
+        "WHERE id=:explorer_id"
+    )
+    values = model_to_dict(explorer)
+    values["explorer_id"] = explorer_id
+    db.cursor.execute(query, values)
 
+    if db.cursor.rowcount == 0:
+        return None
 
-def modify(explorer_id: int, explorer: Explorer) -> Explorer:
-    return explorer
+    db.conn.commit()
+
+    updated = get_one(explorer_id)
+    if updated is None:
+        raise RuntimeError(f"Updated explorer with id={explorer_id} could not be retrieved")
+
+    return updated
 
 
 def delete(explorer_id: int):

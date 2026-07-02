@@ -1,5 +1,5 @@
 from app.models.creature import Creature
-from . import _database as db
+from . import database as db
 
 
 def row_to_model(row: tuple) -> Creature:
@@ -24,6 +24,7 @@ def get_one(creature_id: int) -> Creature | None:
     values = {"id": creature_id}
     db.cursor.execute(query, values)
     row = db.cursor.fetchone()
+
     return row_to_model(row) if row else None
 
 
@@ -31,6 +32,7 @@ def get_all() -> list[Creature]:
     query = "SELECT * FROM creatures"
     db.cursor.execute(query)
     rows = list(db.cursor.fetchall())
+
     return [row_to_model(row) for row in rows]
 
 
@@ -42,15 +44,38 @@ def create(creature: Creature) -> Creature:
     values = model_to_dict(creature)
     db.cursor.execute(query, values)
     db.conn.commit()
-    return creature
+
+    inserted = get_one(db.cursor.lastrowid)
+    if inserted is None:
+        raise RuntimeError(f"Inserted creature with id={db.cursor.lastrowid} could not be retrieved")
+
+    return inserted
 
 
-def replace(creature_id: int, creature: Creature) -> Creature:
-    return creature
+def replace(creature_id: int, creature: Creature) -> Creature | None:
+    query = (
+        "UPDATE creatures "
+        "SET name=:name, "
+        "    country=:country, "
+        "    area=:area, "
+        "    description=:description, "
+        "    aka=:aka "
+        "WHERE id=:creature_id"
+    )
+    values = model_to_dict(creature)
+    values["creature_id"] = creature_id
+    db.cursor.execute(query, values)
 
+    if db.cursor.rowcount == 0:
+        return None
 
-def modify(creature_id: int, creature: Creature) -> Creature:
-    return creature
+    db.conn.commit()
+
+    updated = get_one(creature_id)
+    if updated is None:
+        raise RuntimeError(f"Updated creature with id={creature_id} could not be retrieved")
+
+    return updated
 
 
 def delete(creature_id: int) -> bool:

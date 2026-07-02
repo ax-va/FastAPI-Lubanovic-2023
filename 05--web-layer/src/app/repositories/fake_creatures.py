@@ -41,11 +41,6 @@ def replace(creature_id: int, creature: Creature) -> Creature:
     return creature
 
 
-def modify(creature_id: int, creature: Creature) -> Creature:
-    """Partially modify a creature"""
-    return creature
-
-
 def delete(creature_id: int) -> bool:
     """Delete an explorer; return `False` if it doesn't exist"""
     return False

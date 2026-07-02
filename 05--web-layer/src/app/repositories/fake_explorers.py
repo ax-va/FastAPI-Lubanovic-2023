@@ -36,11 +36,6 @@ def replace(explorer_id: int, explorer: Explorer) -> Explorer:
     return explorer
 
 
-def modify(explorer_id: int, explorer: Explorer) -> Explorer:
-    """Partially modify an explorer"""
-    return explorer
-
-
 def delete(explorer_id: int) -> bool:
     """Delete an explorer; return `False` if it doesn't exist"""
     return False
