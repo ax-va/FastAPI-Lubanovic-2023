@@ -30,6 +30,7 @@ def get_all() -> list[Explorer]:
     query = "SELECT * FROM explorers"
     db.cursor.execute(query)
     rows = list(db.cursor.fetchall())
+    
     return [row_to_model(row) for row in rows]
 
 
