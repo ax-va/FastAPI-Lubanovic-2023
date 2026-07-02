@@ -1,7 +1,8 @@
 import pytest
+
 from app.models.explorer import Explorer
-from app.repositories import fake_explorers
 from app.services import explorers as code
+from fake_repositories import explorers as fake_explorers
 
 hande = Explorer(
     name="Claude Hande",
