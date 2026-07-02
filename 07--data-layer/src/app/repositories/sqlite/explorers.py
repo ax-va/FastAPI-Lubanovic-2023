@@ -4,7 +4,7 @@ from . import database as db
 
 def row_to_model(row: tuple) -> Explorer:
     """Converts a tuple returned by a `fetch` function to a model object."""
-    _, name, description, country, area, aka = row
+    _, name, country, description = row
     return Explorer(
         name=name,
         country=country,
