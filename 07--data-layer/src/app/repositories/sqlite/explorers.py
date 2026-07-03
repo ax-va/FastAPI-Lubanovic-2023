@@ -46,11 +46,11 @@ def create(explorer: Explorer) -> Explorer:
     cursor.execute(query, values)
     db.conn.commit()
 
-    inserted_id = cursor.lastrowid
+    inserted_id: int | None = cursor.lastrowid
     if inserted_id is None:
         raise RuntimeError(f"Inserted explorer id was not returned")
 
-    inserted = get_one(inserted_id)
+    inserted: Explorer | None = get_one(inserted_id)
     if inserted is None:
         raise RuntimeError(f"Inserted explorer with id={inserted_id} could not be retrieved")
 
@@ -75,7 +75,7 @@ def replace(explorer_id: int, explorer: Explorer) -> Explorer | None:
 
     db.conn.commit()
 
-    updated = get_one(explorer_id)
+    updated: Explorer | None = get_one(explorer_id)
     if updated is None:
         raise RuntimeError(f"Updated explorer with id={explorer_id} could not be retrieved")
 
