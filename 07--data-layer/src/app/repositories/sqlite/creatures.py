@@ -22,16 +22,18 @@ def model_to_dict(creature: Creature) -> dict:
 def get_one(creature_id: int) -> Creature | None:
     query = "SELECT * FROM creatures WHERE id=:id"
     values = {"id": creature_id}
-    db.cursor.execute(query, values)
-    row = db.cursor.fetchone()
+    cursor = db.conn.cursor()
+    cursor.execute(query, values)
+    row = cursor.fetchone()
 
     return row_to_model(row) if row else None
 
 
 def get_all() -> list[Creature]:
     query = "SELECT * FROM creatures"
-    db.cursor.execute(query)
-    rows = list(db.cursor.fetchall())
+    cursor = db.conn.cursor()
+    cursor.execute(query)
+    rows = list(cursor.fetchall())
 
     return [row_to_model(row) for row in rows]
 
@@ -42,12 +44,17 @@ def create(creature: Creature) -> Creature:
         "VALUES (:name, :country, :area, :description, :aka)"
     )
     values = model_to_dict(creature)
-    db.cursor.execute(query, values)
+    cursor = db.conn.cursor()
+    cursor.execute(query, values)
     db.conn.commit()
 
-    inserted = get_one(db.cursor.lastrowid)
+    inserted_id = cursor.lastrowid
+    if inserted_id is None:
+        raise RuntimeError(f"Inserted creature id was not returned")
+
+    inserted = get_one(inserted_id)
     if inserted is None:
-        raise RuntimeError(f"Inserted creature with id={db.cursor.lastrowid} could not be retrieved")
+        raise RuntimeError(f"Inserted creature with id={inserted_id} could not be retrieved")
 
     return inserted
 
@@ -64,9 +71,10 @@ def replace(creature_id: int, creature: Creature) -> Creature | None:
     )
     values = model_to_dict(creature)
     values["creature_id"] = creature_id
-    db.cursor.execute(query, values)
+    cursor = db.conn.cursor()
+    cursor.execute(query, values)
 
-    if db.cursor.rowcount == 0:
+    if cursor.rowcount == 0:
         return None
 
     db.conn.commit()
@@ -81,8 +89,9 @@ def replace(creature_id: int, creature: Creature) -> Creature | None:
 def delete(creature_id: int) -> bool:
     query = "DELETE FROM creatures WHERE id = :id"
     values = {"id": creature_id}
-    db.cursor.execute(query, values)
-    deleted: int = db.cursor.rowcount
+    cursor = db.conn.cursor()
+    cursor.execute(query, values)
+    deleted: int = cursor.rowcount
     db.conn.commit()
 
     return deleted > 0

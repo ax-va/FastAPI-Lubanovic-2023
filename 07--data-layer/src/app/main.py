@@ -24,3 +24,16 @@ def echo(thing):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app.main:app", reload=True)
+
+
+"""
+$ http localhost:8000
+HTTP/1.1 200 OK
+content-length: 10
+content-type: application/json
+date: Fri, 03 Jul 2026 16:17:43 GMT
+server: uvicorn
+
+"top here"
+
+"""

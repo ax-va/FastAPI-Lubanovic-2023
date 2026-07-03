@@ -1,7 +1,9 @@
 import sqlite3
-from sqlite3 import Connection, Cursor
+from sqlite3 import Connection
 
-DATABASE_FILE = "lubanovic.db"
+from app.config import DATABASE_FILE
+
+conn: Connection
 
 
 def init() -> None:
@@ -10,19 +12,17 @@ def init() -> None:
     conn.commit()
 
 
-def connect(database_file: str = DATABASE_FILE) -> tuple[Connection, Cursor]:
-    conn_: Connection = sqlite3.connect(database_file)
-    cursor_: Cursor = conn_.cursor()
-    return conn_, cursor_
+def connect(database_file: str = DATABASE_FILE) -> Connection:
+    return sqlite3.connect(database_file, check_same_thread=False)
 
 
 def disconnect() -> None:
-    cursor.close()
+    conn.cursor().close()
     conn.close()
 
 
 def create_creatures_table() -> None:
-    cursor.execute(
+    conn.cursor().execute(
         "CREATE TABLE IF NOT EXISTS creatures ("
         "   id INTEGER PRIMARY KEY, "
         "   name TEXT NOT NULL, "
@@ -35,7 +35,7 @@ def create_creatures_table() -> None:
 
 
 def create_explorers_table() -> None:
-    cursor.execute(
+    conn.cursor().execute(
         "CREATE TABLE IF NOT EXISTS explorers ("
         "   id INTEGER PRIMARY KEY, "
         "   name TEXT NOT NULL, "
@@ -45,4 +45,4 @@ def create_explorers_table() -> None:
     )
 
 
-conn, cursor = connect()
+conn = connect()
