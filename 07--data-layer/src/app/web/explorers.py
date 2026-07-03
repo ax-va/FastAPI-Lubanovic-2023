@@ -8,31 +8,36 @@ router = APIRouter(prefix="/explorers")
 
 
 @router.get("")
+@router.get("/")
 def get_all() -> list[Explorer]:
     return service.get_all()
 
 
 @router.get("/{explorer_id}")
+@router.get("/{explorer_id}/")
 def get_one(explorer_id: int) -> Explorer | None:
     return service.get_one(explorer_id)
 
 
-# all the remaining endpoints do nothing yet
-@router.post("")
+@router.post("/{explorer_id}")
+@router.post("/{explorer_id}/")
 def create(explorer: Explorer) -> Explorer:
     return service.create(explorer)
 
 
-@router.put("")
+@router.put("/{explorer_id}")
+@router.put("/{explorer_id}/")
 def replace(explorer_id: int, explorer: Explorer) -> Explorer | None:
     return service.replace(explorer_id, explorer)
 
 
-@router.patch("")
+@router.patch("/{explorer_id}")
+@router.patch("/{explorer_id}/")
 def modify(explorer_id: int) -> Explorer | None:
     raise NotImplementedError()
 
 
 @router.delete("/{explorer_id}")
+@router.delete("/{explorer_id}/")
 def delete(explorer_id: int) -> bool:
     return service.delete(explorer_id)
