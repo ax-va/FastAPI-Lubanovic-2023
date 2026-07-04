@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from app.models.explorers import ExplorerRequest, ExplorerResponse
 from app.services import explorers
@@ -15,8 +15,14 @@ def get_all() -> list[ExplorerResponse]:
 
 @router.get("/{explorer_id}")
 @router.get("/{explorer_id}/")
-def get_one(explorer_id: int) -> ExplorerResponse | None:
-    return service.get_one(explorer_id)
+def get_one(explorer_id: int) -> ExplorerResponse:
+    explorer = service.get_one(explorer_id)
+    if explorer is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Explorer with ID {explorer_id} not found",
+        )
+    return explorer
 
 
 @router.post("")
@@ -27,17 +33,30 @@ def create(explorer: ExplorerRequest) -> ExplorerResponse:
 
 @router.put("/{explorer_id}")
 @router.put("/{explorer_id}/")
-def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse | None:
-    return service.replace(explorer_id, explorer)
+def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
+    explorer = service.replace(explorer_id, explorer)
+    if explorer is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Explorer with ID {explorer_id} not found",
+        )
+    return explorer
 
 
 @router.patch("/{explorer_id}")
 @router.patch("/{explorer_id}/")
-def modify(explorer_id: int) -> ExplorerResponse:
+def modify(explorer_id: int) -> ExplorerResponse | None:
     raise NotImplementedError()
 
 
 @router.delete("/{explorer_id}")
 @router.delete("/{explorer_id}/")
 def delete(explorer_id: int) -> bool:
-    return service.delete(explorer_id)
+    deleted = service.delete(explorer_id)
+    if not deleted:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Explorer with ID {explorer_id} not found",
+        )
+    return deleted
+

@@ -78,7 +78,9 @@ $ http -b DELETE localhost:8000/explorers/1
 true
 
 $ http -b localhost:8000/explorers/1
-null
+{
+    "detail": "Explorer with ID 1 not found"
+}
 
 $ http -b localhost:8000/explorers
 []

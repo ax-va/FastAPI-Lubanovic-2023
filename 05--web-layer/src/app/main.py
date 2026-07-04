@@ -85,7 +85,4 @@ $ http -b localhost:8000/explorers/1
     "name": "Claude Hande"
 }
 
-$ http -b localhost:8000/explorers name="Ax-Va" country="DE" description="German explorer"
-Internal Server Error
-
 """
