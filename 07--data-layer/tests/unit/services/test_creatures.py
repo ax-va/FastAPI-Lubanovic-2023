@@ -2,7 +2,7 @@ import pytest
 
 from app.models.creatures import CreatureRequest, CreatureResponse
 from app.services import creatures as service
-from tests.repositories import fake_creatures
+from tests.unit.services import fake_creatures
 
 yeti_request = CreatureRequest(
     name="Yeti",
@@ -59,8 +59,8 @@ class Test:
     )
     def test_create(
         self,
-        sample_request,
-        sample_response
+        sample_request: CreatureRequest,
+        sample_response: CreatureResponse,
     ):
         result = service.create(sample_request)
         assert result == sample_response
@@ -80,8 +80,8 @@ class Test:
     @pytest.mark.negative
     @pytest.mark.parametrize(
         "creature_id",
-        [99, 100]
+        [999, 1000]
     )
-    def test_get_one_negative(self, creature_id):
+    def test_get_one_negative(self, creature_id: int):
         result = service.get_one(creature_id)
         assert result is None

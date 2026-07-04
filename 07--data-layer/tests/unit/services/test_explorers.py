@@ -2,7 +2,7 @@ import pytest
 
 from app.models.explorers import ExplorerRequest, ExplorerResponse
 from app.services import explorers as service
-from tests.repositories import fake_explorers
+from tests.unit.services import fake_explorers
 
 hande_request = ExplorerRequest(
     name="Claude Hande",
@@ -53,8 +53,8 @@ class Test:
     )
     def test_create(
         self,
-        sample_request,
-        sample_response,
+        sample_request: ExplorerRequest,
+        sample_response: ExplorerResponse,
     ):
         result = service.create(sample_request)
         assert result == sample_response
@@ -76,6 +76,6 @@ class Test:
         "explorer_id",
         [99, 100]
     )
-    def test_get_one_negative(self, explorer_id):
+    def test_get_one_negative(self, explorer_id: int):
         result = service.get_one(explorer_id)
         assert result is None
