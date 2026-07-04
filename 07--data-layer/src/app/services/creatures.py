@@ -1,22 +1,22 @@
-from app.models.creature import Creature
+from app.models.creatures import CreatureRequest, CreatureResponse
 from app.repositories.sqlite import creatures
 
 repository = creatures
 
 
-def get_all() -> list[Creature]:
+def get_all() -> list[CreatureResponse]:
     return repository.get_all()
 
 
-def get_one(creature_id: int) -> Creature | None:
+def get_one(creature_id: int) -> CreatureResponse | None:
     return repository.get_one(creature_id)
 
 
-def create(creature: Creature) -> Creature:
+def create(creature: CreatureRequest) -> CreatureResponse:
     return repository.create(creature)
 
 
-def replace(creature_id: int, creature: Creature) -> Creature | None:
+def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse | None:
     return repository.replace(creature_id, creature)
 
 

@@ -17,6 +17,22 @@ _explorers: list[ExplorerResponse] = [
 ]
 
 
+def to_model(row: tuple) -> ExplorerResponse:
+    """Converts a tuple returned by a `fetch` function to a model object."""
+    explorer_id, name, country, description = row
+    return ExplorerResponse(
+        id=explorer_id,
+        name=name,
+        country=country,
+        description=description,
+    )
+
+
+def to_dict(explorer: ExplorerRequest) -> dict:
+    """Converts a Pydantic model to a dictionary."""
+    return explorer.model_dump()
+
+
 def get_all() -> list[ExplorerResponse]:
     """Returns all explorers"""
     return _explorers
@@ -31,12 +47,15 @@ def get_one(explorer_id: int) -> ExplorerResponse | None:
         return None
 
 
-# nonfunctional for now
 def create(explorer: ExplorerRequest) -> ExplorerResponse:
     """Add an explorer"""
-    raise NotImplementedError()
+    explorer_id = len(_explorers) + 1
+    values = to_dict(explorer)
+    values["id"] = explorer_id
+    return ExplorerResponse(**values)
 
 
+# nonfunctional for now
 def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
     """Completely replace an explorer"""
     raise NotImplementedError()

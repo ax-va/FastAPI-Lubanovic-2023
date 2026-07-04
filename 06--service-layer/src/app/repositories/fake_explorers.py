@@ -1,48 +1,47 @@
-from app.models.explorer import Explorer
+from app.models.explorers import ExplorerRequest, ExplorerResponse
 
 # stubs, or fake data
-_explorers: dict[int, Explorer] = {
-    1: Explorer(
+_explorers: list[ExplorerResponse] = [
+    ExplorerResponse(
         id=1,
         name="Claude Hande",
         country="FR",
         description="Scarce during full moons",
     ),
-    2: Explorer(
+    ExplorerResponse(
         id=2,
         name="Noah Weiser",
         country="DE",
         description="Myopic machete man",
     ),
-}
+]
 
 
-def get_all() -> list[Explorer]:
+def get_all() -> list[ExplorerResponse]:
     """Returns all explorers"""
-    return list(_explorers.values())
+    return _explorers
 
 
-def get_one(explorer_id: int) -> Explorer | None:
+def get_one(explorer_id: int) -> ExplorerResponse | None:
     """Returns an explorer by its name"""
-    return _explorers.get(explorer_id)
+    try:
+        return _explorers[explorer_id - 1]
+
+    except IndexError:
+        return None
 
 
 # nonfunctional for now
-def create(explorer: Explorer) -> Explorer:
+def create(explorer: ExplorerRequest) -> ExplorerResponse:
     """Add an explorer"""
-    return explorer
+    raise NotImplementedError()
 
 
-def replace(explorer_id: int, explorer: Explorer) -> Explorer:
+def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
     """Completely replace an explorer"""
-    return explorer
-
-
-def modify(explorer_id: int, explorer: Explorer) -> Explorer:
-    """Partially modify an explorer"""
-    return explorer
+    raise NotImplementedError()
 
 
 def delete(explorer_id: int) -> bool:
     """Delete an explorer; return `False` if it doesn't exist"""
-    return False
+    raise NotImplementedError()

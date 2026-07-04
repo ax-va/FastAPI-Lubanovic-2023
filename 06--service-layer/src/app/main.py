@@ -21,3 +21,33 @@ def echo(thing):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app.main:app", reload=True)
+
+"""
+$ http -b localhost:8000/explorers
+[
+    {
+        "country": "FR",
+        "description": "Scarce during full moons",
+        "id": 1,
+        "name": "Claude Hande"
+    },
+    {
+        "country": "DE",
+        "description": "Myopic machete man",
+        "id": 2,
+        "name": "Noah Weiser"
+    }
+]
+
+$ http -b localhost:8000/explorers/1
+{
+    "country": "FR",
+    "description": "Scarce during full moons",
+    "id": 1,
+    "name": "Claude Hande"
+}
+
+$ http -b localhost:8000/explorers name="Ax-Va" country="DE" description="German explorer"
+Internal Server Error
+
+"""

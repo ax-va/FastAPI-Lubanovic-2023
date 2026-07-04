@@ -36,4 +36,51 @@ server: uvicorn
 
 "top here"
 
+
+$ http -b localhost:8000/explorers
+[]
+
+$ http -b localhost:8000/explorers name="Ax-Va" country="DE" description="The best German explorer"
+{
+    "country": "DE",
+    "description": "The best German explorer",
+    "id": 1,
+    "name": "Ax-Va"
+}
+
+$ http -b localhost:8000/explorers
+[
+    {
+        "country": "DE",
+        "description": "The best German explorer",
+        "id": 1,
+        "name": "Ax-Va"
+    }
+]
+
+$ http -b localhost:8000/explorers/1
+{
+    "country": "DE",
+    "description": "The best German explorer",
+    "id": 1,
+    "name": "Ax-Va"
+}
+
+$ http -b PUT localhost:8000/explorers/1 name="AxVa" country="DE" description="*"
+{
+    "country": "DE",
+    "description": "*",
+    "id": 1,
+    "name": "AxVa"
+}
+
+$ http -b DELETE localhost:8000/explorers/1
+true
+
+$ http -b localhost:8000/explorers/1
+null
+
+$ http -b localhost:8000/explorers
+[]
+
 """

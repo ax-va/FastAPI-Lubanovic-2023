@@ -1,51 +1,51 @@
-from app.models.creature import Creature
-
+from app.models.creatures import CreatureRequest, CreatureResponse
 
 # stubs, or fake data
-_creatures: dict[int, Creature] = {
-    1: Creature(
+_creatures: list[CreatureResponse] = [
+    CreatureResponse(
+        id=1,
         name="Yeti",
         aka="Abominable Snowman",
         country="CN",
         area="Himalayas",
         description="Hirsute Himalayan",
     ),
-    2: Creature(
+    CreatureResponse(
+        id=2,
         name="Bigfoot",
         description="Yeti's Cousin Eddie",
         country="US",
         area="*",
         aka="Sasquatch"
     ),
-}
+]
 
 
-def get_all() -> list[Creature]:
+def get_all() -> list[CreatureResponse]:
     """Returns all creatures"""
-    return list(_creatures.values())
+    return _creatures
 
 
-def get_one(creature_id: int) -> Creature | None:
+def get_one(creature_id: int) -> CreatureResponse | None:
     """Returns a creature by its name"""
-    return _creatures.get(creature_id)
+    try:
+        return _creatures[creature_id - 1]
+
+    except IndexError:
+        return None
 
 
 # nonfunctional for now
-def create(creature: Creature) -> Creature:
+def create(creature: CreatureRequest) -> CreatureResponse:
     """Add a creature"""
-    return creature
+    raise NotImplementedError()
 
 
-def replace(creature_id: int, creature: Creature) -> Creature:
+def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse:
     """Completely replace a creature"""
-    return creature
-
-
-def modify(creature_id: int, creature: Creature) -> Creature:
-    """Partially modify a creature"""
-    return creature
+    raise NotImplementedError()
 
 
 def delete(creature_id: int) -> bool:
     """Delete an explorer; return `False` if it doesn't exist"""
-    return False
+    raise NotImplementedError()

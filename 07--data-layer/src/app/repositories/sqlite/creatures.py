@@ -1,11 +1,12 @@
-from app.models.creature import Creature
+from app.models.creatures import CreatureRequest, CreatureResponse
 from . import database as db
 
 
-def row_to_model(row: tuple) -> Creature:
+def to_model(row: tuple) -> CreatureResponse:
     """Converts a tuple returned by a `fetch` function to a model object."""
-    _, name, country, area, description, aka = row
-    return Creature(
+    creature_id, name, country, area, description, aka = row
+    return CreatureResponse(
+        id=creature_id,
         name=name,
         country=country,
         area=area,
@@ -14,36 +15,36 @@ def row_to_model(row: tuple) -> Creature:
     )
 
 
-def model_to_dict(creature: Creature) -> dict:
+def to_dict(creature: CreatureRequest) -> dict:
     """Converts a Pydantic model to a dictionary."""
     return creature.model_dump()
 
 
-def get_one(creature_id: int) -> Creature | None:
+def get_one(creature_id: int) -> CreatureResponse | None:
     query = "SELECT * FROM creatures WHERE id=:id"
     values = {"id": creature_id}
     cursor = db.conn.cursor()
     cursor.execute(query, values)
     row = cursor.fetchone()
 
-    return row_to_model(row) if row else None
+    return to_model(row) if row else None
 
 
-def get_all() -> list[Creature]:
+def get_all() -> list[CreatureResponse]:
     query = "SELECT * FROM creatures"
     cursor = db.conn.cursor()
     cursor.execute(query)
     rows = list(cursor.fetchall())
 
-    return [row_to_model(row) for row in rows]
+    return [to_model(row) for row in rows]
 
 
-def create(creature: Creature) -> Creature:
+def create(creature: CreatureRequest) -> CreatureResponse:
     query = (
         "INSERT INTO creatures (name, country, area, description, aka) "
         "VALUES (:name, :country, :area, :description, :aka)"
     )
-    values = model_to_dict(creature)
+    values = to_dict(creature)
     cursor = db.conn.cursor()
     cursor.execute(query, values)
     db.conn.commit()
@@ -52,14 +53,14 @@ def create(creature: Creature) -> Creature:
     if inserted_id is None:
         raise RuntimeError(f"Inserted creature id was not returned")
 
-    inserted: Creature | None = get_one(inserted_id)
+    inserted: CreatureResponse | None = get_one(inserted_id)
     if inserted is None:
         raise RuntimeError(f"Inserted creature with id={inserted_id} could not be retrieved")
 
     return inserted
 
 
-def replace(creature_id: int, creature: Creature) -> Creature | None:
+def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse | None:
     query = (
         "UPDATE creatures "
         "SET name=:name, "
@@ -69,7 +70,7 @@ def replace(creature_id: int, creature: Creature) -> Creature | None:
         "    aka=:aka "
         "WHERE id=:creature_id"
     )
-    values = model_to_dict(creature)
+    values = to_dict(creature)
     values["creature_id"] = creature_id
     cursor = db.conn.cursor()
     cursor.execute(query, values)
@@ -79,7 +80,7 @@ def replace(creature_id: int, creature: Creature) -> Creature | None:
 
     db.conn.commit()
 
-    updated: Creature | None = get_one(creature_id)
+    updated: CreatureResponse | None = get_one(creature_id)
     if updated is None:
         raise RuntimeError(f"Updated creature with id={creature_id} could not be retrieved")
 

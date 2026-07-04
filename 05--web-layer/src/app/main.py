@@ -62,34 +62,30 @@ INFO:     127.0.0.1:52468 - "GET /echo/ax-va HTTP/1.1" 200 OK
 "echoing ax-va"
 
 $ http -b localhost:8000/explorers
-INFO:     127.0.0.1:44312 - "GET /explorers HTTP/1.1" 200 OK
 [
     {
         "country": "FR",
         "description": "Scarce during full moons",
+        "id": 1,
         "name": "Claude Hande"
     },
     {
         "country": "DE",
         "description": "Myopic machete man",
+        "id": 2,
         "name": "Noah Weiser"
     }
 ]
 
 $ http -b localhost:8000/explorers/1
-INFO:     127.0.0.1:43022 - "GET /explorers/1 HTTP/1.1" 200 OK
 {
     "country": "FR",
     "description": "Scarce during full moons",
+    "id": 1,
     "name": "Claude Hande"
 }
 
-$ http -b POST localhost:8000/explorers name="Ax-Va" country="DE" description="German explorer"
-INFO:     127.0.0.1:41438 - "POST /explorers HTTP/1.1" 200 OK
-{
-    "country": "DE",
-    "description": "German explorer",
-    "name": "Ax-Va"
-}
+$ http -b localhost:8000/explorers name="Ax-Va" country="DE" description="German explorer"
+Internal Server Error
 
 """
