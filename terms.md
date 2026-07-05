@@ -166,14 +166,14 @@ SQLAlchemy works on top of DB-API drivers.
 
 Examples:
 
-- **Username and password:** The user proves their identity by providing a username and password.
+- *Username and password:* The user proves their identity by providing a username and password.
 
-- **API key:** The client authenticates by sending a unique secret key with each request.
+- *API key:* The client authenticates by sending a unique secret key with each request.
 
-- **OAuth 2.0:** A protocol that allows users to authenticate 
+- *OAuth 2.0:* A protocol that allows users to authenticate 
 through a trusted third-party provider (such as Google or GitHub) without sharing their passwords.
 
-- **JSON Web Token (JWT):** A signed token containing user information that is sent with each request after authentication.
+- *JSON Web Token (JWT):* A signed token containing user information that is sent with each request after authentication.
 
 #### Authorization: What Are You Allowed To Do?
 
