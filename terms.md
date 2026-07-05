@@ -162,6 +162,19 @@ SQLAlchemy works on top of DB-API drivers.
 
 - If the verification succeeds, the user is considered authenticated.
 
+- Authentication verifies a user's identity before granting access to protected resources or allowing restricted actions.
+
+Examples:
+
+- Username and password: The user proves their identity by providing a username and password.
+
+- API key: The client authenticates by sending a unique secret key with each request.
+
+- OAuth 2.0: A protocol that allows users to authenticate through a trusted third-party provider
+  (such as Google or GitHub) without sharing their passwords.
+
+- JSON Web Token (JWT): A signed token containing user information that is sent with each request after authentication.
+
 #### Authorization: What Are You Allowed To Do?
 
 - Authorization is the process of determining what an authenticated user is allowed to do.
@@ -169,3 +182,13 @@ SQLAlchemy works on top of DB-API drivers.
 - After authentication,  the server checks the user's permissions or roles before allowing access to a resource or operation.
 
 - If the user does not have sufficient permissions, the server returns `403 Forbidden`.
+
+#### FastAPI Security
+
+https://fastapi.tiangolo.com/tutorial/security/
+
+#### Distributed Denial-of-Service (DDoS)
+
+Distributed Denial-of-Service (DDoS) is an attack 
+in which a large number of compromised computers or devices simultaneously send requests to a server.
+The goal is to overwhelm the server's resources and make the service unavailable to legitimate users. 
