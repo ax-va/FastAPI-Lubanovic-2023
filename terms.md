@@ -170,8 +170,8 @@ Examples:
 
 - API key: The client authenticates by sending a unique secret key with each request.
 
-- OAuth 2.0: A protocol that allows users to authenticate through a trusted third-party provider
-  (such as Google or GitHub) without sharing their passwords.
+- OAuth 2.0: A protocol that allows users to authenticate 
+through a trusted third-party provider (such as Google or GitHub) without sharing their passwords.
 
 - JSON Web Token (JWT): A signed token containing user information that is sent with each request after authentication.
 
