@@ -84,7 +84,9 @@ Examples:
 
 - `GET /users`: Retrieve all users
 
-- `GET /users/25`: Retrieve the user with ID 25
+- `GET /users/25`: Retrieve the user with ID 25 
+
+- If the user with ID 25 was not found, the server returns `404 Not Found`
 
 - `GET /users?sort=country`: Retrieve all users, sorted by country
 
@@ -94,9 +96,9 @@ Examples:
 
 - `POST /users name="AxVa" country="DE"`: Create a new user
 
-- `PUT /users/25`: Completely replace the user with ID 25
+- `PUT /users/25 name="ax-va" country="DE"`: Completely replace the user with ID 25
 
-- `PATCH /uses/25`: Partially update the user with ID 25
+- `PATCH /uses/25 country="US"`: Partially update the user with ID 25
 
 - `DELETE /users/25`: Delete the user with ID 25
 
@@ -151,3 +153,19 @@ Example:
 Database drivers like sqlite3 (SQLite), psycopg (PostgreSQL), PyMySQL (MySQL), and mariadb (MariaDB) implement DB-API.
 
 SQLAlchemy works on top of DB-API drivers.
+
+#### Authentication: Who Are You?
+
+- Authentification is the process of verifying a user's identity.
+
+- A user provides credentials (such as a username and password), and the server verifies that they are valid.
+
+- If the verification succeeds, the user is considered authenticated.
+
+#### Authorization: What Are You Allowed To Do?
+
+- Authorization is the process of determining what an authenticated user is allowed to do.
+
+- After authentication,  the server checks the user's permissions or roles before allowing access to a resource or operation.
+
+- If the user does not have sufficient permissions, the server returns `403 Forbidden`.
