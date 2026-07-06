@@ -17,18 +17,6 @@ $ pip install uvicorn
 $ pip install httpie
 ```
 
-### Testing
-```shell
-$ pip install pytest
-````
-
-### Authentication
-```shell
-$ pip install python-jose[cryptography]
-$ pip install passlib
-$ pip install python-multipart
-```
-
 Example: request `http://example.com/` and print (`-p`) request headers (`H`), request body (`B`), and response headers (`h`)
 ```shell
 $ http -p HBh http://example.com/
@@ -65,4 +53,16 @@ $ pip install requests
 ### The HTTPX synchronous/asynchronous HTTP client package
 ```shell
 $ pip install httpx
+```
+
+### Testing
+```shell
+$ pip install pytest
+````
+
+### Authentication
+```shell
+$ pip install python-jose[cryptography]
+$ pip install passlib
+$ pip install python-multipart
 ```
