@@ -8,8 +8,8 @@ def get_all() -> list[ExplorerResponse]:
     return repository.get_all()
 
 
-def get_one(explorer_id: int) -> ExplorerResponse | None:
-    return repository.get_one(explorer_id)
+def get_by_id(explorer_id: int) -> ExplorerResponse | None:
+    return repository.get_by_id(explorer_id)
 
 
 def create(explorer: ExplorerRequest) -> ExplorerResponse:

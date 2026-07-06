@@ -73,8 +73,8 @@ class Test:
             (2, bigfoot_response),
         ]
     )
-    def test_get_one_positive(self, creature_id: int, expected: CreatureResponse):
-        result = service.get_one(creature_id)
+    def test_get_by_id_positive(self, creature_id: int, expected: CreatureResponse):
+        result = service.get_by_id(creature_id)
         assert result == expected
 
     @pytest.mark.negative
@@ -82,6 +82,6 @@ class Test:
         "creature_id",
         [999, 1000]
     )
-    def test_get_one_negative(self, creature_id: int):
-        result = service.get_one(creature_id)
+    def test_get_by_id_negative(self, creature_id: int):
+        result = service.get_by_id(creature_id)
         assert result is None

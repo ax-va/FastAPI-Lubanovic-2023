@@ -18,7 +18,7 @@ def to_dict(explorer: ExplorerRequest) -> dict:
     return explorer.model_dump()
 
 
-def get_one(explorer_id: int) -> ExplorerResponse | None:
+def get_by_id(explorer_id: int) -> ExplorerResponse | None:
     query = "SELECT * FROM explorers WHERE id=:id"
     values = {"id": explorer_id}
     cursor = db.conn.cursor()
@@ -51,7 +51,7 @@ def create(explorer: ExplorerRequest) -> ExplorerResponse:
     if inserted_id is None:
         raise RuntimeError(f"Inserted explorer id was not returned")
 
-    inserted: ExplorerResponse | None = get_one(inserted_id)
+    inserted: ExplorerResponse | None = get_by_id(inserted_id)
     if inserted is None:
         raise RuntimeError(f"Inserted explorer with id={inserted_id} could not be retrieved")
 
@@ -76,7 +76,7 @@ def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse | N
 
     db.conn.commit()
 
-    updated: ExplorerResponse | None = get_one(explorer_id)
+    updated: ExplorerResponse | None = get_by_id(explorer_id)
     if updated is None:
         raise RuntimeError(f"Updated explorer with id={explorer_id} could not be retrieved")
 

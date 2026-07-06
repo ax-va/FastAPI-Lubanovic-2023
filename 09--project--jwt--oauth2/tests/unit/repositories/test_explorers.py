@@ -77,8 +77,8 @@ class Test:
             (2, weiser_response),
         ]
     )
-    def test_get_one_positive(self, explorer_id: int, explorer_response: ExplorerResponse):
-        result = repository.get_one(explorer_id)
+    def test_get_by_id_positive(self, explorer_id: int, explorer_response: ExplorerResponse):
+        result = repository.get_by_id(explorer_id)
         assert result == explorer_response
 
     @pytest.mark.negative
@@ -86,8 +86,8 @@ class Test:
         "explorer_id",
         [999, 1000]
     )
-    def test_get_one_negative(self, explorer_id: int):
-        result = repository.get_one(explorer_id)
+    def test_get_by_id_negative(self, explorer_id: int):
+        result = repository.get_by_id(explorer_id)
         assert result is None
 
     @pytest.mark.positive

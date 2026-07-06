@@ -44,7 +44,7 @@ def get_all() -> list[CreatureResponse]:
     return _creatures
 
 
-def get_one(creature_id: int) -> CreatureResponse | None:
+def get_by_id(creature_id: int) -> CreatureResponse | None:
     """Returns a creature by its name"""
     try:
         return _creatures[creature_id - 1]

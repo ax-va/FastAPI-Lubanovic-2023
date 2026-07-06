@@ -22,7 +22,7 @@ def get_all() -> list[ExplorerResponse]:
     return _explorers
 
 
-def get_one(explorer_id: int) -> ExplorerResponse | None:
+def get_by_id(explorer_id: int) -> ExplorerResponse | None:
     """Returns an explorer by its name"""
     try:
         return _explorers[explorer_id - 1]

@@ -1,3 +1,8 @@
+"""
+HTTP Basic Authentication is insecure over HTTP
+because usernames and passwords are only Base64-encoded, not encrypted.
+It should always be used together with HTTPS to protect credentials from interception.
+"""
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -7,7 +12,8 @@ app = FastAPI()
 username: str = "ax-va"
 password: str = "123"
 
-http_basic = HTTPBasic()  # Has the `__call__` method
+# The instance has the `__call__` method
+http_basic = HTTPBasic()  
 
 
 @app.get("/who")

@@ -15,8 +15,8 @@ def get_all() -> list[ExplorerResponse]:
 
 @router.get("/{explorer_id}")
 @router.get("/{explorer_id}/")
-def get_one(explorer_id: int) -> ExplorerResponse:
-    explorer = service.get_one(explorer_id)
+def get_by_id(explorer_id: int) -> ExplorerResponse:
+    explorer = service.get_by_id(explorer_id)
     if explorer is None:
         raise HTTPException(
             status_code=404,

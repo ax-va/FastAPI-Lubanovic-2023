@@ -8,8 +8,8 @@ def get_all() -> list[CreatureResponse]:
     return repository.get_all()
 
 
-def get_one(creature_id: int) -> CreatureResponse | None:
-    return repository.get_one(creature_id)
+def get_by_id(creature_id: int) -> CreatureResponse | None:
+    return repository.get_by_id(creature_id)
 
 
 def create(creature: CreatureRequest) -> CreatureResponse:

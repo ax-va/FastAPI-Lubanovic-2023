@@ -20,7 +20,7 @@ def to_dict(creature: CreatureRequest) -> dict:
     return creature.model_dump()
 
 
-def get_one(creature_id: int) -> CreatureResponse | None:
+def get_by_id(creature_id: int) -> CreatureResponse | None:
     query = "SELECT * FROM creatures WHERE id=:id"
     values = {"id": creature_id}
     cursor = db.conn.cursor()
@@ -53,7 +53,7 @@ def create(creature: CreatureRequest) -> CreatureResponse:
     if inserted_id is None:
         raise RuntimeError(f"Inserted creature id was not returned")
 
-    inserted: CreatureResponse | None = get_one(inserted_id)
+    inserted: CreatureResponse | None = get_by_id(inserted_id)
     if inserted is None:
         raise RuntimeError(f"Inserted creature with id={inserted_id} could not be retrieved")
 
@@ -80,7 +80,7 @@ def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse | N
 
     db.conn.commit()
 
-    updated: CreatureResponse | None = get_one(creature_id)
+    updated: CreatureResponse | None = get_by_id(creature_id)
     if updated is None:
         raise RuntimeError(f"Updated creature with id={creature_id} could not be retrieved")
 

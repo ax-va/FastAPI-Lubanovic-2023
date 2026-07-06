@@ -170,10 +170,13 @@ Examples:
 
 - *API key:* The client authenticates by sending a unique secret key with each request.
 
-- *OAuth 2.0:* A protocol that allows users to authenticate 
-through a trusted third-party provider (such as Google or GitHub) without sharing their passwords.
+- *JSON Web Token (JWT):* A signed token issued after authentication and sent with subsequent requests instead of the user's credentials.
+JWT is not part of *OAuth2*, but it is a widely used token format for OAuth2 access tokens. 
 
-- *JSON Web Token (JWT):* A signed token containing user information that is sent with each request after authentication.
+- *OAuth2:* OAuth 2.0 (*Open Authorization*) is an authorization framework 
+that allows an application to access resources hosted by another service on behalf of a user, without requiring the user's password.
+It is commonly used together with *OpenID Connect* for authentication ("Sign in with Google", "Sign in with GitHub").
+*OAuth 2.1* is a simplified and more secure revision of OAuth 2.0 that removes deprecated features and follows current security best practices. 
 
 #### Authorization: What Are You Allowed To Do?
 
@@ -191,4 +194,4 @@ https://fastapi.tiangolo.com/tutorial/security/
 
 Distributed Denial-of-Service (DDoS) is an attack 
 in which a large number of compromised computers or devices simultaneously send requests to a server.
-The goal is to overwhelm the server's resources and make the service unavailable to legitimate users. 
+The goal is to overwhelm the server's resources and make the service unavailable to legitimate users.

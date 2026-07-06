@@ -19,7 +19,7 @@ def create_one(tag_in: TagIn) -> Tag:
 
 
 @app.get('/{tag_str}', response_model=TagOut)
-def get_one(tag_str: str) -> Tag:
+def get_by_id(tag_str: str) -> Tag:
     tag_obj: Tag = get_tag(tag_str)
 
     if tag_obj is None:

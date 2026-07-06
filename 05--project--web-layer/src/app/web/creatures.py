@@ -15,8 +15,8 @@ def get_all() -> list[CreatureResponse]:
 
 @router.get("/{creature_id}")
 @router.get("/{creature_id}/")
-def get_one(creature_id: int) -> CreatureResponse:
-    creature = service.get_one(creature_id)
+def get_by_id(creature_id: int) -> CreatureResponse:
+    creature = service.get_by_id(creature_id)
     if creature is None:
         raise HTTPException(
             status_code=404,
