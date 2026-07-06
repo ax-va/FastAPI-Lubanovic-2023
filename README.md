@@ -60,6 +60,11 @@ $ pip install httpx
 $ pip install pytest
 ````
 
+Run tests
+```shell
+$ pytest -v
+```
+
 ### Authentication
 ```shell
 $ pip install python-jose[cryptography]
