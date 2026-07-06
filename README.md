@@ -71,3 +71,14 @@ $ pip install python-jose[cryptography]
 $ pip install passlib
 $ pip install python-multipart
 ```
+
+### Security
+```shell
+$ pip install python-dotenv
+```
+
+Only for development and testing, write in a `.env`
+```shell
+JWT_SECRET_KEY=<your-secret-key>
+JWT_ALGORITHM=HS256
+```

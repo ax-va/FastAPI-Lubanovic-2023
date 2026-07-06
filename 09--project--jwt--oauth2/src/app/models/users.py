@@ -7,7 +7,6 @@ class UserToCreate(BaseModel):
 
 
 class UserToDB(BaseModel):
-    id: int
     username: str
     password_hash: str
     is_active: bool
