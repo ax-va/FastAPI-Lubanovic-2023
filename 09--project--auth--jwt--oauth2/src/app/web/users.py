@@ -21,6 +21,7 @@ def create_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
 ) -> dict:
     """Authenticates a user and returns a JWT access token."""
+
     user: UserFromDB | None = service.authenticate_user(form_data.username, form_data.password)
 
     if user is None:
