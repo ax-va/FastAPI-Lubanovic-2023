@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from app.models.creatures import CreatureRequest, CreatureResponse
+from app.repositories.errors import NotFoundError
 from app.services import creatures
 
 service = creatures
@@ -22,6 +23,7 @@ def get_by_id(creature_id: int) -> CreatureResponse:
             status_code=404,
             detail=f"Creature with ID {creature_id} not found",
         )
+
     return creature
 
 
@@ -34,12 +36,15 @@ def create(creature: CreatureRequest) -> CreatureResponse:
 @router.put("/{creature_id}")
 @router.put("/{creature_id}/")
 def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse:
-    creature = service.replace(creature_id, creature)
-    if creature is None:
+    try:
+        creature = service.replace(creature_id, creature)
+
+    except NotFoundError as e:
         raise HTTPException(
             status_code=404,
-            detail=f"Creature with ID {creature_id} not found",
+            detail=str(e),
         )
+
     return creature
 
 
@@ -58,4 +63,5 @@ def delete(creature_id: int) -> bool:
             status_code=404,
             detail=f"Creature with ID {creature_id} not found",
         )
+
     return deleted

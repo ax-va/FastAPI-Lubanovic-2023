@@ -1,4 +1,5 @@
 from app.models.explorers import ExplorerRequest, ExplorerResponse
+from app.repositories.errors import NotFoundError
 from . import database as db
 
 
@@ -58,7 +59,7 @@ def create(explorer: ExplorerRequest) -> ExplorerResponse:
     return inserted
 
 
-def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse | None:
+def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
     query = (
         "UPDATE explorers "
         "SET name=:name, "
@@ -72,7 +73,7 @@ def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse | N
     cursor.execute(query, values)
 
     if cursor.rowcount == 0:
-        return None
+        raise NotFoundError(f"Explorer with id={explorer_id} not found")
 
     db.conn.commit()
 

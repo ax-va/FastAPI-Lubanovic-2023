@@ -45,7 +45,7 @@ def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
 
 @router.patch("/{explorer_id}")
 @router.patch("/{explorer_id}/")
-def modify(explorer_id: int) -> ExplorerResponse | None:
+def modify(explorer_id: int) -> ExplorerResponse:
     raise NotImplementedError()
 
 

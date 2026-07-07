@@ -1,5 +1,6 @@
 from app.models.creatures import CreatureRequest, CreatureResponse
 from . import database as db
+from ..errors import NotFoundError
 
 
 def to_model(row: tuple) -> CreatureResponse:
@@ -59,7 +60,7 @@ def create(creature: CreatureRequest) -> CreatureResponse:
     return inserted
 
 
-def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse | None:
+def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse:
     query = (
         "UPDATE creatures "
         "SET name=:name, "
@@ -75,7 +76,7 @@ def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse | N
     cursor.execute(query, values)
 
     if cursor.rowcount == 0:
-        return None
+        raise NotFoundError(f"Creature with id={creature_id} not found")
 
     db.conn.commit()
 

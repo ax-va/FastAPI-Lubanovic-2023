@@ -45,7 +45,7 @@ def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse:
 
 @router.patch("/{creature_id}")
 @router.patch("/{creature_id}/")
-def modify(creature_id: int) -> CreatureResponse | None:
+def modify(creature_id: int) -> CreatureResponse:
     raise NotImplementedError()
 
 

@@ -7,7 +7,7 @@ from jose.exceptions import JWTError
 from app.config import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_EXPIRE_MINUTES
 
 
-def get_subject(token: str) -> str | None:
+def extract_subject(token: str) -> str | None:
     """Returns subject identifier from JWT access token."""
 
     try:

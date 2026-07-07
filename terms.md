@@ -156,7 +156,7 @@ SQLAlchemy works on top of DB-API drivers.
 
 #### Authentication: Who Are You?
 
-- Authentification is the process of verifying a user's identity.
+- Authentication is the process of verifying a user's identity.
 
 - A user provides credentials (such as a username and password), and the server verifies that they are valid.
 
@@ -168,15 +168,48 @@ Examples:
 
 - *Username and password:* The user proves their identity by providing a username and password.
 
+
 - *API key:* The client authenticates by sending a unique secret key with each request.
 
-- *JSON Web Token (JWT):* A signed token issued after authentication and sent with subsequent requests instead of the user's credentials.
-JWT is not part of *OAuth2*, but it is a widely used token format for OAuth2 access tokens. 
 
-- *OAuth2:* OAuth 2.0 (*Open Authorization*) is an authorization framework 
-that allows an application to access resources hosted by another service on behalf of a user, without requiring the user's password.
-It is commonly used together with *OpenID Connect* for authentication ("Sign in with Google", "Sign in with GitHub").
-*OAuth 2.1* is a simplified and more secure revision of OAuth 2.0 that removes deprecated features and follows current security best practices. 
+- *JSON Web Token (JWT):* A signed token format that contains *claims* about a user or client.
+
+  - Claims describe the authenticated user or client inside a JWT payload, 
+    such as their identifier (`sub`), expiration time (`exp`),  or issuer (`iss`):
+    ```json
+    {
+      "sub": "alice",
+      "role": "admin",
+      "exp": 1751914800
+    } 
+    ```
+
+  - JWT is typically issued after authentication and sent with subsequent requests instead of the user's credentials.
+
+  - JWT is not part of *OAuth2*, but it is a widely used token format for OAuth2 access tokens.
+
+
+- *Bearer Token*: An HTTP authentication scheme in which the client sends an access token in the `Authorization` header:
+  ```
+  Authorization: Bearer <token>
+  ```
+  The word *Bearer* means *the bearer (holder) of the token*. 
+  Anyone who presents a valid Bearer token is considered authenticated.
+  A Bearer token is often a JWT, but it can also be an opaque token.
+
+
+- *OAuth2:* OAuth 2.0 (*Open Authorization*) is an authorization framework.
+
+  - Authentication identifies the user, while OAuth2 defines how access tokens are obtained and used to access protected resources.
+    After a user is authenticated, the server issues an access token instead of requiring the user's credentials for every request.
+
+  - OAuth2 does **not** define the format of an access token. The token may be a JWT or an opaque token.
+
+  - OAuth2 is widely used for securing REST APIs, delegated authorization with *OpenID Connect* ("Sign in with Google", "Sign in with GitHub"),
+    or issuing and validating access tokens.
+  
+  - *OAuth 2.1* is a simplified and more secure revision of OAuth 2.0 
+    that removes deprecated features and follows current security best practices. 
 
 #### Authorization: What Are You Allowed To Do?
 

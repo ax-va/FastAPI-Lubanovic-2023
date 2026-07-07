@@ -16,7 +16,7 @@ def create(explorer: ExplorerRequest) -> ExplorerResponse:
     return repository.create(explorer)
 
 
-def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse | None:
+def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
     return repository.replace(explorer_id, explorer)
 
 

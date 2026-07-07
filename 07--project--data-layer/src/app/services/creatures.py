@@ -16,7 +16,7 @@ def create(creature: CreatureRequest) -> CreatureResponse:
     return repository.create(creature)
 
 
-def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse | None:
+def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse:
     return repository.replace(creature_id, creature)
 
 

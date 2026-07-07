@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from app.models.explorers import ExplorerRequest, ExplorerResponse
+from app.repositories.errors import NotFoundError
 from app.services import explorers
 
 service = explorers
@@ -34,18 +35,21 @@ def create(explorer: ExplorerRequest) -> ExplorerResponse:
 @router.put("/{explorer_id}")
 @router.put("/{explorer_id}/")
 def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
-    explorer = service.replace(explorer_id, explorer)
-    if explorer is None:
+    try:
+        explorer = service.replace(explorer_id, explorer)
+
+    except NotFoundError as e:
         raise HTTPException(
             status_code=404,
-            detail=f"Explorer with ID {explorer_id} not found",
+            detail=str(e),
         )
+
     return explorer
 
 
 @router.patch("/{explorer_id}")
 @router.patch("/{explorer_id}/")
-def modify(explorer_id: int) -> ExplorerResponse | None:
+def modify(explorer_id: int) -> ExplorerResponse:
     raise NotImplementedError()
 
 

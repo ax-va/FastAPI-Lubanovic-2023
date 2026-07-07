@@ -1,6 +1,7 @@
 from app.models.users import UserToCreate, UserToDB, UserFromDB, UserResponse
 from app.repositories.sqlite import users
-from app.services.auth.passwords import hash_password
+from app.services.auth.jwt import extract_subject
+from app.services.auth.passwords import hash_password, verify_password
 
 repository = users
 
@@ -43,13 +44,44 @@ def get_by_username(username: str) -> UserResponse | None:
     return to_response(user)
 
 
-def create(user: UserToCreate) -> UserFromDB:
-    return repository.create(to_db(user))
+def create(user: UserToCreate) -> UserResponse:
+    user_from_db: UserFromDB = repository.create(to_db(user))
+    return to_response(user_from_db)
 
 
-def replace(user_id: int, user: UserToDB) -> UserFromDB:
-    return repository.replace(user_id, user)
+def replace(user_id: int, user: UserToDB) -> UserResponse:
+    user_from_db: UserFromDB = repository.replace(user_id, user)
+    return to_response(user_from_db)
 
 
 def delete(user_id: int) -> bool:
     return repository.delete(user_id)
+
+
+def authenticate_user(username: str, password: str) -> UserFromDB | None:
+    user = repository.get_by_username(username)
+
+    if user is None:
+        return None
+
+    if not verify_password(password, user.password_hash):
+        return None
+
+    if not user.is_active:
+        return None
+
+    return user
+
+
+def get_by_token(token: str) -> UserResponse | None:
+    subject = extract_subject(token)
+
+    if subject is None:
+        return None
+
+    user = repository.get_by_username(subject)
+
+    if user is None or not user.is_active:
+        return None
+
+    return to_response(user)
