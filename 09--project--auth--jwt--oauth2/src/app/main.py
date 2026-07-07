@@ -1,14 +1,15 @@
 from fastapi import FastAPI
 
 from app.repositories.sqlite import database as db
-from app.web import creatures
-from app.web import explorers
+from app.web import creatures, explorers, users
+
 
 db.init()
 
 app = FastAPI()
 app.include_router(creatures.router)
 app.include_router(explorers.router)
+app.include_router(users.router)
 
 
 @app.get("/")
