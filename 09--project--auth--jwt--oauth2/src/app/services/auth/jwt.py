@@ -24,6 +24,7 @@ def decode_jwt_subject(token: str) -> str | None:
 
 def encode_jwt(data: dict, expires: timedelta) -> str:
     """Creates a JWT access token."""
+
     payload = data.copy()
     now = datetime.datetime.now(datetime.UTC)
     payload["exp"] = now + expires
