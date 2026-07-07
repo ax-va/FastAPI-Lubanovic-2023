@@ -111,18 +111,18 @@ def replace(user_id: int, user: UserToDB) -> UserResponse:
 
 @router.patch("/{user_id}")
 @router.patch("/{user_id}/")
-def modify(explorer_id: int) -> UserResponse:
+def modify(user_id: int) -> UserResponse:
     raise NotImplementedError()
 
 
-@router.delete("/{explorer_id}")
-@router.delete("/{explorer_id}/")
-def delete(explorer_id: int) -> bool:
-    deleted = service.delete(explorer_id)
+@router.delete("/{user_id}")
+@router.delete("/{user_id}/")
+def delete(user_id: int) -> bool:
+    deleted = service.delete(user_id)
     if not deleted:
         raise HTTPException(
             status_code=404,
-            detail=f"Explorer with ID {explorer_id} not found",
+            detail=f"User with ID {user_id} not found",
         )
 
     return deleted
