@@ -28,4 +28,5 @@ def encode_jwt(data: dict, expires: timedelta) -> str:
     now = datetime.datetime.now(datetime.UTC)
     src["exp"] = now + expires
     jwt_encoded = jwt.encode(src, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+
     return jwt_encoded
