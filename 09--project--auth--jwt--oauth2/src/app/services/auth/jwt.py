@@ -4,10 +4,10 @@ from datetime import timedelta
 from jose import jwt
 from jose.exceptions import JWTError
 
-from app.config import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_EXPIRE_MINUTES
+from app.config import JWT_SECRET_KEY, JWT_ALGORITHM
 
 
-def extract_subject(token: str) -> str | None:
+def decode_jwt_subject(token: str) -> str | None:
     """Returns subject identifier from JWT access token."""
 
     try:
@@ -22,14 +22,10 @@ def extract_subject(token: str) -> str | None:
     return subject
 
 
-def create_access_token(data: dict, expires: timedelta | None = None) -> str:
+def encode_jwt(data: dict, expires: timedelta) -> str:
     """Creates a JWT access token."""
     src = data.copy()
     now = datetime.datetime.now(datetime.UTC)
-
-    if not expires:
-        expires = timedelta(minutes=JWT_EXPIRE_MINUTES)
-
-    src.update({"exp": now + expires})
+    src["exp"] = now + expires
     jwt_encoded = jwt.encode(src, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
     return jwt_encoded

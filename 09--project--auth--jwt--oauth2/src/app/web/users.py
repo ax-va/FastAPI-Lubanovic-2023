@@ -1,9 +1,6 @@
-from datetime import timedelta
-
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from app.models.users import UserToCreate, UserResponse, UserFromDB, UserToDB
 from app.repositories.errors import NotFoundError
 from app.services import users
@@ -33,10 +30,8 @@ def create_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = access_tokens.create_access_token(
-        data={"sub": user.username}, expires=expires
-    )
+    data = {"sub": user.username}
+    access_token = access_tokens.create_access_token(data=data)
 
     return {
         "access_token": access_token,

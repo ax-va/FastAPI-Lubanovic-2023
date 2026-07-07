@@ -1,6 +1,6 @@
 from app.models.users import UserToCreate, UserToDB, UserFromDB, UserResponse
 from app.repositories.sqlite import users
-from app.services.auth.jwt import extract_subject
+from app.services.auth.jwt import decode_jwt_subject
 from app.services.auth.passwords import hash_password, verify_password
 
 repository = users
@@ -74,7 +74,7 @@ def authenticate_user(username: str, password: str) -> UserFromDB | None:
 
 
 def get_by_token(token: str) -> UserResponse | None:
-    subject = extract_subject(token)
+    subject = decode_jwt_subject(token)
 
     if subject is None:
         return None
