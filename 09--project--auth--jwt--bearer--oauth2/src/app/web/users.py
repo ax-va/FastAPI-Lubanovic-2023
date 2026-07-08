@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
+from app.auth import access_tokens
 from app.models.users import UserToCreate, UserResponse, UserFromDB, UserToDB
 from app.repositories.errors import NotFoundError
 from app.services import users
-from app.services.auth import access_tokens
 
 service = users
 router = APIRouter(prefix="/users")

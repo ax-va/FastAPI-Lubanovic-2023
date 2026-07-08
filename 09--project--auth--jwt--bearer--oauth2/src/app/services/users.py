@@ -1,7 +1,8 @@
+from app.auth.jwt import decode_jwt_subject
+from app.auth.passwords import hash_password, verify_password
 from app.models.users import UserToCreate, UserToDB, UserFromDB, UserResponse
 from app.repositories.sqlite import users
-from app.services.auth.jwt import decode_jwt_subject
-from app.services.auth.passwords import hash_password, verify_password
+
 
 repository = users
 
