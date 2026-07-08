@@ -172,7 +172,7 @@ Examples:
 - *API key:* The client authenticates by sending a unique secret key with each request.
 
 
-- *JSON Web Token (JWT):* A signed token format:
+- *JSON Web Token (JWT):* A signed token format.
 
   - The JWT format consists of three parts: a header, a payload, and a signature.
   
