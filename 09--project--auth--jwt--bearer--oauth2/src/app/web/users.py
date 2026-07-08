@@ -1,17 +1,14 @@
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 
 from app.auth import access_tokens
 from app.models.users import UserToCreate, UserResponse, UserFromDB, UserToDB
 from app.repositories.errors import NotFoundError
 from app.services import users
+from app.web.auth import get_current_user, get_current_admin
 
 service = users
 router = APIRouter(prefix="/users")
-
-# Dependency extracts the Bearer token from the Authorization header
-access_token_scheme = OAuth2PasswordBearer(tokenUrl="/users/token")
-
 
 # OAuth2 token endpoint.
 # Clients send username and password here to obtain an access token.
@@ -40,31 +37,31 @@ def create_access_token(
     }
 
 
+# API only for authenticated admins
 @router.get("")
 @router.get("/")
-def get_all() -> list[UserResponse]:
+def get_all(
+    admin: UserResponse = Depends(get_current_admin),
+) -> list[UserResponse]:
     return service.get_all()
 
 
+# API for only authenticated users
 @router.get("/me")
 @router.get("/me/")
-def get_current_user(
-    token: str = Depends(access_token_scheme),
+def get_me(
+    user: UserResponse = Depends(get_current_user)
 ) -> UserResponse:
-    user = service.get_by_token(token)
-    if user is None:
-        raise HTTPException(
-            status_code=401,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
     return user
 
 
+# API only for authenticated admins
 @router.get("/{user_id}")
 @router.get("/{user_id}/")
-def get_by_id(user_id: int) -> UserResponse:
+def get_by_id(
+    user_id: int,
+    admin: UserResponse = Depends(get_current_admin),
+) -> UserResponse:
     user: UserResponse | None = service.get_by_id(user_id)
     if user is None:
         raise HTTPException(
@@ -75,9 +72,13 @@ def get_by_id(user_id: int) -> UserResponse:
     return user
 
 
-@router.get("/{user_id}")
-@router.get("/{user_id}/")
-def get_by_username(username: str) -> UserResponse:
+# API only for authenticated admins
+@router.get("/{username}")
+@router.get("/{username}/")
+def get_by_username(
+    username: str,
+    admin: UserResponse = Depends(get_current_admin),
+) -> UserResponse:
     user: UserResponse | None = service.get_by_username(username)
     if user is None:
         raise HTTPException(
@@ -88,15 +89,23 @@ def get_by_username(username: str) -> UserResponse:
     return user
 
 
-@router.post("", status_code=201)
+# public API
+@router.post("", status_code=201)  # 201 Created
 @router.post("/", status_code=201)
-def create(user: UserToCreate) -> UserResponse:
+def create(
+    user: UserToCreate,
+) -> UserResponse:
     return service.create(user)
 
 
+# API only for authenticated admins
 @router.put("/{user_id}")
 @router.put("/{user_id}/")
-def replace(user_id: int, user: UserToDB) -> UserResponse:
+def replace(
+    user_id: int,
+    user: UserToDB,
+    admin: UserResponse = Depends(get_current_admin),
+) -> UserResponse:
     try:
         user: UserResponse = service.replace(user_id, user)
 
@@ -109,15 +118,51 @@ def replace(user_id: int, user: UserToDB) -> UserResponse:
     return user
 
 
-@router.patch("/{user_id}")
-@router.patch("/{user_id}/")
-def modify(user_id: int) -> UserResponse:
-    raise NotImplementedError()
+# API only for authenticated admins
+@router.patch("/{user_id}/grand-admin")
+@router.patch("/{user_id}/grand-admin/")
+def grand_admin(
+    user_id: int,
+    admin: UserResponse = Depends(get_current_admin),
+) -> UserResponse:
+    try:
+        user: UserResponse = service.set_admin_status(user_id, True)
+
+    except NotFoundError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=str(e),
+        )
+
+    return user
 
 
+# API only for authenticated admins
+@router.patch("/{user_id}/revoke-admin")
+@router.patch("/{user_id}/revoke-admin/")
+def revoke_admin(
+    user_id: int,
+    admin: UserResponse = Depends(get_current_admin),
+) -> UserResponse:
+    try:
+        user: UserResponse = service.set_admin_status(user_id, False)
+
+    except NotFoundError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=str(e),
+        )
+
+    return user
+
+
+# API only for authenticated admins
 @router.delete("/{user_id}")
 @router.delete("/{user_id}/")
-def delete(user_id: int) -> bool:
+def delete(
+    user_id: int,
+    admin: UserResponse = Depends(get_current_admin),
+) -> bool:
     deleted = service.delete(user_id)
     if not deleted:
         raise HTTPException(

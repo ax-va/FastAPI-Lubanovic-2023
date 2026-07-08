@@ -4,7 +4,7 @@ from app.models.explorers import ExplorerRequest, ExplorerResponse
 from app.repositories import fake_explorers
 
 service = fake_explorers
-router = APIRouter(prefix="/explorers")
+router = APIRouter(prefix="/explorers", tags=["Explorers"])
 
 
 @router.get("")

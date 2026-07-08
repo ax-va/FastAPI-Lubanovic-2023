@@ -5,7 +5,7 @@ from app.repositories.errors import NotFoundError
 from app.services import explorers
 
 service = explorers
-router = APIRouter(prefix="/explorers")
+router = APIRouter(prefix="/explorers", tags=["Explorers"])
 
 
 @router.get("")

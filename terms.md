@@ -246,3 +246,22 @@ https://fastapi.tiangolo.com/tutorial/security/
 Distributed Denial-of-Service (DDoS) is an attack 
 in which a large number of compromised computers or devices simultaneously send requests to a server.
 The goal is to overwhelm the server's resources and make the service unavailable to legitimate users.
+
+#### Middleware
+
+*Middleware* is a component that intercepts HTTP requests and responses.
+It runs before and after an endpoint, allowing cross-cutting functionality
+such as logging, authentication, cross-origin resource sharing (CORS), compression, and request timing.
+Unlike FastAPI's dependencies, FastAPI's middleware is typically applied to all requests in the application.
+
+#### Cross-Origin Resource Sharing (CORS)
+
+*CORS* is browser security mechanism that controls 
+whether a web page from one origin can access resources from another origin.
+A server enables cross-origin access by sending CORS headers, 
+such as `Acces-Control-Allow-Origin`.
+CORS applies only to browsers and does not restrict server-to-server requests or tolls like `curl` or Postman.
+
+CORS protects the browser, not the API. 
+JWT (or another authentication mechanism) protects the API by proving the client's identity.
+They solve different security problems and are often used together.

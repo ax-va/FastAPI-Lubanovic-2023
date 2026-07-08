@@ -12,14 +12,16 @@ def to_response(user: UserFromDB) -> UserResponse:
         id=user.id,
         username=user.username,
         is_active=user.is_active,
+        is_admin=user.is_admin,
     )
 
 
-def to_db(user: UserToCreate) -> UserToDB:
+def to_db(user: UserToCreate, is_admin: bool = False) -> UserToDB:
     return UserToDB(
         username=user.username,
         password_hash=hash_password(user.password),
         is_active=True,
+        is_admin=is_admin,
     )
 
 
@@ -45,8 +47,15 @@ def get_by_username(username: str) -> UserResponse | None:
     return to_response(user)
 
 
-def create(user: UserToCreate) -> UserResponse:
-    user_from_db: UserFromDB = repository.create(to_db(user))
+def create(user: UserToCreate, is_admin: bool = False) -> UserResponse:
+    user_to_db = UserToDB(
+        username=user.username,
+        password_hash=hash_password(user.password),
+        is_active=True,
+        is_admin=is_admin,
+    )
+    user_from_db: UserFromDB = repository.create(user_to_db)
+
     return to_response(user_from_db)
 
 
@@ -85,4 +94,18 @@ def get_by_token(token: str) -> UserResponse | None:
     if user is None or not user.is_active:
         return None
 
+    return to_response(user)
+
+
+def admin_exists() -> bool:
+    return repository.admin_exists()
+
+
+def create_admin(username: str, password: str) -> UserResponse:
+    user = UserToCreate(username=username, password=password)
+    return create(user, is_admin=True)
+
+
+def set_admin_status(user_id: int, is_admin: bool) -> UserResponse:
+    user: UserFromDB = repository.set_admin_status(user_id, is_admin)
     return to_response(user)

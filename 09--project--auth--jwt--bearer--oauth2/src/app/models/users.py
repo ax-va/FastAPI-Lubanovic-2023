@@ -10,6 +10,7 @@ class UserToDB(BaseModel):
     username: str
     password_hash: str
     is_active: bool
+    is_admin: bool
 
 
 class UserFromDB(BaseModel):
@@ -17,9 +18,11 @@ class UserFromDB(BaseModel):
     username: str
     password_hash: str
     is_active: bool
+    is_admin: bool
 
 
 class UserResponse(BaseModel):
     id: int
     username: str
     is_active: bool
+    is_admin: bool

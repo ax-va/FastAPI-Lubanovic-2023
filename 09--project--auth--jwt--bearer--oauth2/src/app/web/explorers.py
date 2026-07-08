@@ -1,19 +1,23 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from app.models.explorers import ExplorerRequest, ExplorerResponse
+from app.models.users import UserResponse
 from app.repositories.errors import NotFoundError
 from app.services import explorers
+from app.web.auth import get_current_user
 
 service = explorers
-router = APIRouter(prefix="/explorers")
+router = APIRouter(prefix="/explorers", tags=["Explorers"])
 
 
+# public API
 @router.get("")
 @router.get("/")
 def get_all() -> list[ExplorerResponse]:
     return service.get_all()
 
 
+# public API
 @router.get("/{explorer_id}")
 @router.get("/{explorer_id}/")
 def get_by_id(explorer_id: int) -> ExplorerResponse:
@@ -27,15 +31,24 @@ def get_by_id(explorer_id: int) -> ExplorerResponse:
     return explorer
 
 
+# API for only authenticated users
 @router.post("")
 @router.post("/")
-def create(explorer: ExplorerRequest) -> ExplorerResponse:
+def create(
+    explorer: ExplorerRequest,
+    user: UserResponse = Depends(get_current_user),
+) -> ExplorerResponse:
     return service.create(explorer)
 
 
+# API for only authenticated users
 @router.put("/{explorer_id}")
 @router.put("/{explorer_id}/")
-def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
+def replace(
+    explorer_id: int,
+    explorer: ExplorerRequest,
+    user: UserResponse = Depends(get_current_user),
+) -> ExplorerResponse:
     try:
         explorer = service.replace(explorer_id, explorer)
 
@@ -54,9 +67,13 @@ def modify(explorer_id: int) -> ExplorerResponse | None:
     raise NotImplementedError()
 
 
+# API for only authenticated users
 @router.delete("/{explorer_id}")
 @router.delete("/{explorer_id}/")
-def delete(explorer_id: int) -> bool:
+def delete(
+    explorer_id: int,
+    user: UserResponse = Depends(get_current_user),
+) -> bool:
     deleted = service.delete(explorer_id)
     if not deleted:
         raise HTTPException(

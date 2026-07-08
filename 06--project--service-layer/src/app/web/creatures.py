@@ -4,7 +4,7 @@ from app.models.creatures import CreatureRequest, CreatureResponse
 from app.services import creatures
 
 service = creatures
-router = APIRouter(prefix="/creatures")
+router = APIRouter(prefix="/creatures", tags=["Creatures"])
 
 
 @router.get("")

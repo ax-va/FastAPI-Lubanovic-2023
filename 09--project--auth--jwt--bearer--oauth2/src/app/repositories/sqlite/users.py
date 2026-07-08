@@ -6,12 +6,13 @@ from ..errors import DuplicateError, NotFoundError, INTEGRITY_ERROR_UNIQUE
 
 
 def to_model(row: tuple) -> UserFromDB:
-    user_id, username, password_hash, is_active = row
+    user_id, username, password_hash, is_active, is_admin = row
     return UserFromDB(
         id=user_id,
         username=username,
         password_hash=password_hash,
         is_active=is_active,
+        is_admin=is_admin,
     )
 
 
@@ -49,8 +50,8 @@ def get_all() -> list[UserFromDB]:
 
 def create(user: UserToDB) -> UserFromDB:
     query = (
-        "INSERT INTO users (username, password_hash, is_active) "
-        "VALUES (:username, :password_hash, :is_active)"
+        "INSERT INTO users (username, password_hash, is_active, is_admin) "
+        "VALUES (:username, :password_hash, :is_active, :is_admin)"
     )
     values = to_dict(user)
     cursor = db.conn.cursor()
@@ -83,7 +84,8 @@ def replace(user_id: int, user: UserToDB) -> UserFromDB:
         "UPDATE users "
         "SET username=:username, "
         "    password_hash=:password_hash, "
-        "    is_active=:is_active "
+        "    is_active=:is_active,"
+        "    is_admin=:is_admin "
         "WHERE id=:user_id"
     )
     values = to_dict(user)
@@ -129,3 +131,45 @@ def delete(user_id: int) -> bool:
     db.conn.commit()
 
     return True
+
+
+def admin_exists() -> bool:
+    query = (
+        "SELECT EXISTS ("
+        "    SELECT 1 "
+        "    FROM users "
+        "    WHERE is_admin = TRUE"
+        ")"
+    )
+    cursor = db.conn.cursor()
+    cursor.execute(query)
+    row = cursor.fetchone()
+    # In SQLite: either `(1,)` or `(0,)`.
+    # In PostgreSQL: either `(True,)` or `(False,)`.
+
+    return bool(row[0])
+
+
+def set_admin_status(user_id: int, is_admin: bool) -> UserFromDB:
+    query = (
+        "UPDATE users "
+        "SET is_admin=:is_admin "
+        "WHERE id=:user_id"
+    )
+    values = {
+        "user_id": user_id,
+        "is_admin": is_admin,
+    }
+    cursor = db.conn.cursor()
+    cursor.execute(query, values)
+
+    if cursor.rowcount == 0:
+        raise NotFoundError(f"User with id={user_id} not found")
+
+    db.conn.commit()
+
+    updated: UserFromDB | None = get_by_id(user_id)
+    if updated is None:
+        raise RuntimeError(f"Updated user with id={user_id} could not be retrieved")
+
+    return updated

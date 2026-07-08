@@ -5,7 +5,7 @@ from app.repositories.errors import NotFoundError
 from app.services import creatures
 
 service = creatures
-router = APIRouter(prefix="/creatures")
+router = APIRouter(prefix="/creatures", tags=["Creatures"])
 
 
 @router.get("")

@@ -52,7 +52,8 @@ def create_users_table() -> None:
         "   id INTEGER PRIMARY KEY, "
         "   username TEXT NOT NULL UNIQUE, "
         "   password_hash TEXT NOT NULL, "
-        "   is_active BOOLEAN NOT NULL DEFAULT TRUE"
+        "   is_active BOOLEAN NOT NULL DEFAULT TRUE, "
+        "   is_admin BOOLEAN NOT NULL DEFAULT FALSE"
         ")"
     )
 
