@@ -16,15 +16,6 @@ def to_response(user: UserFromDB) -> UserResponse:
     )
 
 
-def to_db(user: UserToCreate, is_admin: bool = False) -> UserToDB:
-    return UserToDB(
-        username=user.username,
-        password_hash=hash_password(user.password),
-        is_active=True,
-        is_admin=is_admin,
-    )
-
-
 def get_all() -> list[UserResponse]:
     return [to_response(user) for user in repository.get_all()]
 
