@@ -106,6 +106,6 @@ def create_admin(username: str, password: str) -> UserResponse:
     return create(user, is_admin=True)
 
 
-def set_admin_status(user_id: int, is_admin: bool) -> UserResponse:
-    user: UserFromDB = repository.set_admin_status(user_id, is_admin)
+def set_admin(user_id: int, is_admin: bool) -> UserResponse:
+    user: UserFromDB = repository.set_admin(user_id, is_admin)
     return to_response(user)

@@ -126,7 +126,7 @@ def grand_admin(
     admin: UserResponse = Depends(get_current_admin),
 ) -> UserResponse:
     try:
-        user: UserResponse = service.set_admin_status(user_id, True)
+        user: UserResponse = service.set_admin(user_id, True)
 
     except NotFoundError as e:
         raise HTTPException(
@@ -145,7 +145,7 @@ def revoke_admin(
     admin: UserResponse = Depends(get_current_admin),
 ) -> UserResponse:
     try:
-        user: UserResponse = service.set_admin_status(user_id, False)
+        user: UserResponse = service.set_admin(user_id, False)
 
     except NotFoundError as e:
         raise HTTPException(

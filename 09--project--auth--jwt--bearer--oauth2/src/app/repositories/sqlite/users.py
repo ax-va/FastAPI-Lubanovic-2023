@@ -150,7 +150,7 @@ def admin_exists() -> bool:
     return bool(row[0])
 
 
-def set_admin_status(user_id: int, is_admin: bool) -> UserFromDB:
+def set_admin(user_id: int, is_admin: bool) -> UserFromDB:
     query = (
         "UPDATE users "
         "SET is_admin=:is_admin "
