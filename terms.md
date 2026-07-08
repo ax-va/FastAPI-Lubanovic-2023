@@ -172,10 +172,22 @@ Examples:
 - *API key:* The client authenticates by sending a unique secret key with each request.
 
 
-- *JSON Web Token (JWT):* A signed token format that contains *claims* about a user or client.
+- *JSON Web Token (JWT):* A signed token format:
 
-  - Claims describe the authenticated user or client inside a JWT payload, 
-    such as their identifier (`sub`), expiration time (`exp`),  or issuer (`iss`):
+  - The JWT format consists of three parts: a header, a payload, and a signature.
+  
+  - The *header* contains metadata, such as the signing algorithm (`alg`) and token type (`typ`):
+    ```json
+    {
+      "alg": "HS256",
+      "typ": "JWT"
+    }
+    ```
+
+  - The *payload* contains *claims*. 
+    The claims describe the authenticated user or client inside a JWT payload, 
+    such as their identifier (`sub`), expiration time (`exp`), issuer (`iss`) 
+    or application-specific data like roles and permissions:
     ```json
     {
       "sub": "alice",
@@ -183,6 +195,11 @@ Examples:
       "exp": 1751914800
     } 
     ```
+  - The *signature* verifies that the token has not been modified and was signed by a trusted issuer.
+
+  - The header and payload are Base64URL-encoded. A signature is then generated from them using the selected algorithm
+    and a *secret key*. Finally, the there parts are joined with dots (`header.payload.signature`) to form the JWT,
+    which is sent in the `Authorization: Bearer <token>` header.
 
   - JWT is typically issued after authentication and sent with subsequent requests instead of the user's credentials.
 
@@ -205,7 +222,8 @@ Examples:
 
   - OAuth2 does **not** define the format of an access token. The token may be a JWT or an opaque token.
 
-  - OAuth2 is widely used for securing REST APIs, delegated authorization with *OpenID Connect* ("Sign in with Google", "Sign in with GitHub"),
+  - OAuth2 is widely used for securing REST APIs, 
+    delegated authorization with *OpenID Connect* ("Sign in with Google", "Sign in with GitHub"),
     or issuing and validating access tokens.
   
   - *OAuth 2.1* is a simplified and more secure revision of OAuth 2.0 

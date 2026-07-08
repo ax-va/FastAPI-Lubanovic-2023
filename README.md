@@ -77,8 +77,9 @@ $ pip install python-multipart
 $ pip install python-dotenv
 ```
 
-Only for development and testing, write in a `.env`
+Only for development and testing, store in a `.env`
 ```shell
-JWT_SECRET_KEY=<your-secret-key>
+JWT_SECRET_KEY=<secret-key>
 JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=15
 ```
