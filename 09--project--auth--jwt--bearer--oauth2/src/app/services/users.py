@@ -3,7 +3,6 @@ from app.auth.passwords import hash_password, verify_password
 from app.models.users import UserToCreate, UserToDB, UserFromDB, UserResponse
 from app.repositories.sqlite import users
 
-
 repository = users
 
 
