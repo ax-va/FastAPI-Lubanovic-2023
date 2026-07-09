@@ -40,8 +40,10 @@ def create_access_token(
 # API only for authenticated admins
 @router.get("")
 @router.get("/")
+@router.get("/{user_id}")
+@router.get("/{user_id}/")
 def get(
-    user_id: int | None = Query(default=None, alias="id"),  # example: `GET /users?id=1`
+    user_id: int | None = None,  # example: `GET /users/1`
     username: str | None = Query(default=None, min_length=1),  # example: `GET /users?useranme=Alice`
     admin: UserResponse = Depends(get_current_admin),
 ) -> UserResponse | list[UserResponse]:
@@ -49,7 +51,7 @@ def get(
     if user_id is not None and username is not None:
         raise HTTPException(
             status_code=400,
-            detail="Specify either `id` or `username`, but not both",
+            detail="Specify either `user_id` or `username`, but not both",
         )
 
     if user_id is not None:
