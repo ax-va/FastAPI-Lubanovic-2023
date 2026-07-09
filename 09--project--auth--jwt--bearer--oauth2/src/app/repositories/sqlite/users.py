@@ -1,6 +1,6 @@
 from sqlite3 import IntegrityError
 
-from app.models.users import UserToDB, UserFromDB, UserToReplace
+from app.models.users import UserToDB, UserFromDB
 from . import database as db
 from ..errors import DuplicateError, INTEGRITY_ERROR_UNIQUE
 
