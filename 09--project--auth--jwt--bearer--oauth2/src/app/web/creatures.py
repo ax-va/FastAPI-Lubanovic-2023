@@ -4,7 +4,7 @@ from app.models.creatures import CreatureRequest, CreatureResponse
 from app.models.users import UserResponse
 from app.repositories.errors import NotFoundError
 from app.services import creatures
-from app.web.auth import get_current_user
+from app.web.deps.auth import get_current_user
 
 service = creatures
 router = APIRouter(prefix="/creatures", tags=["Creatures"])

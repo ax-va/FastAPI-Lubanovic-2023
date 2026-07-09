@@ -4,7 +4,7 @@ from app.models.explorers import ExplorerRequest, ExplorerResponse
 from app.models.users import UserResponse
 from app.repositories.errors import NotFoundError
 from app.services import explorers
-from app.web.auth import get_current_user
+from app.web.deps.auth import get_current_user
 
 service = explorers
 router = APIRouter(prefix="/explorers", tags=["Explorers"])

@@ -5,7 +5,7 @@ from app.auth import access_tokens
 from app.models.users import UserToCreate, UserResponse, UserFromDB, UserToDB
 from app.repositories.errors import NotFoundError
 from app.services import users
-from app.web.auth import get_current_user, get_current_admin
+from app.web.deps.auth import get_current_user, get_current_admin
 
 service = users
 router = APIRouter(prefix="/users")
