@@ -25,8 +25,8 @@ def get_by_id(creature_id: int) -> CreatureResponse:
     return creature
 
 
-@router.post("")
-@router.post("/")
+@router.post("", status_code=201)  # 201 Created
+@router.post("/", status_code=201)  # 201 Created
 def create(creature: CreatureRequest) -> CreatureResponse:
     return service.create(creature)
 

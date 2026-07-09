@@ -26,8 +26,8 @@ def get_by_id(explorer_id: int) -> ExplorerResponse:
     return explorer
 
 
-@router.post("")
-@router.post("/")
+@router.post("", status_code=201)  # 201 Created
+@router.post("/", status_code=201)  # 201 Created
 def create(explorer: ExplorerRequest) -> ExplorerResponse:
     return service.create(explorer)
 

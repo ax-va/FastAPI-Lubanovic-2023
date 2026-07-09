@@ -32,8 +32,8 @@ def get_by_id(creature_id: int) -> CreatureResponse:
 
 
 # API for only authenticated users
-@router.post("")
-@router.post("/")
+@router.post("", status_code=201)  # 201 Created
+@router.post("/", status_code=201)  # 201 Created
 def create(
     creature: CreatureRequest,
     user: UserResponse = Depends(get_current_user),
