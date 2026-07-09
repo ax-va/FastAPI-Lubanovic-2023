@@ -2,7 +2,7 @@ from app.auth.jwt import decode_jwt_subject
 from app.auth.passwords import hash_password, verify_password
 from app.models.users import UserToCreate, UserToDB, UserFromDB, UserResponse, UserToReplace
 from app.repositories.sqlite import users
-from app.services.errors import LastAdminError, NotAvailableError, DoesNotExistError
+from app.services.errors import LastAdminError, DoesNotExistError
 
 repository = users
 

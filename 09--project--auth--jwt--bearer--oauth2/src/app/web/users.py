@@ -1,13 +1,13 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.auth import access_tokens
-from app.models.users import UserToCreate, UserResponse, UserFromDB, UserToDB, UserToReplace
+from app.models.users import UserToCreate, UserResponse, UserFromDB, UserToReplace
 from app.repositories.errors import NotFoundError
-from app.services import users
+from app.services import users as users_service
 from app.web.deps.auth import get_current_user, get_current_admin
 
-service = users
+service = users_service
 router = APIRouter(prefix="/users")
 
 # OAuth2 token endpoint.
@@ -40,10 +40,43 @@ def create_access_token(
 # API only for authenticated admins
 @router.get("")
 @router.get("/")
-def get_all(
+def get(
+    user_id: int | None = Query(default=None, alias="id"),  # example: `GET /users?id=1`
+    username: str | None = Query(default=None, min_length=1),  # example: `GET /users?useranme=Alice`
     admin: UserResponse = Depends(get_current_admin),
-) -> list[UserResponse]:
-    return service.get_all()
+) -> UserResponse | list[UserResponse]:
+
+    if user_id is not None and username is not None:
+        raise HTTPException(
+            status_code=400,
+            detail="Specify either `id` or `username`, but not both",
+        )
+
+    if user_id is not None:
+        user: UserResponse | None = service.get_by_id(user_id)
+
+        if user is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"User with id={user_id} not found",
+            )
+
+        return user
+
+    elif username is not None:
+        user: UserResponse | None = service.get_by_username(username)
+
+        if user is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"User with username {username!r} not found",
+            )
+
+        return user
+
+    else:
+        users: list[UserResponse] = service.get_all()
+        return users
 
 
 # API for only authenticated users
@@ -52,40 +85,6 @@ def get_all(
 def get_me(
     user: UserResponse = Depends(get_current_user)
 ) -> UserResponse:
-    return user
-
-
-# API only for authenticated admins
-@router.get("/{user_id}")
-@router.get("/{user_id}/")
-def get_by_id(
-    user_id: int,
-    admin: UserResponse = Depends(get_current_admin),
-) -> UserResponse:
-    user: UserResponse | None = service.get_by_id(user_id)
-    if user is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"User with ID {user_id} not found",
-        )
-
-    return user
-
-
-# API only for authenticated admins
-@router.get("/{username}")
-@router.get("/{username}/")
-def get_by_username(
-    username: str,
-    admin: UserResponse = Depends(get_current_admin),
-) -> UserResponse:
-    user: UserResponse | None = service.get_by_username(username)
-    if user is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"User with username {username!r} not found",
-        )
-
     return user
 
 
@@ -171,3 +170,12 @@ def delete(
         )
 
     return deleted
+
+
+# API for only authenticated users
+@router.delete("/me")
+@router.delete("/me/")
+def delete_me(
+    user: UserResponse = Depends(get_current_user)
+) -> bool:
+    return service.delete(user.id)
