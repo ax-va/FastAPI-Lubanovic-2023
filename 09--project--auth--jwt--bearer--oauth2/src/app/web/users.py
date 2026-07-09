@@ -51,7 +51,7 @@ def get(
     if user_id is not None and username is not None:
         raise HTTPException(
             status_code=400,
-            detail="Specify either `user_id` or `username`, but not both",
+            detail="Use either `/users/<id>` or `/users?username=<name>`, but not both",
         )
 
     if user_id is not None:
