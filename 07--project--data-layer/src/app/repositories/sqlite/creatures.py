@@ -64,12 +64,12 @@ def create(creature: CreatureRequest) -> CreatureResponse:
 def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse:
     query = (
         "UPDATE creatures "
-        "SET name=:name, "
-        "    country=:country, "
-        "    area=:area, "
-        "    description=:description, "
-        "    aka=:aka "
-        "WHERE id=:creature_id"
+        "SET name = :name, "
+        "    country = :country, "
+        "    area = :area, "
+        "    description = :description, "
+        "    aka = :aka "
+        "WHERE id = :creature_id"
     )
     values = to_dict(creature)
     values["creature_id"] = creature_id

@@ -20,7 +20,7 @@ def to_dict(explorer: ExplorerRequest) -> dict:
 
 
 def get_by_id(explorer_id: int) -> ExplorerResponse | None:
-    query = "SELECT * FROM explorers WHERE id=:id"
+    query = "SELECT * FROM explorers WHERE id = :id"
     values = {"id": explorer_id}
     cursor = db.conn.cursor()
     cursor.execute(query, values)
@@ -62,10 +62,10 @@ def create(explorer: ExplorerRequest) -> ExplorerResponse:
 def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
     query = (
         "UPDATE explorers "
-        "SET name=:name, "
-        "    country=:country, "
-        "    description=:description "
-        "WHERE id=:explorer_id"
+        "SET name = :name, "
+        "    country = :country, "
+        "    description = :description "
+        "WHERE id = :explorer_id"
     )
     values = to_dict(explorer)
     values["explorer_id"] = explorer_id

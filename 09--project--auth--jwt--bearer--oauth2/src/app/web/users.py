@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.auth import access_tokens
-from app.models.users import UserToCreate, UserResponse, UserFromDB, UserToDB
+from app.models.users import UserToCreate, UserResponse, UserFromDB, UserToDB, UserToReplace
 from app.repositories.errors import NotFoundError
 from app.services import users
 from app.web.deps.auth import get_current_user, get_current_admin
@@ -103,7 +103,7 @@ def create(
 @router.put("/{user_id}/")
 def replace(
     user_id: int,
-    user: UserToDB,
+    user: UserToReplace,
     admin: UserResponse = Depends(get_current_admin),
 ) -> UserResponse:
     try:

@@ -20,7 +20,7 @@ def to_dict(explorer: ExplorerRequest) -> dict:
 
 
 def get_by_id(explorer_id: int) -> ExplorerResponse | None:
-    query = "SELECT * FROM explorers WHERE id=:id"
+    query = "SELECT * FROM explorers WHERE id = :id"
     values = {"id": explorer_id}
     cursor = db.conn.cursor()
     cursor.execute(query, values)

@@ -1,8 +1,8 @@
 from sqlite3 import IntegrityError
 
-from app.models.users import UserToDB, UserFromDB
+from app.models.users import UserToDB, UserFromDB, UserToReplace
 from . import database as db
-from ..errors import DuplicateError, NotFoundError, INTEGRITY_ERROR_UNIQUE
+from ..errors import DuplicateError, INTEGRITY_ERROR_UNIQUE
 
 
 def to_model(row: tuple) -> UserFromDB:
@@ -21,7 +21,7 @@ def to_dict(user: UserToDB | UserFromDB) -> dict:
 
 
 def get_by_id(user_id: int) -> UserFromDB | None:
-    query = "SELECT * FROM users WHERE id=:user_id"
+    query = "SELECT * FROM users WHERE id = :user_id"
     values = {"id": user_id}
     cursor = db.conn.cursor()
     cursor.execute(query, values)
@@ -31,7 +31,7 @@ def get_by_id(user_id: int) -> UserFromDB | None:
 
 
 def get_by_username(username: str) -> UserFromDB | None:
-    query = "SELECT * FROM users WHERE username=:username"
+    query = "SELECT * FROM users WHERE username = :username"
     values = {"username": username}
     cursor = db.conn.cursor()
     cursor.execute(query, values)
@@ -82,11 +82,11 @@ def create(user: UserToDB) -> UserFromDB:
 def replace(user_id: int, user: UserToDB) -> UserFromDB:
     query = (
         "UPDATE users "
-        "SET username=:username, "
-        "    password_hash=:password_hash, "
-        "    is_active=:is_active,"
-        "    is_admin=:is_admin "
-        "WHERE id=:user_id"
+        "SET username = :username, "
+        "    password_hash = :password_hash, "
+        "    is_active = :is_active,"
+        "    is_admin = :is_admin "
+        "WHERE id = :user_id"
     )
     values = to_dict(user)
     values["user_id"] = user_id
@@ -94,9 +94,6 @@ def replace(user_id: int, user: UserToDB) -> UserFromDB:
 
     try:
         cursor.execute(query, values)
-
-        if cursor.rowcount == 0:
-            raise NotFoundError(f"User with id={user_id} not found")
 
     except IntegrityError as e:
         message = str(e).lower()
@@ -118,8 +115,8 @@ def delete(user_id: int) -> bool:
     """Soft-delete a user."""
     query = (
         "UPDATE users "
-        "SET is_active=FALSE "
-        "WHERE id=:user_id"
+        "SET is_active = FALSE "
+        "WHERE id = :user_id"
     )
     values = {"user_id": user_id}
     cursor = db.conn.cursor()
@@ -133,28 +130,24 @@ def delete(user_id: int) -> bool:
     return True
 
 
-def admin_exists() -> bool:
+def count_admins() -> int:
     query = (
-        "SELECT EXISTS ("
-        "    SELECT 1 "
-        "    FROM users "
-        "    WHERE is_admin = TRUE"
-        ")"
+        "SELECT COUNT(*)"
+        "FROM users "
+        "WHERE is_admin = TRUE"
     )
     cursor = db.conn.cursor()
     cursor.execute(query)
     row = cursor.fetchone()
-    # In SQLite: either `(1,)` or `(0,)`.
-    # In PostgreSQL: either `(True,)` or `(False,)`.
 
-    return bool(row[0])
+    return row[0]
 
 
 def set_admin(user_id: int, is_admin: bool) -> UserFromDB:
     query = (
         "UPDATE users "
-        "SET is_admin=:is_admin "
-        "WHERE id=:user_id"
+        "SET is_admin = :is_admin "
+        "WHERE id = :user_id"
     )
     values = {
         "user_id": user_id,
@@ -162,10 +155,6 @@ def set_admin(user_id: int, is_admin: bool) -> UserFromDB:
     }
     cursor = db.conn.cursor()
     cursor.execute(query, values)
-
-    if cursor.rowcount == 0:
-        raise NotFoundError(f"User with id={user_id} not found")
-
     db.conn.commit()
 
     updated: UserFromDB | None = get_by_id(user_id)

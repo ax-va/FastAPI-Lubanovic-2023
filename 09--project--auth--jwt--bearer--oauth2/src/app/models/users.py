@@ -6,6 +6,12 @@ class UserToCreate(BaseModel):
     password: str
 
 
+class UserToReplace(BaseModel):
+    username: str
+    password: str
+    is_active: bool
+
+
 class UserToDB(BaseModel):
     username: str
     password_hash: str

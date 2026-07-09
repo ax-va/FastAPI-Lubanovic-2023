@@ -1,21 +1,19 @@
 from fastapi import FastAPI
 
 from app.repositories.sqlite import database as db
-from app.services.users import admin_exists, create_admin
-from app.web import creatures, explorers, users
+from app.services import users as users_service
+from app.web import creatures as creatures_web
+from app.web import explorers as explorers_web
+from app.web import users as users_web
 
 
 db.init()
-if not admin_exists():
-    print("You must create an admin.")
-    username = input("Enter username: ")
-    password = input("Enter password: ")
-    create_admin(username, password)
+users_service.ensure_admin_exists()
 
 app = FastAPI()
-app.include_router(creatures.router)
-app.include_router(explorers.router)
-app.include_router(users.router)
+app.include_router(creatures_web.router)
+app.include_router(explorers_web.router)
+app.include_router(users_web.router)
 
 
 @app.get("/")
