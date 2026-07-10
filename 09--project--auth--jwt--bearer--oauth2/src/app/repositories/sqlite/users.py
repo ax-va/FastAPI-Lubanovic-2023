@@ -21,7 +21,7 @@ def to_dict(user: UserToDB | UserFromDB) -> dict:
 
 
 def get_by_id(user_id: int) -> UserFromDB | None:
-    query = "SELECT * FROM users WHERE id = :user_id"
+    query = "SELECT * FROM users WHERE id = :id"
     values = {"id": user_id}
     cursor = db.conn.cursor()
     cursor.execute(query, values)
