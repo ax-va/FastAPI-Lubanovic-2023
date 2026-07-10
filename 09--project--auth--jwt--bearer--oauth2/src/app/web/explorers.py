@@ -36,7 +36,7 @@ def get_by_id(explorer_id: int) -> ExplorerResponse:
 @router.post("/", status_code=201)  # 201 Created
 def create(
     explorer: ExplorerRequest,
-    user: UserResponse = Depends(get_current_user),
+    _: UserResponse = Depends(get_current_user),
 ) -> ExplorerResponse:
     return service.create(explorer)
 
@@ -47,7 +47,7 @@ def create(
 def replace(
     explorer_id: int,
     explorer: ExplorerRequest,
-    user: UserResponse = Depends(get_current_user),
+    _: UserResponse = Depends(get_current_user),
 ) -> ExplorerResponse:
     try:
         explorer = service.replace(explorer_id, explorer)
@@ -72,7 +72,7 @@ def modify(explorer_id: int) -> ExplorerResponse | None:
 @router.delete("/{explorer_id}/")
 def delete(
     explorer_id: int,
-    user: UserResponse = Depends(get_current_user),
+    _: UserResponse = Depends(get_current_user),
 ) -> bool:
     deleted = service.delete(explorer_id)
     if not deleted:

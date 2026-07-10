@@ -36,7 +36,7 @@ def get_by_id(creature_id: int) -> CreatureResponse:
 @router.post("/", status_code=201)  # 201 Created
 def create(
     creature: CreatureRequest,
-    user: UserResponse = Depends(get_current_user),
+    _: UserResponse = Depends(get_current_user),
 ) -> CreatureResponse:
     return service.create(creature)
 
@@ -47,7 +47,7 @@ def create(
 def replace(
     creature_id: int,
     creature: CreatureRequest,
-    user: UserResponse = Depends(get_current_user),
+    _: UserResponse = Depends(get_current_user),
 ) -> CreatureResponse:
     try:
         creature = service.replace(creature_id, creature)
@@ -72,7 +72,7 @@ def modify(creature_id: int) -> CreatureResponse | None:
 @router.delete("/{creature_id}/")
 def delete(
     creature_id: int,
-    user: UserResponse = Depends(get_current_user),
+    _: UserResponse = Depends(get_current_user),
 ) -> bool:
     deleted = service.delete(creature_id)
     if not deleted:

@@ -5,7 +5,7 @@ from app.auth import access_tokens
 from app.models.users import UserToCreate, UserResponse, UserFromDB, UserToReplace
 from app.repositories.errors import NotFoundError
 from app.services import users as users_service
-from app.web.deps.auth import get_current_user, get_current_admin
+from app.web.deps.auth import get_current_user, get_current_admin, reject_authenticated_user
 
 service = users_service
 router = APIRouter(prefix="/users")
@@ -45,7 +45,7 @@ def create_access_token(
 def get(
     user_id: int | None = None,  # example: `GET /users/1`
     username: str | None = Query(default=None, min_length=1),  # example: `GET /users?useranme=Alice`
-    admin: UserResponse = Depends(get_current_admin),
+    _: UserResponse = Depends(get_current_admin),
 ) -> UserResponse | list[UserResponse]:
 
     if user_id is not None and username is not None:
@@ -95,6 +95,7 @@ def get_me(
 @router.post("/", status_code=201)
 def create(
     user: UserToCreate,
+    _: None = Depends(reject_authenticated_user)
 ) -> UserResponse:
     return service.create(user)
 
@@ -105,7 +106,7 @@ def create(
 def replace(
     user_id: int,
     user: UserToReplace,
-    admin: UserResponse = Depends(get_current_admin),
+    _: UserResponse = Depends(get_current_admin),
 ) -> UserResponse:
     try:
         user: UserResponse = service.replace(user_id, user)
@@ -124,7 +125,7 @@ def replace(
 @router.patch("/{user_id}/grand-admin/")
 def grand_admin(
     user_id: int,
-    admin: UserResponse = Depends(get_current_admin),
+    _: UserResponse = Depends(get_current_admin),
 ) -> UserResponse:
     try:
         user: UserResponse = service.set_admin(user_id, True)
@@ -143,7 +144,7 @@ def grand_admin(
 @router.patch("/{user_id}/revoke-admin/")
 def revoke_admin(
     user_id: int,
-    admin: UserResponse = Depends(get_current_admin),
+    _: UserResponse = Depends(get_current_admin),
 ) -> UserResponse:
     try:
         user: UserResponse = service.set_admin(user_id, False)
@@ -162,7 +163,7 @@ def revoke_admin(
 @router.delete("/{user_id}/")
 def delete(
     user_id: int,
-    admin: UserResponse = Depends(get_current_admin),
+    _: UserResponse = Depends(get_current_admin),
 ) -> bool:
     deleted = service.delete(user_id)
     if not deleted:
