@@ -14,7 +14,9 @@ def init() -> None:
 
 
 def connect(database_file: str = DATABASE_FILE) -> Connection:
-    return sqlite3.connect(database_file, check_same_thread=False)
+    connection = sqlite3.connect(database_file, check_same_thread=False)
+    connection.row_factory = sqlite3.Row
+    return connection
 
 
 def disconnect() -> None:

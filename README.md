@@ -58,6 +58,7 @@ $ pip install httpx
 ### Testing
 ```shell
 $ pip install pytest
+$ pip install pytest-mock
 ````
 
 Run tests
@@ -83,7 +84,7 @@ $ python -c "import secrets; print(secrets.token_hex(32))"
 b9f3f6a080cfc1fd67dfe1f6e9e6cd2f119d09d4a58884fa7c7ead61216873e9
 ```
 
-Add ".env" to the `.gitignore` and store in the `.env`
+Add ".env" to `.gitignore` and store the following in `.env`
 ```shell
 JWT_SECRET_KEY=<secret-key>
 JWT_ALGORITHM=HS256

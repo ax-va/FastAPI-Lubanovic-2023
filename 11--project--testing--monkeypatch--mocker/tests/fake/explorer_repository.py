@@ -1,20 +1,12 @@
 from app.models.explorers import ExplorerRequest, ExplorerResponse
+from tests.fake.explorer_samples import hande_response, weiser_response
 
-# stubs, or fake data
-_explorers: list[ExplorerResponse] = [
-    ExplorerResponse(
-        id=1,
-        name="Claude Hande",
-        country="FR",
-        description="Scarce during full moons",
-    ),
-    ExplorerResponse(
-        id=2,
-        name="Noah Weiser",
-        country="DE",
-        description="Myopic machete man",
-    ),
-]
+
+def _data() -> dict[int, ExplorerResponse]:
+    return {
+        1: hande_response,
+        2: weiser_response,
+    }
 
 
 def to_model(row: tuple) -> ExplorerResponse:
@@ -35,13 +27,13 @@ def to_dict(explorer: ExplorerRequest) -> dict:
 
 def get_all() -> list[ExplorerResponse]:
     """Returns all explorers"""
-    return _explorers
+    return list(_data().values())
 
 
 def get_by_id(explorer_id: int) -> ExplorerResponse | None:
     """Returns an explorer by its name"""
     try:
-        return _explorers[explorer_id - 1]
+        return _data()[explorer_id]
 
     except IndexError:
         return None
@@ -49,10 +41,13 @@ def get_by_id(explorer_id: int) -> ExplorerResponse | None:
 
 def create(explorer: ExplorerRequest) -> ExplorerResponse:
     """Add an explorer"""
-    explorer_id = len(_explorers) + 1
+    data = _data()
+    explorer_id = list(data.keys())[-1] + 1
     values = to_dict(explorer)
     values["id"] = explorer_id
-    return ExplorerResponse(**values)
+    explorer = ExplorerResponse(**values)
+    data[explorer_id] = explorer
+    return explorer
 
 
 # nonfunctional for now
