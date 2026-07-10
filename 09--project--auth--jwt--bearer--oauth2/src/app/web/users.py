@@ -37,6 +37,58 @@ def create_access_token(
     }
 
 
+# NOTE:
+# Keep "/users/me" above "/users/{user_id}".
+# FastAPI matches routes in declaration order.
+# Otherwise, "/users/me" will be matched by the dynamic route first.
+
+# API for only authenticated users
+@router.get("/me")
+@router.get("/me/")
+def get_me(
+    user: UserResponse = Depends(get_current_user)
+) -> UserResponse:
+    return user
+
+
+# API only for authenticated admins
+@router.patch("/{user_id}/grant-admin")
+@router.patch("/{user_id}/grant-admin/")
+def grant_admin(
+    user_id: int,
+    _: UserResponse = Depends(get_current_admin),
+) -> UserResponse:
+    try:
+        user: UserResponse = service.set_admin(user_id, True)
+
+    except NotFoundError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=str(e),
+        )
+
+    return user
+
+
+# API only for authenticated admins
+@router.patch("/{user_id}/revoke-admin")
+@router.patch("/{user_id}/revoke-admin/")
+def revoke_admin(
+    user_id: int,
+    _: UserResponse = Depends(get_current_admin),
+) -> UserResponse:
+    try:
+        user: UserResponse = service.set_admin(user_id, False)
+
+    except NotFoundError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=str(e),
+        )
+
+    return user
+
+
 # API only for authenticated admins
 @router.get("")
 @router.get("/")
@@ -81,15 +133,6 @@ def get(
         return users
 
 
-# API for only authenticated users
-@router.get("/me")
-@router.get("/me/")
-def get_me(
-    user: UserResponse = Depends(get_current_user)
-) -> UserResponse:
-    return user
-
-
 # public API
 @router.post("", status_code=201)  # 201 Created
 @router.post("/", status_code=201)
@@ -120,42 +163,18 @@ def replace(
     return user
 
 
-# API only for authenticated admins
-@router.patch("/{user_id}/grand-admin")
-@router.patch("/{user_id}/grand-admin/")
-def grand_admin(
-    user_id: int,
-    _: UserResponse = Depends(get_current_admin),
-) -> UserResponse:
-    try:
-        user: UserResponse = service.set_admin(user_id, True)
+# NOTE:
+# Keep "/users/me" above "/users/{user_id}".
+# FastAPI matches routes in declaration order.
+# Otherwise, "/users/me" will be matched by the dynamic route first.
 
-    except NotFoundError as e:
-        raise HTTPException(
-            status_code=404,
-            detail=str(e),
-        )
-
-    return user
-
-
-# API only for authenticated admins
-@router.patch("/{user_id}/revoke-admin")
-@router.patch("/{user_id}/revoke-admin/")
-def revoke_admin(
-    user_id: int,
-    _: UserResponse = Depends(get_current_admin),
-) -> UserResponse:
-    try:
-        user: UserResponse = service.set_admin(user_id, False)
-
-    except NotFoundError as e:
-        raise HTTPException(
-            status_code=404,
-            detail=str(e),
-        )
-
-    return user
+# API for only authenticated users
+@router.delete("/me")
+@router.delete("/me/")
+def delete_me(
+    user: UserResponse = Depends(get_current_user)
+) -> bool:
+    return service.delete(user.id)
 
 
 # API only for authenticated admins
@@ -173,12 +192,3 @@ def delete(
         )
 
     return deleted
-
-
-# API for only authenticated users
-@router.delete("/me")
-@router.delete("/me/")
-def delete_me(
-    user: UserResponse = Depends(get_current_user)
-) -> bool:
-    return service.delete(user.id)
