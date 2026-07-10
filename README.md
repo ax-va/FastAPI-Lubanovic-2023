@@ -77,7 +77,13 @@ $ pip install python-multipart
 $ pip install python-dotenv
 ```
 
-Only for development and testing, store in a `.env`
+Generate a secret key
+```shell
+$ python -c "import secrets; print(secrets.token_hex(32))"
+b9f3f6a080cfc1fd67dfe1f6e9e6cd2f119d09d4a58884fa7c7ead61216873e9
+```
+
+Add ".env" to the `.gitignore` and store in the `.env`
 ```shell
 JWT_SECRET_KEY=<secret-key>
 JWT_ALGORITHM=HS256
