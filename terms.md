@@ -53,7 +53,7 @@ A RESTful API is an API designed according to the REST architectural constraints
 
 - HTTP is a stateless protocol: each request is independent and contains all information required to process it.
 
-- HTTP runs over TCP. HTTPS runs over TSL over TCP.
+- HTTP runs over TCP. HTTPS runs over TLS over TCP.
 
 #### TCP = Transmission Control Protocol
 
@@ -63,13 +63,13 @@ A RESTful API is an API designed according to the REST architectural constraints
 
 #### TLS = Transport Layer Security
 
-- TSL is a cryptographic protocol that provides secure communication over a network.
+- TLS is a cryptographic protocol that provides secure communication over a network.
 
 #### HTTP vs HTTPS
 
 - HTTP sends data in plain text: HTTP (Application Layer) → TCP (Transport Layer)
 
-- HTTPS is simply HTTP running over a TSL-encrypted TCP connection: HTTP (Application Layer) → TLS → TCP (Transport Layer)
+- HTTPS is simply HTTP running over a TLS-encrypted TCP connection: HTTP (Application Layer) → TLS → TCP (Transport Layer)
 
 #### Layers and Protocols
 
