@@ -307,7 +307,7 @@ Examples:
 
 https://fastapi.tiangolo.com/tutorial/security/
 
-#### Distributed Denial-of-Service (DDoS)
+#### DDoS = Distributed Denial-of-Service
 
 Distributed Denial-of-Service (DDoS) is an attack 
 in which a large number of compromised computers or devices simultaneously send requests to a server.
@@ -320,7 +320,7 @@ It runs before and after an endpoint, allowing cross-cutting functionality
 such as logging, authentication, cross-origin resource sharing (CORS), compression, and request timing.
 Unlike FastAPI's dependencies, FastAPI's middleware is typically applied to all requests in the application.
 
-#### Cross-Origin Resource Sharing (CORS)
+#### CORS = Cross-Origin Resource Sharing
 
 *CORS* is browser security mechanism that controls 
 whether a web page from one origin can access resources from another origin.
