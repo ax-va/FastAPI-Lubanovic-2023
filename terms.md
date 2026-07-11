@@ -76,7 +76,7 @@ A RESTful API is an API designed according to the REST architectural constraints
 | Layer       | Protocols    |
 |-------------|--------------|
 | Application | HTTP, HTTPS  |
-| Security    | TSL          |
+| Security    | TLS          |
 | Transport   | TCP          |
 | Internet    | IP           |
 
