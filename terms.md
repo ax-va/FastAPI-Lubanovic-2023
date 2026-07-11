@@ -1,18 +1,118 @@
-#### RESTful (REST = Representational State Transfer)
+#### REST = Representational State Transfer 
 
-- Usually uses HTTP 
+- REST is s an architecture style for distributed systems, especially web APIs.
+It is not a protocol, framework, or data format.
 
-- Client-server architecture
+- Rest is usually implemented over HTTP, although it is not strictly tied to HTTP.
 
-- Stateless (each request is independent)
+- A system is *RESTful* when it follows the REST architectural constraints:
 
-- Server responses can be marked as cacheable
+  - *Client-Server*:
 
-- Resource-based (resources identified by URIs)
+    The client and sever have separate responsibilities. 
+    The client handles the user interface, while the server stores data and implements application logic.
 
-- Uniform interface (standard HTTP methods such as `GET`, `POST`, `PUT`, `PATCH`, `DELETE`)
+  - *Stateless*:
+    
+    Every request must contain all information required to process it.
+    The server does not rely on client session state stored between requests.
 
-- Layered system (intermediaries may exist between client and server; it has nothing to do with the three-tier model)
+  - *Cacheable*:
+    
+    Server responses indicate whether they may be cached. 
+    Caching can reduce server load and improve performance.
+
+  - *Uniform Interface*:
+    
+    Clients interact with resources though a consistent interface. 
+    This includes resources identified by URIs, representations of resources (commonly JSON), 
+    self-described requests and responses, resource manipulation though representations,
+    hypermedia links (when applicable).
+
+  - *Layered System*:
+    
+    Intermediaries such as proxies, gateways, load balancers, and caches may exist between the client and the server.
+    The client does not need to know whether it communicates directly with the final server.
+
+  - *Code on Demand (optional)*:
+    
+    The server may send executable code to the client, such aas JavaScript.
+
+#### RESTful API
+
+A RESTful API is an API designed according to the REST architectural constraints.
+
+#### HTTP = HyperText Transfer Protocol
+
+- HTTP is an application-layer protocol.
+
+- Defines how requests and responses are formatted and exchanged between a client and a server over a network.
+
+- Although originally designed for transferring hypertext documents (HTML),
+  HTTP is now used to transfer many types of data, including JSON, XML, images, audio, video, and files.
+
+- HTTP is a stateless protocol: each request is independent and contains all information required to process it.
+
+- HTTP runs over TCP. HTTPS runs over TSL over TCP.
+
+#### TCP = Transmission Control Protocol
+
+- TCP is a transport-layer protocol that provides reliable, ordered, and error-checked delivery of data between two hosts.
+
+- TCP establishes a connection between the client and the server before exchanging data.
+
+#### TLS = Transport Layer Security
+
+- TSL is a cryptographic protocol that provides secure communication over a network.
+
+#### HTTP vs HTTPS
+
+- HTTP sends data in plain text: HTTP (Application Layer) → TCP (Transport Layer)
+
+- HTTPS is simply HTTP running over a TSL-encrypted TCP connection: HTTP (Application Layer) → TLS → TCP (Transport Layer)
+
+#### Layers and Protocols
+
+| Layer       | Protocols    |
+|-------------|--------------|
+| Application | HTTP, HTTPS  |
+| Security    | TSL          |
+| Transport   | TCP          |
+| Internet    | IP           |
+
+#### HTTP Methods (Verbs)
+
+- `GET`: Retrieve a resource
+
+- `POST`: Create a new resource, or trigger an action or operation (e.g., login, logout, checkout, send-email, calculate)
+
+- `PUT`: Completely replace a resource
+
+- `PATCH`: Partially update a resource
+
+- `DELETE`: Delete a resource
+
+Examples:
+
+- `GET /users`: Retrieve all users
+
+- `GET /users/25`: Retrieve the user with ID 25 
+
+- If the user with ID 25 was not found, the server returns `404 Not Found`
+
+- `GET /users?sort=country`: Retrieve all users, sorted by country
+
+- `GET /users?offset=10&size=10`: Retrieve users in places 10 through 19
+
+- `GET /users?sort=country&offset=10&size=10`: Retrieve all users, sorted by country, in places 10 through 19
+
+- `POST /users name="AxVa" country="DE"`: Create a new user
+
+- `PUT /users/25 name="ax-va" country="DE"`: Completely replace the user with ID 25
+
+- `PATCH /uses/25 country="US"`: Partially update the user with ID 25
+
+- `DELETE /users/25`: Delete the user with ID 25
 
 #### Three-Tier Model
 
@@ -67,40 +167,6 @@ Dependency functions benefit from the same automatic validation, type conversion
 and documentation generation as path operation functions.
 
 - In FastAPI, there are dependencies on three levels: endpoint, router, and application.
-
-#### HTTP Methods (Verbs)
-
-- `GET`: Retrieve a resource
-
-- `POST`: Create a new resource, or trigger an action or operation (e.g., login, logout, checkout, send-email, calculate)
-
-- `PUT`: Completely replace a resource
-
-- `PATCH`: Partially update a resource
-
-- `DELETE`: Delete a resource
-
-Examples:
-
-- `GET /users`: Retrieve all users
-
-- `GET /users/25`: Retrieve the user with ID 25 
-
-- If the user with ID 25 was not found, the server returns `404 Not Found`
-
-- `GET /users?sort=country`: Retrieve all users, sorted by country
-
-- `GET /users?offset=10&size=10`: Retrieve users in places 10 through 19
-
-- `GET /users?sort=country&offset=10&size=10`: Retrieve all users, sorted by country, in places 10 through 19
-
-- `POST /users name="AxVa" country="DE"`: Create a new user
-
-- `PUT /users/25 name="ax-va" country="DE"`: Completely replace the user with ID 25
-
-- `PATCH /uses/25 country="US"`: Partially update the user with ID 25
-
-- `DELETE /users/25`: Delete the user with ID 25
 
 #### DB-API
 
