@@ -21,7 +21,7 @@ from tests.samples.creatures import (
 def test_create(
     sample_request: CreatureRequest,
     sample_response: CreatureResponse,
-    creatures_sqlite_memory_db: Connection,
+    creatures_sqlite_db: Connection,
 ):
     missing = repository.get_by_id(sample_response.id)
     assert missing is None
@@ -56,7 +56,7 @@ def test_create(
 def test_get_by_id(
     sample_id: int,
     sample_response: CreatureResponse,
-    creatures_sqlite_memory_db: Connection,
+    creatures_sqlite_db: Connection,
 ):
     got = repository.get_by_id(sample_id)
     assert got == sample_response
@@ -74,7 +74,7 @@ def test_get_by_id(
 def test_delete(
     sample_id: int,
     expected: bool,
-    creatures_sqlite_memory_db: Connection,
+    creatures_sqlite_db: Connection,
 ):
     num_rows_before = len(repository.get_all())
     assert num_rows_before == 2

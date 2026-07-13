@@ -9,6 +9,12 @@ from app.web.deps.auth import get_current_user
 
 
 @pytest.fixture
+def public_client(monkeypatch: pytest.MonkeyPatch) -> Generator[TestClient, None, None]:
+    with TestClient(app) as client:
+        yield client
+
+
+@pytest.fixture
 def user_client(monkeypatch: pytest.MonkeyPatch) -> Generator[TestClient, None, None]:
     def fake_current_user():
         return UserResponse(
