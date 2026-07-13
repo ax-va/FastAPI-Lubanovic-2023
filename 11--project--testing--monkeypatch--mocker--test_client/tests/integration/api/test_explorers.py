@@ -33,6 +33,7 @@ def test_create(
     assert response.json() == sample_response.model_dump()
 
 
+@pytest.mark.positive
 @pytest.mark.parametrize(
     "sample_id, sample_response",
     [
@@ -52,6 +53,7 @@ def test_get_by_id_success(
     assert response.json() == sample_response.model_dump()
 
 
+@pytest.mark.negative
 @pytest.mark.parametrize(
     "sample_id", [99]
 )
