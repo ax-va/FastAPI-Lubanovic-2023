@@ -1,4 +1,5 @@
 import pytest
+from pytest_mock import MockerFixture
 
 from app.models.creatures import CreatureRequest, CreatureResponse
 from app.services import creatures as service
@@ -17,8 +18,8 @@ from tests.fake.creature_samples import (
 def test_create(
     sample_request: CreatureRequest,
     sample_response: CreatureResponse,
-    mocker,
-):
+    mocker: MockerFixture,
+) -> None:
     # Mocker replaces an object with a `Mock`.
     # Use it when you want to isolate the unit under test and verify interactions
     #  (`assert_called_once_with()`, `call_count`, `call_args`, etc.).
@@ -41,8 +42,8 @@ def test_create(
 def test_get_by_id(
     sample_id: int,
     expected: CreatureResponse,
-    mocker,
-):
+    mocker: MockerFixture,
+) -> None:
     repository_mock = mocker.patch.object(service, "repository", autospec=True)
     repository_mock.get_by_id.return_value = expected
 

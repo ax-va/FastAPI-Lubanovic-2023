@@ -1,4 +1,5 @@
 import pytest
+from pytest_mock import MockerFixture
 
 from app.models.explorers import ExplorerRequest, ExplorerResponse
 from app.services import explorers as service
@@ -17,8 +18,8 @@ from tests.fake.explorer_samples import (
 def test_create(
     sample_request: ExplorerRequest,
     sample_response: ExplorerResponse,
-    mocker,
-):
+    mocker: MockerFixture,
+) -> None:
     repository_mock = mocker.patch.object(service, "repository", autospec=True)
     repository_mock.create.return_value = sample_response
 
@@ -38,8 +39,8 @@ def test_create(
 def test_get_by_id(
     sample_id: int,
     expected: ExplorerResponse | None,
-    mocker,
-):
+    mocker: MockerFixture,
+) -> None:
     repository_mock = mocker.patch.object(service, "repository", autospec=True)
     repository_mock.get_by_id.return_value = expected
 
