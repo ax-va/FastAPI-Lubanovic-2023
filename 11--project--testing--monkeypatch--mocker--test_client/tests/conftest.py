@@ -5,8 +5,8 @@ from typing import Generator
 import pytest
 
 from app.repositories.sqlite import database as db
-from tests.samples.creature_samples import yeti_request, bigfoot_request
-from tests.samples.explorer_samples import hande_request, weiser_request
+from tests.samples.creatures import yeti_request, bigfoot_request
+from tests.samples.explorers import hande_request, weiser_request
 
 
 @pytest.fixture

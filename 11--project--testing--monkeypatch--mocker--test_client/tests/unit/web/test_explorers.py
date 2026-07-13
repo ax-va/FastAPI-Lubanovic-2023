@@ -4,7 +4,7 @@ from pytest_mock import MockerFixture
 
 from app.web import explorers as web
 from app.models.explorers import ExplorerRequest, ExplorerResponse
-from tests.samples.explorer_samples import (
+from tests.samples.explorers import (
     hande_request,
     hande_response,
 )

@@ -3,7 +3,7 @@ from pytest_mock import MockerFixture
 
 from app.models.creatures import CreatureRequest, CreatureResponse
 from app.services import creatures as service
-from tests.samples.creature_samples import (
+from tests.samples.creatures import (
     lubanovic_request,
     lubanovic_response,
 )

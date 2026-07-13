@@ -2,7 +2,7 @@ from sqlite3 import Connection
 
 from fastapi.testclient import TestClient
 
-from tests.samples.creature_samples import lubanovic_request
+from tests.samples.creatures import lubanovic_request
 
 
 def test_create(

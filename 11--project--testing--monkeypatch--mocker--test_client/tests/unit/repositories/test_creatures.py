@@ -4,7 +4,7 @@ import pytest
 
 from app.models.creatures import CreatureRequest, CreatureResponse
 from app.repositories.sqlite import creatures as repository
-from tests.samples.creature_samples import (
+from tests.samples.creatures import (
     yeti_response,
     bigfoot_response,
     lubanovic_request,
