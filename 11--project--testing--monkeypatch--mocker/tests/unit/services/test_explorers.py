@@ -3,7 +3,7 @@ from pytest_mock import MockerFixture
 
 from app.models.explorers import ExplorerRequest, ExplorerResponse
 from app.services import explorers as service
-from tests.fake.explorer_samples import (
+from tests.samples.explorer_samples import (
     ax_va_request,
     ax_va_response,
 )

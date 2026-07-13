@@ -53,6 +53,7 @@ $ pip install requests
 ### The HTTPX synchronous/asynchronous HTTP client package
 ```shell
 $ pip install httpx
+$ pip install httpx2
 ```
 
 ### Testing
@@ -67,11 +68,16 @@ $ pytest -v
 ```
 
 ### Authentication
-```shell
-$ pip install python-jose[cryptography]
-$ pip install passlib
-$ pip install python-multipart
-```
+
+- JWT
+    ```shell
+    $ pip install python-jose[cryptography]
+    ```
+
+- Hashing and verifying passwords
+    ```shell
+    $ pip install pwdlib[argon2]
+    ```
 
 ### Security
 ```shell

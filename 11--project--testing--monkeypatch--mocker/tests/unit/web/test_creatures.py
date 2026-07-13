@@ -4,7 +4,7 @@ from pytest_mock import MockerFixture
 
 from app.web import creatures as web
 from app.models.creatures import CreatureRequest, CreatureResponse
-from tests.fake.creature_samples import (
+from tests.samples.creature_samples import (
     yeti_request,
     yeti_response,
 )

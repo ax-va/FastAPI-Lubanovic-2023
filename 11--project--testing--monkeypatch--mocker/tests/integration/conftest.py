@@ -1,0 +1,28 @@
+from collections.abc import Generator
+
+import pytest
+from fastapi.testclient import TestClient
+
+from app.main import app
+from app.models.users import UserResponse
+from app.web.deps.auth import get_current_user
+
+
+@pytest.fixture
+def authenticated_client(monkeypatch: pytest.MonkeyPatch) -> Generator[TestClient, None, None]:
+    def fake_current_user():
+        return UserResponse(
+            id=1,
+            username="test",
+            is_active=True,
+            is_admin=False,
+        )
+
+    # just a dictionary
+    app.dependency_overrides[get_current_user] = fake_current_user
+
+    with TestClient(app) as client:
+        yield client
+
+    # just a dictionary
+    app.dependency_overrides.pop(get_current_user, None)
