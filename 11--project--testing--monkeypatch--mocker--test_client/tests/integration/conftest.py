@@ -18,11 +18,11 @@ def user_client(monkeypatch: pytest.MonkeyPatch) -> Generator[TestClient, None, 
             is_admin=False,
         )
 
-    # just a dictionary
+    # Add to the `dependency_overrides` dictionary
     app.dependency_overrides[get_current_user] = fake_current_user
 
     with TestClient(app) as client:
         yield client
 
-    # just a dictionary
+    # Pop from the `dependency_overrides` dictionary
     app.dependency_overrides.pop(get_current_user, None)
