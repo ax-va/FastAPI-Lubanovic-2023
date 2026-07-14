@@ -112,7 +112,7 @@ def get(
         if user is None:
             raise HTTPException(
                 status_code=404,
-                detail=f"User with id={user_id} not found",
+                detail=f"User with ID {user_id} not found",
             )
 
         return user

@@ -70,11 +70,11 @@ def create(user: UserToDB) -> UserFromDB:
 
     inserted_id: int | None = cursor.lastrowid
     if inserted_id is None:
-        raise RuntimeError(f"Inserted user id was not returned")
+        raise RuntimeError(f"Inserted user ID was not returned")
 
     inserted: UserFromDB | None = get_by_id(inserted_id)
     if inserted is None:
-        raise RuntimeError(f"Inserted user with id={inserted_id} could not be retrieved")
+        raise RuntimeError(f"Inserted user with ID {inserted_id} could not be retrieved")
 
     return inserted
 
@@ -106,7 +106,7 @@ def replace(user_id: int, user: UserToDB) -> UserFromDB:
 
     updated: UserFromDB | None = get_by_id(user_id)
     if updated is None:
-        raise RuntimeError(f"Updated user with id={user_id} could not be retrieved")
+        raise RuntimeError(f"Updated user with ID {user_id} could not be retrieved")
 
     return updated
 
@@ -159,6 +159,6 @@ def set_admin(user_id: int, is_admin: bool) -> UserFromDB:
 
     updated: UserFromDB | None = get_by_id(user_id)
     if updated is None:
-        raise RuntimeError(f"Updated user with id={user_id} could not be retrieved")
+        raise RuntimeError(f"Updated user with ID {user_id} could not be retrieved")
 
     return updated

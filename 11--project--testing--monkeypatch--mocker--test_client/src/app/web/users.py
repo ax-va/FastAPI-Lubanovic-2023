@@ -13,7 +13,6 @@ router = APIRouter(prefix="/users")
 # OAuth2 token endpoint.
 # Clients send username and password here to obtain an access token.
 @router.post("/token")
-@router.post("/token/")
 def create_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
 ) -> dict:
@@ -44,7 +43,6 @@ def create_access_token(
 
 # API for only authenticated users
 @router.get("/me")
-@router.get("/me/")
 def get_me(
     user: UserResponse = Depends(get_current_user)
 ) -> UserResponse:
@@ -53,7 +51,6 @@ def get_me(
 
 # API only for authenticated admins
 @router.patch("/{user_id}/grant-admin")
-@router.patch("/{user_id}/grant-admin/")
 def grant_admin(
     user_id: int,
     _: UserResponse = Depends(get_current_admin),
@@ -72,7 +69,6 @@ def grant_admin(
 
 # API only for authenticated admins
 @router.patch("/{user_id}/revoke-admin")
-@router.patch("/{user_id}/revoke-admin/")
 def revoke_admin(
     user_id: int,
     _: UserResponse = Depends(get_current_admin),
@@ -91,9 +87,7 @@ def revoke_admin(
 
 # API only for authenticated admins
 @router.get("")
-@router.get("/")
 @router.get("/{user_id}")
-@router.get("/{user_id}/")
 def get(
     user_id: int | None = None,  # example: `GET /users/1`
     username: str | None = Query(default=None, min_length=1),  # example: `GET /users?useranme=Alice`
@@ -112,7 +106,7 @@ def get(
         if user is None:
             raise HTTPException(
                 status_code=404,
-                detail=f"User with id={user_id} not found",
+                detail=f"User with ID {user_id} not found",
             )
 
         return user
@@ -135,7 +129,6 @@ def get(
 
 # public API
 @router.post("", status_code=201)  # 201 Created
-@router.post("/", status_code=201)
 def create(
     user: UserToCreate,
     _: None = Depends(reject_authenticated_user)
@@ -145,7 +138,6 @@ def create(
 
 # API only for authenticated admins
 @router.put("/{user_id}")
-@router.put("/{user_id}/")
 def replace(
     user_id: int,
     user: UserToReplace,
@@ -170,7 +162,6 @@ def replace(
 
 # API for only authenticated users
 @router.delete("/me")
-@router.delete("/me/")
 def delete_me(
     user: UserResponse = Depends(get_current_user)
 ) -> bool:
@@ -179,7 +170,6 @@ def delete_me(
 
 # API only for authenticated admins
 @router.delete("/{user_id}")
-@router.delete("/{user_id}/")
 def delete(
     user_id: int,
     _: UserResponse = Depends(get_current_admin),

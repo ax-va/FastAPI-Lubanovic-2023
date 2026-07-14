@@ -8,13 +8,11 @@ router = APIRouter(prefix="/explorers", tags=["Explorers"])
 
 
 @router.get("")
-@router.get("/")
 def get_all() -> list[ExplorerResponse]:
     return service.get_all()
 
 
 @router.get("/{explorer_id}")
-@router.get("/{explorer_id}/")
 def get_by_id(explorer_id: int) -> ExplorerResponse:
     explorer = service.get_by_id(explorer_id)
     if explorer is None:
@@ -26,13 +24,11 @@ def get_by_id(explorer_id: int) -> ExplorerResponse:
 
 
 @router.post("", status_code=201)  # 201 Created
-@router.post("/", status_code=201)  # 201 Created
 def create(explorer: ExplorerRequest) -> ExplorerResponse:
     return service.create(explorer)
 
 
 @router.put("/{explorer_id}")
-@router.put("/{explorer_id}/")
 def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
     explorer = service.replace(explorer_id, explorer)
     if explorer is None:
@@ -44,13 +40,11 @@ def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
 
 
 @router.patch("/{explorer_id}")
-@router.patch("/{explorer_id}/")
 def modify(explorer_id: int) -> ExplorerResponse:
     raise NotImplementedError()
 
 
 @router.delete("/{explorer_id}")
-@router.delete("/{explorer_id}/")
 def delete(explorer_id: int) -> bool:
     deleted = service.delete(explorer_id)
     if not deleted:

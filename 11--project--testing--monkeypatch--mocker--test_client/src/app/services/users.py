@@ -54,7 +54,7 @@ def replace(user_id: int, user: UserToReplace) -> UserResponse:
     response: UserResponse | None = get_by_id(user_id)
 
     if response is None:
-        raise DoesNotExistError(f"User with id={user_id} does not exist")
+        raise DoesNotExistError(f"User with ID {user_id} does not exist")
 
     user_to_db = UserToDB(
         username=user.username,
@@ -119,7 +119,7 @@ def set_admin(user_id: int, is_admin: bool) -> UserResponse:
     response: UserResponse | None = get_by_id(user_id)
 
     if response is None:
-        raise DoesNotExistError(f"User with id={user_id} does not exist")
+        raise DoesNotExistError(f"User with ID {user_id} does not exist")
 
     if not is_admin and response.is_admin and count_admins() == 1:
         raise LastAdminError("Revoking the last admin is not allowed")

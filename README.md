@@ -67,6 +67,12 @@ Run tests
 $ pytest -v
 ```
 
+### Property-Based Testing
+```shell
+$ pip install hypothesis
+$ pip install schemathesis
+```
+
 ### Authentication
 
 - JWT

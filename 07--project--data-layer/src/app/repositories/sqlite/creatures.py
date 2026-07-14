@@ -52,11 +52,11 @@ def create(creature: CreatureRequest) -> CreatureResponse:
 
     inserted_id: int | None = cursor.lastrowid
     if inserted_id is None:
-        raise RuntimeError(f"Inserted creature id was not returned")
+        raise RuntimeError(f"Inserted creature ID was not returned")
 
     inserted: CreatureResponse | None = get_by_id(inserted_id)
     if inserted is None:
-        raise RuntimeError(f"Inserted creature with id={inserted_id} could not be retrieved")
+        raise RuntimeError(f"Inserted creature with ID {inserted_id} could not be retrieved")
 
     return inserted
 
@@ -77,13 +77,13 @@ def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse:
     cursor.execute(query, values)
 
     if cursor.rowcount == 0:
-        raise NotFoundError(f"Creature with id={creature_id} not found")
+        raise NotFoundError(f"Creature with ID {creature_id} not found")
 
     db.conn.commit()
 
     updated: CreatureResponse | None = get_by_id(creature_id)
     if updated is None:
-        raise RuntimeError(f"Updated creature with id={creature_id} could not be retrieved")
+        raise RuntimeError(f"Updated creature with ID {creature_id} could not be retrieved")
 
     return updated
 

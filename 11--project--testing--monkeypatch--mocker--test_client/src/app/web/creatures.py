@@ -5,6 +5,8 @@ from app.models.users import UserResponse
 from app.repositories.errors import NotFoundError
 from app.services import creatures
 from app.web.deps.auth import get_current_user
+from app.web.errors import not_found
+from app.web.metadata import NOT_FOUND_RESPONSE
 
 service = creatures
 router = APIRouter(prefix="/creatures", tags=["Creatures"])
@@ -12,28 +14,22 @@ router = APIRouter(prefix="/creatures", tags=["Creatures"])
 
 # public API
 @router.get("")
-@router.get("/")
 def get_all() -> list[CreatureResponse]:
     return service.get_all()
 
 
 # public API
-@router.get("/{creature_id}")
-@router.get("/{creature_id}/")
+@router.get("/{creature_id}", responses=NOT_FOUND_RESPONSE)
 def get_by_id(creature_id: int) -> CreatureResponse:
     creature = service.get_by_id(creature_id)
     if creature is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Creature with ID {creature_id} not found",
-        )
+        raise not_found("Creature", creature_id)
 
     return creature
 
 
 # API for only authenticated users
 @router.post("", status_code=201)  # 201 Created
-@router.post("/", status_code=201)  # 201 Created
 def create(
     creature: CreatureRequest,
     _: UserResponse = Depends(get_current_user),
@@ -43,7 +39,6 @@ def create(
 
 # API for only authenticated users
 @router.put("/{creature_id}")
-@router.put("/{creature_id}/")
 def replace(
     creature_id: int,
     creature: CreatureRequest,
@@ -62,14 +57,12 @@ def replace(
 
 
 @router.patch("/{creature_id}")
-@router.patch("/{creature_id}/")
 def modify(creature_id: int) -> CreatureResponse | None:
     raise NotImplementedError()
 
 
 # API for only authenticated users
 @router.delete("/{creature_id}")
-@router.delete("/{creature_id}/")
 def delete(
     creature_id: int,
     _: UserResponse = Depends(get_current_user),
