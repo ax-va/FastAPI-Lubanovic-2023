@@ -2,9 +2,10 @@ from fastapi import APIRouter, HTTPException, Depends
 
 from app.models.creatures import CreatureRequest, CreatureResponse
 from app.models.users import UserResponse
-from app.repositories.errors import NotFoundError
 from app.services import creatures
+from app.services.errors import NotFoundError
 from app.web.deps.auth import get_current_user
+from app.web.errors import resource_with_id_not_found
 
 service = creatures
 router = APIRouter(prefix="/creatures", tags=["Creatures"])
@@ -22,10 +23,7 @@ def get_by_id(creature_id: int) -> CreatureResponse:
     creature = service.get_by_id(creature_id)
 
     if creature is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Creature with ID {creature_id} not found",
-        )
+        raise resource_with_id_not_found(f"Creature with ID {creature_id} not found")
 
     return creature
 
@@ -50,10 +48,7 @@ def replace(
         creature = service.replace(creature_id, creature)
 
     except NotFoundError as e:
-        raise HTTPException(
-            status_code=404,
-            detail=str(e),
-        )
+        raise resource_with_id_not_found(str(e))
 
     return creature
 
@@ -68,13 +63,9 @@ def modify(creature_id: int) -> CreatureResponse | None:
 def delete(
     creature_id: int,
     _: UserResponse = Depends(get_current_user),
-) -> bool:
-    deleted = service.delete(creature_id)
+) -> None:
+    try:
+        service.delete(creature_id)
 
-    if not deleted:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Creature with ID {creature_id} not found",
-        )
-
-    return deleted
+    except NotFoundError as e:
+        raise resource_with_id_not_found(str(e))

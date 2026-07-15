@@ -2,9 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.auth import access_tokens
-from app.models.users import UserToCreate, UserResponse, UserFromDB, UserToReplace
-from app.repositories.errors import NotFoundError
+from app.models.users import UserToCreateRequest, UserResponse, UserFromDB, UserToReplaceRequest
 from app.services import users as users_service
+from app.services.errors import LastAdminError, NotFoundError
 from app.web.deps.auth import get_current_user, get_current_admin, reject_authenticated_user
 from app.web.errors import resource_with_id_not_found
 from app.web.metadata import UNAUTHORIZED, NOT_FOUND, BAD_REQUEST
@@ -23,16 +23,18 @@ def create_access_token(
 ) -> dict:
     """Authenticates a user and returns a JWT access token."""
 
-    user: UserFromDB | None = service.authenticate_user(form_data.username, form_data.password)
+    is_verified: bool = service.verify_credentials(
+        form_data.username, form_data.password
+    )
 
-    if user is None:
+    if not is_verified:
         raise HTTPException(
             status_code=401,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    data = {"sub": user.username}
+    data = {"sub": form_data.username}
     access_token = access_tokens.create_access_token(data=data)
 
     return {
@@ -47,7 +49,10 @@ def create_access_token(
 # Otherwise, "/users/me" will be matched by the dynamic route first.
 
 # API for only authenticated users
-@router.get("/me")
+@router.get(
+    "/me",
+    responses=UNAUTHORIZED,
+)
 def get_me(
     user: UserResponse = Depends(get_current_user)
 ) -> UserResponse:
@@ -57,7 +62,7 @@ def get_me(
 # API only for authenticated admins
 @router.patch(
     "/{user_id}/grant-admin",
-    responses=NOT_FOUND,
+    responses=UNAUTHORIZED | NOT_FOUND,
 )
 def grant_admin(
     user_id: int,
@@ -67,10 +72,7 @@ def grant_admin(
         user: UserResponse = service.set_admin(user_id, True)
 
     except NotFoundError as e:
-        raise HTTPException(
-            status_code=404,
-            detail=str(e),
-        )
+        raise resource_with_id_not_found(str(e))
 
     return user
 
@@ -78,7 +80,7 @@ def grant_admin(
 # API only for authenticated admins
 @router.patch(
     "/{user_id}/revoke-admin",
-    responses=NOT_FOUND,
+    responses=UNAUTHORIZED | NOT_FOUND,
 )
 def revoke_admin(
     user_id: int,
@@ -93,6 +95,12 @@ def revoke_admin(
             detail=str(e),
         )
 
+    except LastAdminError as e:
+        raise HTTPException(
+            status_code=409,
+            detail=str(e),
+        )
+
     return user
 
 
@@ -100,7 +108,7 @@ def revoke_admin(
 @router.get("")
 @router.get(
     "/{user_id}",
-    responses=BAD_REQUEST | NOT_FOUND,
+    responses=UNAUTHORIZED | BAD_REQUEST | NOT_FOUND,
 )
 def get(
     user_id: int | None = None,  # example: `GET /users/1`
@@ -118,7 +126,7 @@ def get(
         user: UserResponse | None = service.get_by_id(user_id)
 
         if user is None:
-            raise resource_with_id_not_found("User", user_id)
+            raise resource_with_id_not_found(f"User with ID {user_id} not found")
 
         return user
 
@@ -126,10 +134,7 @@ def get(
         user: UserResponse | None = service.get_by_username(username)
 
         if user is None:
-            raise HTTPException(
-                status_code=404,
-                detail=f"User with username {username!r} not found",
-            )
+            raise resource_with_id_not_found(f"User with username {username!r} not found")
 
         return user
 
@@ -139,9 +144,13 @@ def get(
 
 
 # public API
-@router.post("", status_code=201)  # 201 Created
+@router.post(
+    "",
+    status_code=201,  # 201 Created
+    responses=UNAUTHORIZED,
+)
 def create(
-    user: UserToCreate,
+    user: UserToCreateRequest,
     _: None = Depends(reject_authenticated_user)
 ) -> UserResponse:
     return service.create(user)
@@ -150,21 +159,18 @@ def create(
 # API only for authenticated admins
 @router.put(
     "/{user_id}",
-    responses=NOT_FOUND,
+    responses=UNAUTHORIZED | NOT_FOUND,
 )
 def replace(
     user_id: int,
-    user: UserToReplace,
+    user: UserToReplaceRequest,
     _: UserResponse = Depends(get_current_admin),
 ) -> UserResponse:
     try:
         user: UserResponse = service.replace(user_id, user)
 
     except NotFoundError as e:
-        raise HTTPException(
-            status_code=404,
-            detail=str(e),
-        )
+        raise resource_with_id_not_found(str(e))
 
     return user
 
@@ -175,24 +181,43 @@ def replace(
 # Otherwise, "/users/me" will be matched by the dynamic route first.
 
 # API for only authenticated users
-@router.delete("/me")
+@router.delete(
+    "/me",
+    responses=UNAUTHORIZED,
+)
 def delete_me(
     user: UserResponse = Depends(get_current_user)
-) -> bool:
-    return service.delete(user.id)
+) -> None:
+    try:
+        service.delete(user.id)
+
+    except NotFoundError as e:
+        raise resource_with_id_not_found(str(e))
+
+    except LastAdminError as e:
+        raise HTTPException(
+            status_code=409,
+            detail=str(e),
+        )
 
 
 # API only for authenticated admins
 @router.delete(
     "/{user_id}",
-    responses=NOT_FOUND,
+    responses=UNAUTHORIZED | NOT_FOUND,
 )
 def delete(
     user_id: int,
     _: UserResponse = Depends(get_current_admin),
-) -> bool:
-    deleted = service.delete(user_id)
-    if not deleted:
-        raise resource_with_id_not_found("User", user_id)
+) -> None:
+    try:
+        service.delete(user_id)
 
-    return deleted
+    except NotFoundError as e:
+        raise resource_with_id_not_found(str(e))
+
+    except LastAdminError as e:
+        raise HTTPException(
+            status_code=409,
+            detail=str(e),
+        )

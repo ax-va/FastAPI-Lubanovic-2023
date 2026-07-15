@@ -1,12 +1,12 @@
 from pydantic import BaseModel
 
 
-class UserToCreate(BaseModel):
+class UserToCreateRequest(BaseModel):
     username: str
     password: str
 
 
-class UserToReplace(BaseModel):
+class UserToReplaceRequest(BaseModel):
     username: str
     password: str
     is_active: bool

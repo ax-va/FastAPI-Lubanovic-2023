@@ -48,7 +48,7 @@ def get_all() -> list[UserFromDB]:
     return [to_model(row) for row in cursor.fetchall()]
 
 
-def create(user: UserToDB) -> UserFromDB:
+def create(user: UserToDB) -> int:
     query = (
         "INSERT INTO users (username, password_hash, is_active, is_admin) "
         "VALUES (:username, :password_hash, :is_active, :is_admin)"
@@ -60,26 +60,26 @@ def create(user: UserToDB) -> UserFromDB:
         cursor.execute(query, values)
 
     except IntegrityError as e:
+        db.conn.rollback()
         message = str(e).lower()
         if INTEGRITY_ERROR_UNIQUE in message:
             raise DuplicateError(f"Username {user.username!r} already exists") from e
         raise
 
-    else:
-        db.conn.commit()
+    except:
+        db.conn.rollback()
+        raise
 
-    inserted_id: int | None = cursor.lastrowid
-    if inserted_id is None:
-        raise RuntimeError(f"Inserted user ID was not returned")
+    db.conn.commit()
 
-    inserted: UserFromDB | None = get_by_id(inserted_id)
-    if inserted is None:
-        raise RuntimeError(f"Inserted user with ID {inserted_id} could not be retrieved")
+    created_id: int | None = cursor.lastrowid
+    if created_id is None:
+        raise RuntimeError(f"User ID was not returned")
 
-    return inserted
+    return created_id
 
 
-def replace(user_id: int, user: UserToDB) -> UserFromDB:
+def replace(user_id: int, user: UserToDB) -> None:
     query = (
         "UPDATE users "
         "SET username = :username, "
@@ -96,22 +96,20 @@ def replace(user_id: int, user: UserToDB) -> UserFromDB:
         cursor.execute(query, values)
 
     except IntegrityError as e:
+        db.conn.rollback()
         message = str(e).lower()
         if INTEGRITY_ERROR_UNIQUE in message:
             raise DuplicateError(f"Username {user.username!r} already exists") from e
         raise
 
-    else:
-        db.conn.commit()
+    except:
+        db.conn.rollback()
+        raise
 
-    updated: UserFromDB | None = get_by_id(user_id)
-    if updated is None:
-        raise RuntimeError(f"Updated user with ID {user_id} could not be retrieved")
-
-    return updated
+    db.conn.commit()
 
 
-def delete(user_id: int) -> bool:
+def delete(user_id: int) -> None:
     """Soft-delete a user."""
     query = (
         "UPDATE users "
@@ -123,11 +121,10 @@ def delete(user_id: int) -> bool:
     cursor.execute(query, values)
 
     if cursor.rowcount == 0:
-        return False
+        db.conn.rollback()
+        raise RuntimeError(f"User with ID {user_id} not deleted")
 
     db.conn.commit()
-
-    return True
 
 
 def count_admins() -> int:
@@ -143,7 +140,7 @@ def count_admins() -> int:
     return row[0]
 
 
-def set_admin(user_id: int, is_admin: bool) -> UserFromDB:
+def set_admin(user_id: int, is_admin: bool) -> None:
     query = (
         "UPDATE users "
         "SET is_admin = :is_admin "
@@ -156,9 +153,3 @@ def set_admin(user_id: int, is_admin: bool) -> UserFromDB:
     cursor = db.conn.cursor()
     cursor.execute(query, values)
     db.conn.commit()
-
-    updated: UserFromDB | None = get_by_id(user_id)
-    if updated is None:
-        raise RuntimeError(f"Updated user with ID {user_id} could not be retrieved")
-
-    return updated

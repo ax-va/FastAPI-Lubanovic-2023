@@ -2,5 +2,9 @@ class LastAdminError(Exception):
     pass
 
 
-class DoesNotExistError(Exception):
+class DuplicateError(Exception):
+    pass
+
+
+class NotFoundError(Exception):
     pass

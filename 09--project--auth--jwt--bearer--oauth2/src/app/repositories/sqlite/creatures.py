@@ -1,6 +1,5 @@
 from app.models.creatures import CreatureRequest, CreatureResponse
 from . import database as db
-from ..errors import NotFoundError
 
 
 def to_model(row: tuple) -> CreatureResponse:
@@ -39,7 +38,7 @@ def get_all() -> list[CreatureResponse]:
     return [to_model(row) for row in cursor.fetchall()]
 
 
-def create(creature: CreatureRequest) -> CreatureResponse:
+def create(creature: CreatureRequest) -> int:
     query = (
         "INSERT INTO creatures (name, country, area, description, aka) "
         "VALUES (:name, :country, :area, :description, :aka)"
@@ -47,20 +46,18 @@ def create(creature: CreatureRequest) -> CreatureResponse:
     values = to_dict(creature)
     cursor = db.conn.cursor()
     cursor.execute(query, values)
+
+    created_id: int | None = cursor.lastrowid
+    if created_id is None:
+        db.conn.rollback()
+        raise RuntimeError(f"Creature ID was not returned")
+
     db.conn.commit()
 
-    inserted_id: int | None = cursor.lastrowid
-    if inserted_id is None:
-        raise RuntimeError(f"Inserted creature ID was not returned")
-
-    inserted: CreatureResponse | None = get_by_id(inserted_id)
-    if inserted is None:
-        raise RuntimeError(f"Inserted creature with ID {inserted_id} could not be retrieved")
-
-    return inserted
+    return created_id
 
 
-def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse:
+def replace(creature_id: int, creature: CreatureRequest) -> None:
     query = (
         "UPDATE creatures "
         "SET name = :name, "
@@ -76,23 +73,20 @@ def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse:
     cursor.execute(query, values)
 
     if cursor.rowcount == 0:
-        raise NotFoundError(f"Creature with ID {creature_id} not found")
+        db.conn.rollback()
+        raise RuntimeError(f"Creature with ID {creature_id} not updated")
 
     db.conn.commit()
 
-    updated: CreatureResponse | None = get_by_id(creature_id)
-    if updated is None:
-        raise RuntimeError(f"Updated creature with ID {creature_id} could not be retrieved")
 
-    return updated
-
-
-def delete(creature_id: int) -> bool:
+def delete(creature_id: int) -> None:
     query = "DELETE FROM creatures WHERE id = :id"
     values = {"id": creature_id}
     cursor = db.conn.cursor()
     cursor.execute(query, values)
-    deleted: int = cursor.rowcount
-    db.conn.commit()
 
-    return deleted > 0
+    if cursor.rowcount == 0:
+        db.conn.rollback()
+        raise RuntimeError(f"Creature with ID {creature_id} not deleted")
+
+    db.conn.commit()

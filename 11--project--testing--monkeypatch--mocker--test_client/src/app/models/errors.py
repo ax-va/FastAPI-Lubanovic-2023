@@ -11,7 +11,10 @@ class BadRequestResponse(BaseModel):
 # 401
 class UnauthorizedResponse(BaseModel):
     detail: str = Field(
-        examples=["Incorrect username or password"]
+        examples=[
+            "Incorrect username or password",
+            "Invalid or expired access token",
+        ]
     )
 
 
@@ -23,5 +26,15 @@ class NotFoundResponse(BaseModel):
             "Explorer with ID 42 not found",
             "User with ID 42 not found",
             "User with username 'Alice' not found",
+        ]
+    )
+
+
+# 409
+class ConflictResponse(BaseModel):
+    detail: str = Field(
+        examples=[
+            "Revoking the last admin is not allowed",
+            "Deleting the last admin is not allowed",
         ]
     )
