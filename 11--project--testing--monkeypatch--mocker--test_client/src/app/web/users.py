@@ -6,13 +6,18 @@ from app.models.users import UserToCreate, UserResponse, UserFromDB, UserToRepla
 from app.repositories.errors import NotFoundError
 from app.services import users as users_service
 from app.web.deps.auth import get_current_user, get_current_admin, reject_authenticated_user
+from app.web.errors import resource_with_id_not_found
+from app.web.metadata import UNAUTHORIZED, NOT_FOUND, BAD_REQUEST
 
 service = users_service
-router = APIRouter(prefix="/users")
+router = APIRouter(prefix="/users", tags=["Users"])
 
 # OAuth2 token endpoint.
 # Clients send username and password here to obtain an access token.
-@router.post("/token")
+@router.post(
+    "/token",
+    responses=UNAUTHORIZED,
+)
 def create_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
 ) -> dict:
@@ -50,7 +55,10 @@ def get_me(
 
 
 # API only for authenticated admins
-@router.patch("/{user_id}/grant-admin")
+@router.patch(
+    "/{user_id}/grant-admin",
+    responses=NOT_FOUND,
+)
 def grant_admin(
     user_id: int,
     _: UserResponse = Depends(get_current_admin),
@@ -68,7 +76,10 @@ def grant_admin(
 
 
 # API only for authenticated admins
-@router.patch("/{user_id}/revoke-admin")
+@router.patch(
+    "/{user_id}/revoke-admin",
+    responses=NOT_FOUND,
+)
 def revoke_admin(
     user_id: int,
     _: UserResponse = Depends(get_current_admin),
@@ -87,7 +98,10 @@ def revoke_admin(
 
 # API only for authenticated admins
 @router.get("")
-@router.get("/{user_id}")
+@router.get(
+    "/{user_id}",
+    responses=BAD_REQUEST | NOT_FOUND,
+)
 def get(
     user_id: int | None = None,  # example: `GET /users/1`
     username: str | None = Query(default=None, min_length=1),  # example: `GET /users?useranme=Alice`
@@ -104,10 +118,7 @@ def get(
         user: UserResponse | None = service.get_by_id(user_id)
 
         if user is None:
-            raise HTTPException(
-                status_code=404,
-                detail=f"User with ID {user_id} not found",
-            )
+            raise resource_with_id_not_found("User", user_id)
 
         return user
 
@@ -137,7 +148,10 @@ def create(
 
 
 # API only for authenticated admins
-@router.put("/{user_id}")
+@router.put(
+    "/{user_id}",
+    responses=NOT_FOUND,
+)
 def replace(
     user_id: int,
     user: UserToReplace,
@@ -169,16 +183,16 @@ def delete_me(
 
 
 # API only for authenticated admins
-@router.delete("/{user_id}")
+@router.delete(
+    "/{user_id}",
+    responses=NOT_FOUND,
+)
 def delete(
     user_id: int,
     _: UserResponse = Depends(get_current_admin),
 ) -> bool:
     deleted = service.delete(user_id)
     if not deleted:
-        raise HTTPException(
-            status_code=404,
-            detail=f"User with ID {user_id} not found",
-        )
+        raise resource_with_id_not_found("User", user_id)
 
     return deleted

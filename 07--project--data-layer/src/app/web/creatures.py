@@ -16,6 +16,7 @@ def get_all() -> list[CreatureResponse]:
 @router.get("/{creature_id}")
 def get_by_id(creature_id: int) -> CreatureResponse:
     creature = service.get_by_id(creature_id)
+
     if creature is None:
         raise HTTPException(
             status_code=404,
@@ -52,6 +53,7 @@ def modify(creature_id: int) -> CreatureResponse:
 @router.delete("/{creature_id}")
 def delete(creature_id: int) -> bool:
     deleted = service.delete(creature_id)
+
     if not deleted:
         raise HTTPException(
             status_code=404,

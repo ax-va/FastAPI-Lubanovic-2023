@@ -17,11 +17,13 @@ def get_all() -> list[ExplorerResponse]:
 @router.get("/{explorer_id}/")
 def get_by_id(explorer_id: int) -> ExplorerResponse:
     explorer = service.get_by_id(explorer_id)
+
     if explorer is None:
         raise HTTPException(
             status_code=404,
             detail=f"Explorer with ID {explorer_id} not found",
         )
+
     return explorer
 
 
@@ -35,11 +37,13 @@ def create(explorer: ExplorerRequest) -> ExplorerResponse:
 @router.put("/{explorer_id}/")
 def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
     explorer = service.replace(explorer_id, explorer)
+
     if explorer is None:
         raise HTTPException(
             status_code=404,
             detail=f"Explorer with ID {explorer_id} not found",
         )
+
     return explorer
 
 
@@ -53,9 +57,11 @@ def modify(explorer_id: int) -> ExplorerResponse:
 @router.delete("/{explorer_id}/")
 def delete(explorer_id: int) -> bool:
     deleted = service.delete(explorer_id)
+
     if not deleted:
         raise HTTPException(
             status_code=404,
             detail=f"Explorer with ID {explorer_id} not found",
         )
+
     return deleted

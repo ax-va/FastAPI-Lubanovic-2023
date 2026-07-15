@@ -5,6 +5,8 @@ from app.models.users import UserResponse
 from app.repositories.errors import NotFoundError
 from app.services import explorers
 from app.web.deps.auth import get_current_user
+from app.web.errors import resource_with_id_not_found
+from app.web.metadata import NOT_FOUND
 
 service = explorers
 router = APIRouter(prefix="/explorers", tags=["Explorers"])
@@ -17,14 +19,15 @@ def get_all() -> list[ExplorerResponse]:
 
 
 # public API
-@router.get("/{explorer_id}")
+@router.get(
+    "/{explorer_id}",
+    responses=NOT_FOUND,
+)
 def get_by_id(explorer_id: int) -> ExplorerResponse:
     explorer = service.get_by_id(explorer_id)
+
     if explorer is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Explorer with ID {explorer_id} not found",
-        )
+        raise resource_with_id_not_found("Explorer", explorer_id)
 
     return explorer
 
@@ -39,7 +42,10 @@ def create(
 
 
 # API for only authenticated users
-@router.put("/{explorer_id}")
+@router.put(
+    "/{explorer_id}",
+    responses=NOT_FOUND,
+)
 def replace(
     explorer_id: int,
     explorer: ExplorerRequest,
@@ -63,16 +69,17 @@ def modify(explorer_id: int) -> ExplorerResponse | None:
 
 
 # API for only authenticated users
-@router.delete("/{explorer_id}")
+@router.delete(
+    "/{explorer_id}",
+    responses=NOT_FOUND,
+)
 def delete(
     explorer_id: int,
     _: UserResponse = Depends(get_current_user),
 ) -> bool:
     deleted = service.delete(explorer_id)
+
     if not deleted:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Explorer with ID {explorer_id} not found",
-        )
+        raise resource_with_id_not_found("Explorer", explorer_id)
 
     return deleted
