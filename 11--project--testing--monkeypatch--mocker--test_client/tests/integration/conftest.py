@@ -1,11 +1,17 @@
 from collections.abc import Generator
 
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.main import app
 from app.models.users import UserResponse
+from app.web import creatures as creatures_web
+from app.web import explorers as explorers_web
 from app.web.deps.auth import get_current_user
+
+app = FastAPI()
+app.include_router(creatures_web.router)
+app.include_router(explorers_web.router)
 
 
 @pytest.fixture
