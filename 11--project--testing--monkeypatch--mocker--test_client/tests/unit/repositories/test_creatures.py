@@ -29,8 +29,8 @@ def test_create(
     num_rows_before = len(repository.get_all())
     assert num_rows_before == 2
 
-    created = repository.create(sample_request)
-    assert created == sample_response
+    created_id = repository.create(sample_request)
+    assert created_id == sample_response.id
 
     num_rows_after = len(repository.get_all())
     assert num_rows_after == num_rows_before + 1
@@ -63,30 +63,50 @@ def test_get_by_id(
 
 
 @pytest.mark.parametrize(
-    "sample_id, expected",
+    "sample_id, sample_response",
     [
-        (1, True),
-        (2, True),
-        (3, False),
-
+        (1, yeti_response),
+        (2, bigfoot_response),
     ]
 )
-def test_delete(
+def test_delete_success(
     sample_id: int,
-    expected: bool,
+    sample_response: CreatureResponse,
     creatures_sqlite_db: Connection,
 ):
     num_rows_before = len(repository.get_all())
     assert num_rows_before == 2
 
-    deleted = repository.delete(sample_id)
-    assert deleted is expected
+    got = repository.get_by_id(sample_id)
+    assert got == sample_response
+
+    repository.delete(sample_id)
 
     num_rows_after = len(repository.get_all())
-    if expected:
-        assert num_rows_after == num_rows_before - 1
-    else:
-        assert num_rows_after == num_rows_before
+    assert num_rows_after == num_rows_before - 1
+
+    missing = repository.get_by_id(sample_id)
+    assert missing is None
+
+
+@pytest.mark.parametrize(
+    "sample_id", [3]
+)
+def test_delete_not_deleted(
+        sample_id: int,
+        creatures_sqlite_db: Connection,
+):
+    num_rows_before = len(repository.get_all())
+    assert num_rows_before == 2
+
+    got = repository.get_by_id(sample_id)
+    assert got is None
+
+    with pytest.raises(RuntimeError, match="not deleted"):
+        repository.delete(sample_id)
+
+    num_rows_after = len(repository.get_all())
+    assert num_rows_after == num_rows_before
 
     missing = repository.get_by_id(sample_id)
     assert missing is None

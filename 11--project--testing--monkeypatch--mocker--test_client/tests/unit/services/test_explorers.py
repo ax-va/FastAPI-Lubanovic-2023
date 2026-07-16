@@ -21,12 +21,14 @@ def test_create(
     mocker: MockerFixture,
 ) -> None:
     repository_mock = mocker.patch.object(service, "repository", autospec=True)
-    repository_mock.create.return_value = sample_response
+    repository_mock.create.return_value = sample_response.id
+    repository_mock.get_by_id.return_value = sample_response
 
     result = service.create(sample_request)
     assert result == sample_response
 
     repository_mock.create.assert_called_once_with(sample_request)
+    repository_mock.get_by_id.assert_called_once_with(sample_response.id)
 
 
 @pytest.mark.parametrize(
