@@ -4,7 +4,9 @@ from pydantic import BaseModel, Field
 # 400
 class BadRequestResponse(BaseModel):
     detail: str = Field(
-        examples=["Use either `/users/42` or `/users?username=Alice`, but not both"]
+        examples=[
+            "Use either `/users/1` or `/users?username=admin`, but not both",
+        ]
     )
 
 
@@ -22,10 +24,10 @@ class UnauthorizedResponse(BaseModel):
 class NotFoundResponse(BaseModel):
     detail: str = Field(
         examples=[
-            "Creature with ID 42 not found",
-            "Explorer with ID 42 not found",
-            "User with ID 42 not found",
-            "User with username 'Alice' not found",
+            "Creature with ID 1 not found",
+            "Explorer with ID 1 not found",
+            "User with ID 1 not found",
+            "User with username 'admin' not found",
         ]
     )
 
@@ -34,6 +36,7 @@ class NotFoundResponse(BaseModel):
 class ConflictResponse(BaseModel):
     detail: str = Field(
         examples=[
+            "Username 'admin' already exists",
             "Revoking the last admin is not allowed",
             "Deleting the last admin is not allowed",
         ]

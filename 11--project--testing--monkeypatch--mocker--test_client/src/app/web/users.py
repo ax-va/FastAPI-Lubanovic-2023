@@ -2,12 +2,12 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.auth import access_tokens
-from app.models.users import UserToCreateRequest, UserResponse, UserFromDB, UserToReplaceRequest
+from app.models.users import UserToCreateRequest, UserResponse, UserToReplaceRequest
 from app.services import users as users_service
-from app.services.errors import LastAdminError, NotFoundError
+from app.services.errors import LastAdminError, NotFoundError, DuplicateError
 from app.web.deps.auth import get_current_user, get_current_admin, reject_authenticated_user
 from app.web.errors import resource_with_id_not_found
-from app.web.metadata import UNAUTHORIZED, NOT_FOUND, BAD_REQUEST
+from app.web.metadata import UNAUTHORIZED, NOT_FOUND, BAD_REQUEST, CONFLICT
 
 service = users_service
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -90,10 +90,7 @@ def revoke_admin(
         user: UserResponse = service.set_admin(user_id, False)
 
     except NotFoundError as e:
-        raise HTTPException(
-            status_code=404,
-            detail=str(e),
-        )
+        raise resource_with_id_not_found(str(e))
 
     except LastAdminError as e:
         raise HTTPException(
@@ -147,13 +144,22 @@ def get(
 @router.post(
     "",
     status_code=201,  # 201 Created
-    responses=UNAUTHORIZED,
+    responses=UNAUTHORIZED | CONFLICT,
 )
 def create(
     user: UserToCreateRequest,
     _: None = Depends(reject_authenticated_user)
 ) -> UserResponse:
-    return service.create(user)
+    try:
+        user: UserResponse = service.create(user)
+
+    except DuplicateError as e:
+        raise HTTPException(
+            status_code=409,
+            detail=str(e),
+        )
+
+    return user
 
 
 # API only for authenticated admins
@@ -172,6 +178,12 @@ def replace(
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e))
 
+    except DuplicateError as e:
+        raise HTTPException(
+            status_code=409,
+            detail=str(e),
+        )
+
     return user
 
 
@@ -183,7 +195,7 @@ def replace(
 # API for only authenticated users
 @router.delete(
     "/me",
-    responses=UNAUTHORIZED,
+    responses=UNAUTHORIZED | CONFLICT,
 )
 def delete_me(
     user: UserResponse = Depends(get_current_user)
@@ -204,7 +216,7 @@ def delete_me(
 # API only for authenticated admins
 @router.delete(
     "/{user_id}",
-    responses=UNAUTHORIZED | NOT_FOUND,
+    responses=UNAUTHORIZED | NOT_FOUND | CONFLICT,
 )
 def delete(
     user_id: int,

@@ -1,4 +1,4 @@
-from app.models.errors import NotFoundResponse, UnauthorizedResponse, BadRequestResponse
+from app.models.errors import NotFoundResponse, UnauthorizedResponse, BadRequestResponse, ConflictResponse
 
 BAD_REQUEST = {
     400: {
@@ -6,7 +6,6 @@ BAD_REQUEST = {
         "description": "Invalid query parameters",
     }
 }
-
 
 UNAUTHORIZED = {
     401: {
@@ -19,5 +18,12 @@ NOT_FOUND = {
     404: {
         "model": NotFoundResponse,
         "description": "Resource not found",
+    }
+}
+
+CONFLICT = {
+    409: {
+        "model": ConflictResponse,
+        "description": "The request conflicts with the current resource state",
     }
 }
