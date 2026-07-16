@@ -6,7 +6,6 @@ from app.web import creatures as creatures_web
 from app.web import explorers as explorers_web
 from app.web import users as users_web
 
-
 db.init()
 users_service.ensure_admin_exists()
 

@@ -27,6 +27,8 @@ def test_create(
 
     payload = sample_request.model_dump()
 
+    # Authentication is bypassed by overriding `get_current_user`.
+    # Requests don't require an Authorization header or JWT token.
     response = user_client.post("/explorers", json=payload)
 
     assert response.status_code == 201

@@ -55,9 +55,21 @@ if the testes property is formulated too broadly.
 They are best used alongside conventional integration and API tests.
 
 Run Schemathesis
+
+----------------------------------------------------------
+*WARNING: 
+Schemathesis' test cases will change the database*
+----------------------------------------------------------
+
 ```shell
 $ st run --header "Authorization:Bearer <admin_token>" http://localhost:8000/openapi.json
 ```
+
+Replay a test case
+```shell
+$ st replay <test_case_id>
+```
+
 
 
 

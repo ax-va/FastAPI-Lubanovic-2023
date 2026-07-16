@@ -102,7 +102,10 @@ def revoke_admin(
 
 
 # API only for authenticated admins
-@router.get("")
+@router.get(
+    "",
+    responses=UNAUTHORIZED | BAD_REQUEST | NOT_FOUND,
+)
 @router.get(
     "/{user_id}",
     responses=UNAUTHORIZED | BAD_REQUEST | NOT_FOUND,
@@ -116,7 +119,10 @@ def get(
     if user_id is not None and username is not None:
         raise HTTPException(
             status_code=400,
-            detail=f"Use either `/users/{user_id}` or `/users?username={username}`, but not both",
+            detail=(
+                f"Use either `/users/{user_id}` or `/users?username={username}`, "
+                f"but not both `/users/{user_id}?username={username}`",
+            )
         )
 
     if user_id is not None:

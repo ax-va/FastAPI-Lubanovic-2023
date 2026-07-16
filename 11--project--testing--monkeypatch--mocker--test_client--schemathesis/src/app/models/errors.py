@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 class BadRequestResponse(BaseModel):
     detail: str = Field(
         examples=[
-            "Use either `/users/1` or `/users?username=admin`, but not both",
+            "Use either `/users/1` or `/users?username=admin`, but not both `/users/1?username=admin`",
         ]
     )
 
