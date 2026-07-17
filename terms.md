@@ -456,3 +456,29 @@ $ st replay <test_case_id>
   - Is useful for organizing and validating load tests in large projects.
 
   - https://github.com/alteryx/locust-grasshopper
+
+
+### Uvicorn
+
+#### Uvicorn Workers
+
+- Running Uvicorn with multiple workers starts multiple independent processes.
+  Each worker has its own event loop and handles requests concurrently.
+
+- Incoming requests are automatically distributed among workers by the operating system.
+
+- Workers can run simultaneously on different CPU cores, 
+  allowing the application to utilize multiple cores and improve throughput.
+
+- Workers do not share memory. Global variables, caches, and in-memory data are private to each worker.
+
+- Shared application state should be stored in external services 
+  such as a database, Redis, or a message broker, not in global variables. 
+
+Example:
+
+```shell
+$ uvicorn app.main:app --workers 4
+```
+This starts four independent FastAPI application instances,
+each running in its own process with its own event loop.

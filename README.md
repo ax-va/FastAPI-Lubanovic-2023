@@ -7,9 +7,9 @@
 $ pip install fastapi
 ```
 
-### The Uvicorn ASGI server
+### The Uvicorn ASGI server with dependencies written in C
 ```shell
-$ pip install uvicorn
+$ pip install "uvicorn[standard]"
 ```
 
 ### The HTTPie command-line HTTP client
