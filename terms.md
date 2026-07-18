@@ -150,9 +150,9 @@ Examples:
   
     - https://asgi.readthedocs.io/en/latest/
 
-#### Dependency Injection (DI)
+#### Dependency Injection
 
-- *Dependency Injection* is a design pattern in which an object or function receives its dependencies from the outside 
+- *Dependency Injection* (DI) is a design pattern in which an object or function receives its dependencies from the outside 
 instead of creating them itself.
 
 - Dependencies are injected, not instantiated.
@@ -267,7 +267,7 @@ Examples:
 - *API key:* The client authenticates by sending a unique secret key with each request.
 
 
-- *JSON Web Token (JWT):* A signed token format.
+- *JWT = JSON Web Token*: A signed token format.
 
   - The JWT format consists of three parts: a header, a payload, and a signature.
   
