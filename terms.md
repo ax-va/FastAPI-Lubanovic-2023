@@ -587,7 +587,7 @@ The certificate proves that the server is authorized to use a particular domain 
 
 #### 7. CA = Certificate Authority: Let's Encrypt
 
-*Let's Encrypt* is a free, automated, public Certificate Authority.
+*Let's Encrypt* is a free, automated, public *Certificate Authority* (CA).
 
 It issues TLS certificates through the ACME protocol.
 The certificate-issuance process is separated from normal HTTPS traffic.
@@ -733,28 +733,37 @@ Traefik
 Responsibilities:
 
 - *VPS*: 
+  
   Runs the operating system and application infrastructure
 
 - *Public IP*:
+  
   Makes the server reachable over the Internet
 
 - *Domain*:
+
   Provides a stable, readable application name
 
 - *DNS*:
+  
   Maps the domain to the public IP address
 
 - *Let's Encrypt*:
+  
   Issues trusted TLS certificates
 
 - *Traefik*:
+  
   Handles HTTPS, routing, and load balancing
 
 - *Uvicorn*:
+  
   Runs the ASGI application
 
 - *FastAPI*:
+  
   Implements API and business behavior
 
 - *Database*:
+  
   Stores shared persistent data
