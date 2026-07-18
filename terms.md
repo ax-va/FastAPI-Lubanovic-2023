@@ -67,9 +67,9 @@ A RESTful API is an API designed according to the REST architectural constraints
 
 #### HTTP vs HTTPS
 
-- HTTP sends data in plain text: HTTP (Application Layer) → TCP (Transport Layer)
+- HTTP sends data in plain text: `HTTP (Application Layer) → TCP (Transport Layer)`
 
-- HTTPS is simply HTTP running over a TLS-encrypted TCP connection: HTTP (Application Layer) → TLS → TCP (Transport Layer)
+- HTTPS is simply HTTP running over a TLS-encrypted TCP connection: `HTTP (Application Layer) → TLS → TCP (Transport Layer)`
 
 #### Layers and Protocols
 
