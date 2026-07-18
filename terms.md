@@ -614,15 +614,18 @@ It is an independent infrastructure program written in Go.
 Traefik combines three main roles:
 
 - *Application Proxy*:
+  
   - Routes HTTP requests to the appropriate application or service.
 
 - *Reverse Proxy*:
+  
   - Accepts public HTTP and HTTPS connections;
   - Terminates TLS;
   - Obtains and renews TLS certificates;
   - Redirect HTTP to HTTPS.
 
 - *Load Balancer*:
+  
   - Distributes requests among multiple application instancies.
 
 Traefik includes support for separate, automatic certificate management through ACME providers such as Let's Encrypt:
