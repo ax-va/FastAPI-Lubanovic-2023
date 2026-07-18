@@ -482,3 +482,279 @@ $ uvicorn app.main:app --workers 4
 ```
 This starts four independent FastAPI application instances,
 each running in its own process with its own event loop.
+
+### Deployment Overview
+
+#### 1. Local Development
+
+During development, the application usually runs directly on the local machine.
+
+Example:
+
+```shell
+$ uvicorn app.main:app --reload
+```
+
+The application is available at `http://localhost:8000`.
+No public IP adress, domain, DNS, or TLS certificate is required.
+
+#### 2. VPS = Virtual Private Server
+
+A *Virtual Private Server (VPS)* is a virtual machine running on a physical server in a data center.
+
+For the developer, it behaves like a separate Linux computer (e.g., with Docker, Traefik, Uvicorn, database).
+
+A VPS usually provides:
+
+- virtual CPU cores,
+- RAM,
+- disk storage,
+- root or administrator access,
+- optional public IPv4 and IPv6 addresses.
+
+The hosting provider allocates the public IP address.
+The application developer does not create an arbitrary public IP address.
+Some providers treat public addresses as separate resources that must be assigned to the virtual machine.
+
+A FastAPI application can be made available directly through the VPS address, e.g, `http://203.0.113.10:8000`.
+However, exposing Uvicorn directly is usually not the preffered production configuration.
+
+#### 3. VPS and Cloud
+
+A VPS can be considered a basic cloud infrastructure service.
+
+With a VPS, the provider gives you a virtual machine, 
+but you generally manage the operating system and software yourself.
+
+The term *cloud* is broader. It can include:
+
+- virtual machines,
+- managed databases,
+- object storage,
+- load balancers,
+- container platforms,
+- serverless applications,
+- Kubernetes clusters,
+- monitoring and backup services.
+
+Therefore, a VPS is one type of cloud resource,
+while a cloud platform provides a wider collection of infrastructures and managed services.
+
+#### 4. Public IP Address
+
+A public IP address identifies a server on the Internet: 
+
+```
+Client
+  ↓
+203.0.113.10
+  ↓
+ VPS
+```
+
+An application can be accesed directly through this address without DNS.
+This is sufficient for testing or a simple deployment, 
+but IP addresses are less convenient than domain names.
+
+#### 5. Domain; DNS = Domain Name System
+
+A *domain name* is a human-readable name such as `api.example.com`.
+
+A domain is normally registered through a domain registrar and renewed periodically.
+
+*Domain Name System (DNS)* connects the domain name to the server's IP address:
+
+```
+api.example.com
+  ↓ 
+ DNS
+  ↓ 
+203.0.113.10
+```
+
+#### 6. HTTPS and TLS
+
+HTTPS is HTTP protected by TLS.
+
+TLS provides:
+
+- encryption,
+- server authentication,
+- protection against modification of transmitted data.
+
+To provide HTTPS, the server needs a TLS certificate.
+The certificate proves that the server is authorized to use a particular domain name or IP address.
+
+#### 7. CA = Certificate Authority: Let's Encrypt
+
+*Let's Encrypt* is a free, automated, public Certificate Authority.
+
+It issues TLS certificates through the ACME protocol.
+The certificate-issuance process is separated from normal HTTPS traffic.
+After the certificate has been issued, Let's Encrypt is no longer involved in each client request.
+The browser validates the certificate using the trusted CA chain.
+
+For a domain certificate, Let's Encrypt verifies that the requester controls the domain.
+
+A domain is no longer strictly required for every Let's Encrypt certificate.
+As of 2026, Let's Encrypt also provides publicly trusted certificates for IP addresses.
+These certificates are short-lived (about six days).
+
+However,  a domain remains the usual and more convenient production choice 
+because it provides a stable public name independent of the underlying server address.
+
+#### 8. Traefik
+
+*Traefik* is an application reverse proxy and load balancer.
+
+(*Reverse Proxy* represents the server while *Forward Proxy* represents the client.)
+
+It is an independent infrastructure program written in Go.
+
+Traefik combines three main roles:
+
+- *Application Proxy*:
+  - Routes HTTP requests to the appropriate application or service.
+
+- *Reverse Proxy*:
+  - Accepts public HTTP and HTTPS connections;
+  - Terminates TLS;
+  - Obtains and renews TLS certificates;
+  - Redirect HTTP to HTTPS.
+
+- *Load Balancer*:
+  - Distributes requests among multiple application instancies.
+
+Traefik includes support for separate, automatic certificate management through ACME providers such as Let's Encrypt:
+
+```
+Traefik
+  ↓  ACME request
+Let's Encrypt
+  ↓  certificate
+Traefik
+```
+
+After the certificate has been issued:
+
+```
+Browser
+  ↓ HTTPS
+Traefik
+```
+
+### 9. TLS Termination
+
+In a common deployment, Traefik handles TLS instead of FastAPI or Uvicorn:
+
+```
+Browser 
+  ↓  HTTPS
+Traefik 
+  ↓  HTTP
+Uvicorn and FastAPI
+```
+
+Traefik decrypts the HTTPS connection. This is called *TLS termination*.
+
+The internal request from Traefik to Uvicorn may use ordinary HTTP 
+when both services communicate through a private network on the same machine or 
+within the same container environment.
+
+As a result, the FastAPI application usually requires no TLS-specific application code.
+
+Proxy headers may still need to be trusted and processed 
+so that FastAPI knows the original client protocol, host, and address.
+
+#### 10. Docker Containers
+
+Traefik and FastAPI commonly run in separate containers:
+
+```
+Docker host
+|-- Traefik container
+|-- Uvicorn and FastAPI container
+|-- PostgreSQL container
+|-- Redis container
+```
+
+This separates responsibilities:
+
+- Traefik handles external networking and HTTPS.
+- FastAPI handles application logic.
+- PostgreSQL stores persistent data.
+- Redis may provide caching or shared state.
+
+*Docker Compose* normally creates a project network and connects the services to it.
+Containers on that network can communicate through service names rather than fixed container IP addresses.
+
+#### 11. Load Balancing
+
+Traefik can distribute requests among several FastAPI containers.
+The application instances should therefore be mostly stateless.
+Shared data should not be stored only in process-local variables.
+
+Use shared external storage instead:
+- PostgreSQL,
+- Redis,
+- object storage,
+- message brokers.
+
+#### 12. Complete Production Flow
+
+A typical small production deployment looks like this:
+
+```
+https://api.example.com
+  ↓  
+ DNS
+  ↓
+Public IP address
+  ↓
+VPS / cloud virtual machine
+  ↓
+Traefik container
+  ↓ private HTTP
+Uvicorn and FastAPI container
+  ↓
+PostgreSQL container
+```
+
+Certificate management happens separately:
+
+```
+Traefik
+  ↓  ACME request
+Let's Encrypt
+  ↓  certificate
+Traefik
+```
+
+Responsibilities:
+
+- *VPS*: 
+  Runs the operating system and application infrastructure
+
+- *Public IP*:
+  Makes the server reachable over the Internet
+
+- *Domain*:
+  Provides a stable, readable application name
+
+- *DNS*:
+  Maps the domain to the public IP address
+
+- *Let's Encrypt*:
+  Issues trusted TLS certificates
+
+- *Traefik*:
+  Handles HTTPS, routing, and load balancing
+
+- *Uvicorn*:
+  Runs the ASGI application
+
+- *FastAPI*:
+  Implements API and business behavior
+
+- *Database*:
+  Stores shared persistent data
