@@ -642,7 +642,7 @@ After the certificate has been issued:
 
 ```
 Browser
-  ↓ HTTPS
+  ↓  HTTPS
 Traefik
 ```
 
