@@ -247,6 +247,34 @@ of the underlying storage (e.g., SQLite, PostgreSQL, REST API, file system).
     |-- Fake Repository
   ```
 
+#### Python Database Libraries
+
+- *SQLAlchemy* is the de facto standard for working with relational databases in Python.
+
+  - It provides both a low-level SQL toolkit (Core) and a full-featured *Object-Relational Mapper (ORM)*.
+  
+  - SQLAlchemy is the most widely used database library in the Python ecosystem and suitable for projects of any size.
+
+- *SQLModel* is a higher-level library build on top of SQLAlchemy and Pydantic by the creator of FastAPI.
+
+  - It reduces boilerplate by combining ORM models with data validation, 
+    making it especially convenient for small and medium-sized FastAPI projects.
+  
+  - Although very elegant, SQLModel is less widely adopted than SQLAlchemy 
+    because SQLAlchemy 2.x has become much simpler while continuing to evolve more rapidly.
+
+- Database drivers provide the low-level communication between Python and a specific database system 
+  and usually accessed indirectly through SQLALchemy or another database library.
+
+- *Alembic* is a standard database migration tool for SQLAlchemy.
+
+  - It manages schema changes over time by generating and applying versioned migration scripts.
+
+  - Alembic makes it possible to evolve a database safely without manually editing production schemas.
+  
+  - It has become the de facto standard for schema migrations in Python projects that use SQLAlchemy.
+
+
 ### Authentication and Authorization
 
 #### Authentication: Who Are You?
