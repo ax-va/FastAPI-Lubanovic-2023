@@ -338,7 +338,7 @@ https://fastapi.tiangolo.com/tutorial/security/
 
 #### DDoS = Distributed Denial-of-Service
 
-Distributed Denial-of-Service (DDoS) is an attack 
+*Distributed Denial-of-Service (DDoS)* is an attack 
 in which a large number of compromised computers or devices simultaneously send requests to a server.
 The goal is to overwhelm the server's resources and make the service unavailable to legitimate users.
 
@@ -533,7 +533,7 @@ The term *cloud* is broader. It can include:
 - object storage,
 - load balancers,
 - container platforms,
-- serverless applications,
+- serverless applications (on cloud-managed infrastructure without requiring developers to manage servers),
 - Kubernetes clusters,
 - monitoring and backup services.
 
@@ -587,7 +587,7 @@ The certificate proves that the server is authorized to use a particular domain 
 
 #### 7. CA = Certificate Authority: Let's Encrypt
 
-*Let's Encrypt* is a free, automated, public *Certificate Authority* (CA).
+*Let's Encrypt* is a free, automated, public *Certificate Authority (CA)*.
 
 It issues TLS certificates through the ACME protocol.
 The certificate-issuance process is separated from normal HTTPS traffic.
