@@ -691,12 +691,6 @@ This separates responsibilities:
 *Docker Compose* normally creates a project network and connects the services to it.
 Containers on that network can communicate through service names rather than fixed container IP addresses.
 
-See also:
-
-- https://fastapi.tiangolo.com/deployment/docker/
-
-- https://christophergs.com/tutorials/ultimate-fastapi-tutorial-pt-13-docker-deploy/
-
 #### 11. Load Balancing
 
 Traefik can distribute requests among several FastAPI containers.
@@ -776,3 +770,54 @@ Responsibilities:
 - *Database*:
   
   Stores shared persistent data
+
+#### 13. See Also
+
+- https://fastapi.tiangolo.com/deployment/docker/
+
+- https://christophergs.com/tutorials/ultimate-fastapi-tutorial-pt-13-docker-deploy/
+
+- https://www.tutorialspoint.com/fastapi/fastapi_deployment.htm
+
+- https://christophergs.com/tutorials/ultimate-fastapi-tutorial-pt-6b-linode-deploy-gunicorn-uvicorn-nginx/
+
+- https://sumanta9090.medium.com/deploying-a-fastapi-application-on-kubernetes-a-step-by-step-guide-for-production-d74faac4ca36
+
+### Links
+
+#### SQLite Query Optimizer
+
+- https://www.sqlite.org/optoverview.html
+
+#### Celery: Distributed Task Queue
+
+- https://docs.celeryq.dev/en/stable/
+
+#### Mojo
+
+- https://mojolang.org/
+
+
+#### Prometheus + FastAPI
+
+- https://prometheus.io/
+
+- https://github.com/trallnag/prometheus-fastapi-instrumentator
+
+- https://dev.to/ken_mwaura1/getting-started-monitoring-a-fastapi-app-with-grafana-and-prometheus-a-step-by-step-guide-3fbn
+
+#### Grafana + FastAPI
+
+- https://grafana.com/
+
+- https://grafana.com/grafana/dashboards/16110-fastapi-observability/
+
+#### OpenTelemetry + FastAPI
+
+- https://opentelemetry.io/
+
+- https://opentelemetry-python-contrib.readthedocs.io/en/latest/instrumentation/fastapi/fastapi.html
+
+- https://signoz.io/blog/opentelemetry-fastapi/
+
+- https://opentelemetry.io/docs/languages/python/
