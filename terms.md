@@ -254,6 +254,10 @@ of the underlying storage (e.g., SQLite, PostgreSQL, REST API, file system).
   - It provides both a low-level SQL toolkit (Core) and a full-featured *Object-Relational Mapper (ORM)*.
   
   - SQLAlchemy is the most widely used database library in the Python ecosystem and suitable for projects of any size.
+  
+  - SQLAlchemy Expression Language: https://www.tutorialspoint.com/sqlalchemy/sqlalchemy_core_expression_language.htm
+  
+  - ORM Quick Start: https://docs.sqlalchemy.org/en/20/orm/quickstart.html
 
 - *SQLModel* is a higher-level library build on top of SQLAlchemy and Pydantic by the creator of FastAPI.
 
