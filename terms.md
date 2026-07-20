@@ -691,6 +691,12 @@ This separates responsibilities:
 *Docker Compose* normally creates a project network and connects the services to it.
 Containers on that network can communicate through service names rather than fixed container IP addresses.
 
+See also:
+
+- https://fastapi.tiangolo.com/deployment/docker/
+
+- https://christophergs.com/tutorials/ultimate-fastapi-tutorial-pt-13-docker-deploy/
+
 #### 11. Load Balancing
 
 Traefik can distribute requests among several FastAPI containers.
