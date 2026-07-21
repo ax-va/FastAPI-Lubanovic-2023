@@ -1,0 +1,85 @@
+from fastapi import APIRouter, HTTPException, Depends
+
+from app.models.explorers import ExplorerRequest, ExplorerResponse
+from app.models.users import UserResponse
+from app.services import explorers
+from app.services.errors import NotFoundError
+from app.web.deps.auth import get_current_user
+from app.web.errors import resource_with_id_not_found
+from app.web.metadata import NOT_FOUND, UNAUTHORIZED
+
+service = explorers
+router = APIRouter(prefix="/explorers", tags=["Explorers"])
+
+
+# public API
+@router.get("")
+def get_all() -> list[ExplorerResponse]:
+    return service.get_all()
+
+
+# public API
+@router.get(
+    "/{explorer_id}",
+    responses=NOT_FOUND,
+)
+def get_by_id(explorer_id: int) -> ExplorerResponse:
+    explorer = service.get_by_id(explorer_id)
+
+    if explorer is None:
+        raise resource_with_id_not_found(f"Explorer with ID {explorer_id} not found")
+
+    return explorer
+
+
+# API for only authenticated users
+@router.post(
+    "",
+    status_code=201,  # 201 Created
+    responses=UNAUTHORIZED,
+)
+def create(
+    explorer: ExplorerRequest,
+    _: UserResponse = Depends(get_current_user),
+) -> ExplorerResponse:
+    return service.create(explorer)
+
+
+# API for only authenticated users
+@router.put(
+    "/{explorer_id}",
+    responses=UNAUTHORIZED | NOT_FOUND,
+)
+def replace(
+    explorer_id: int,
+    explorer: ExplorerRequest,
+    _: UserResponse = Depends(get_current_user),
+) -> ExplorerResponse:
+    try:
+        explorer = service.replace(explorer_id, explorer)
+
+    except NotFoundError as e:
+        raise resource_with_id_not_found(str(e))
+
+    return explorer
+
+
+@router.patch("/{explorer_id}")
+def modify(explorer_id: int) -> ExplorerResponse | None:
+    raise NotImplementedError()
+
+
+# API for only authenticated users
+@router.delete(
+    "/{explorer_id}",
+    responses=UNAUTHORIZED | NOT_FOUND,
+)
+def delete(
+    explorer_id: int,
+    _: UserResponse = Depends(get_current_user),
+) -> None:
+    try:
+        service.delete(explorer_id)
+
+    except NotFoundError as e:
+        raise resource_with_id_not_found(str(e))

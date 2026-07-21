@@ -102,3 +102,8 @@ JWT_SECRET_KEY=<secret-key>
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=15
 ```
+
+### Database
+```shell
+$ pip install SQLAlchemy
+```
