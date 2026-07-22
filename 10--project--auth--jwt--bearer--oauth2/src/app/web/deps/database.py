@@ -3,7 +3,6 @@ from typing import Annotated, Generator
 
 from fastapi import Depends
 
-from app.config import DATABASE_FILE
 from app.repositories.sqlite.database import connection_manager
 
 
