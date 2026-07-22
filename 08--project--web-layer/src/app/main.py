@@ -1,17 +1,16 @@
 from fastapi import FastAPI
 
 from app.repositories.sqlite import database as db
+from app.repositories.sqlite.database import connection_manager
 from app.web import creatures as creatures_web
 from app.web import explorers as explorers_web
 
-
-db.init()
-print("Database initialized")
+with connection_manager() as connection:
+    db.init(connection)
 
 app = FastAPI()
 app.include_router(creatures_web.router)
 app.include_router(explorers_web.router)
-print("App created")
 
 
 @app.get("/")

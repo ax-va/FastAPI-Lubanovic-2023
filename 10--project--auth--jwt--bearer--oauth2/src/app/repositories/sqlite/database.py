@@ -1,16 +1,28 @@
 import sqlite3
+from contextlib import contextmanager
 from sqlite3 import Connection
 from typing import Generator
 
 from app.config import DATABASE_FILE
 
 
-def init(database_file: str = DATABASE_FILE) -> None:
+@contextmanager
+def connection_manager(
+    database_file: str = DATABASE_FILE,
+) -> Generator[Connection, None, None]:
     connection = sqlite3.connect(
         database_file,
         check_same_thread=False,
     )
+    connection.row_factory = sqlite3.Row
 
+    try:
+        yield connection
+    finally:
+        connection.close()
+
+
+def init(connection: Connection) -> None:
     try:
         create_creatures_table(connection)
         create_explorers_table(connection)
@@ -22,26 +34,6 @@ def init(database_file: str = DATABASE_FILE) -> None:
 
     else:
         connection.commit()
-
-    finally:
-        connection.close()
-
-
-def get_connection(
-    database_file: str = DATABASE_FILE,
-) -> Generator[Connection, None, None]:
-    """Provides a database connection for a unit of work and close it afterwards."""
-    connection = sqlite3.connect(
-        database_file,
-        check_same_thread=False,
-    )
-    connection.row_factory = sqlite3.Row
-
-    try:
-        yield connection
-
-    finally:
-        connection.close()
 
 
 def create_creatures_table(connection: Connection) -> None:
