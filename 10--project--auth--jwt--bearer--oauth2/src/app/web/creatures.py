@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.models.creatures import CreatureRequest, CreatureResponse
 from app.services import creatures
 from app.services.errors import NotFoundError
+from app.web.deps.auth import CurrentUser
 from app.web.deps.database import DatabaseConnection
 from app.web.errors import resource_with_id_not_found
 
@@ -10,13 +11,14 @@ service = creatures
 router = APIRouter(prefix="/creatures", tags=["Creatures"])
 
 
+# public
 @router.get("")
 def get_all(
     connection: DatabaseConnection,
 ) -> list[CreatureResponse]:
     return service.get_all(connection)
 
-
+# public
 @router.get("/{creature_id}")
 def get_by_id(
     connection: DatabaseConnection,
@@ -34,6 +36,7 @@ def get_by_id(
 def create(
     connection: DatabaseConnection,
     creature: CreatureRequest,
+    _: CurrentUser,  # for authenticated users
 ) -> CreatureResponse:
     return service.create(connection, creature)
 
@@ -43,6 +46,7 @@ def replace(
     connection: DatabaseConnection,
     creature_id: int,
     creature: CreatureRequest,
+    _: CurrentUser,  # for authenticated users
 ) -> CreatureResponse:
     try:
         creature = service.replace(connection, creature_id, creature)
@@ -62,6 +66,7 @@ def modify(creature_id: int) -> CreatureResponse | None:
 def delete(
     connection: DatabaseConnection,
     creature_id: int,
+    _: CurrentUser,  # for authenticated users
 ) -> None:
     try:
         service.delete(connection, creature_id)

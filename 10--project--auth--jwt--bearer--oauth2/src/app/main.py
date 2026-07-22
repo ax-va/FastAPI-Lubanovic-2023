@@ -33,10 +33,10 @@ if __name__ == "__main__":
 
 
 """
-$ http $ http -b localhost:8000/explorers
+$ http -b localhost:8000/explorers
 []
 
-http -b localhost:8000/explorers name="Ax-Va" country="DE" description="The best German explorer"
+$ http -b localhost:8000/explorers name="Ax-Va" country="DE" description="The best German explorer"
 {
     "detail": "Not authenticated"
 }
@@ -76,26 +76,6 @@ description="FastAPI explorer"
 $ http -b localhost:8000/users/me "Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheC12YSIsImV4cCI6MTc4MzY3ODAzMH0.PQCGdqJYXLmWTW02liS3blTqSm_iK23C8LpDjxpONpA"
 {
     "detail": "Invalid or expired access token"
-}
-
-$ http -f localhost:8000/users/token username="ax-va" password="123"
-HTTP/1.1 200 OK
-content-length: 165
-content-type: application/json
-date: Fri, 10 Jul 2026 10:09:18 GMT
-server: uvicorn
-
-{
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheC12YSIsImV4cCI6MTc4MzY3OTA1OX0.EPeryjWN5RfcBc3SR9z3tlQ__mtIROVQXfGegSLdeIc",
-    "token_type": "bearer"
-}
-
-$ http -b localhost:8000/users/me "Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheC12YSIsImV4cCI6MTc4MzY3OTA1OX0.EPeryjWN5RfcBc3SR9z3tlQ__mtIROVQXfGegSLdeIc"
-{
-    "id": 2,
-    "is_active": true,
-    "is_admin": false,
-    "username": "ax-va"
 }
 
 $ http -b localhost:8000/users/2 "Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheC12YSIsImV4cCI6MTc4MzY3OTA1OX0.EPeryjWN5RfcBc3SR9z3tlQ__mtIROVQXfGegSLdeIc"

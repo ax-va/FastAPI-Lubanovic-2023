@@ -8,11 +8,9 @@ from app.repositories.sqlite.database import connection_manager
 
 
 # dependency
-def get_connection(
-    database_file: str = DATABASE_FILE,
-) -> Generator[Connection, None, None]:
+def get_connection() -> Generator[Connection, None, None]:
     """Provides a database connection for a unit of work and close it afterwards."""
-    with connection_manager(database_file) as connection:
+    with connection_manager() as connection:
         yield connection
 
 
