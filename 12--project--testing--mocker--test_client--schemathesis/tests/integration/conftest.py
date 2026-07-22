@@ -26,10 +26,11 @@ def test_app(
     # Add to the `dependency_overrides` dictionary
     app.dependency_overrides[get_connection] = fake_connection
 
-    yield app
-
-    # Pop from the `dependency_overrides` dictionary
-    app.dependency_overrides.pop(get_connection, None)
+    try:
+        yield app
+    finally:
+        # Pop from the `dependency_overrides` dictionary
+        app.dependency_overrides.pop(get_connection, None)
 
 
 @pytest.fixture
@@ -55,10 +56,11 @@ def user_client(
     # Add to the `dependency_overrides` dictionary
     test_app.dependency_overrides[get_current_user] = fake_current_user
 
-    with TestClient(test_app) as client:
-        # Authentication is bypassed by overriding `get_current_user`.
-        # Requests don't require an Authorization header or JWT token.
-        yield client
-
-    # Pop from the `dependency_overrides` dictionary
-    test_app.dependency_overrides.pop(get_current_user, None)
+    try:
+        with TestClient(test_app) as client:
+            # Authentication is bypassed by overriding `get_current_user`.
+            # Requests don't require an Authorization header or JWT token.
+            yield client
+    finally:
+        # Pop from the `dependency_overrides` dictionary
+        test_app.dependency_overrides.pop(get_current_user, None)
