@@ -1,5 +1,6 @@
+from sqlite3 import Connection
+
 from app.models.creatures import CreatureRequest, CreatureResponse
-from . import database as db
 
 
 def to_model(row: tuple) -> CreatureResponse:
@@ -20,44 +21,51 @@ def to_dict(creature: CreatureRequest) -> dict:
     return creature.model_dump()
 
 
-def get_by_id(creature_id: int) -> CreatureResponse | None:
+def get_by_id(
+    connection: Connection,
+    creature_id: int,
+) -> CreatureResponse | None:
     query = "SELECT * FROM creatures WHERE id = :id"
     values = {"id": creature_id}
-    cursor = db.conn.cursor()
+    cursor = connection.cursor()
     cursor.execute(query, values)
     row = cursor.fetchone()
 
     return to_model(row) if row else None
 
 
-def get_all() -> list[CreatureResponse]:
+def get_all(connection: Connection) -> list[CreatureResponse]:
     query = "SELECT * FROM creatures"
-    cursor = db.conn.cursor()
+    cursor = connection.cursor()
     cursor.execute(query)
 
     return [to_model(row) for row in cursor.fetchall()]
 
 
-def create(creature: CreatureRequest) -> int:
+def create(
+    connection: Connection,
+    creature: CreatureRequest,
+) -> int:
     query = (
         "INSERT INTO creatures (name, country, area, description, aka) "
         "VALUES (:name, :country, :area, :description, :aka)"
     )
     values = to_dict(creature)
-    cursor = db.conn.cursor()
+    cursor = connection.cursor()
     cursor.execute(query, values)
 
     created_id: int | None = cursor.lastrowid
     if created_id is None:
-        db.conn.rollback()
         raise RuntimeError(f"Creature ID was not returned")
-
-    db.conn.commit()
 
     return created_id
 
 
-def replace(creature_id: int, creature: CreatureRequest) -> None:
+def replace(
+    connection: Connection,
+    creature_id: int,
+    creature: CreatureRequest,
+) -> None:
     query = (
         "UPDATE creatures "
         "SET name = :name, "
@@ -69,24 +77,21 @@ def replace(creature_id: int, creature: CreatureRequest) -> None:
     )
     values = to_dict(creature)
     values["creature_id"] = creature_id
-    cursor = db.conn.cursor()
+    cursor = connection.cursor()
     cursor.execute(query, values)
 
     if cursor.rowcount == 0:
-        db.conn.rollback()
         raise RuntimeError(f"Creature with ID {creature_id} not updated")
 
-    db.conn.commit()
 
-
-def delete(creature_id: int) -> None:
+def delete(
+    connection: Connection,
+    creature_id: int,
+) -> None:
     query = "DELETE FROM creatures WHERE id = :id"
     values = {"id": creature_id}
-    cursor = db.conn.cursor()
+    cursor = connection.cursor()
     cursor.execute(query, values)
 
     if cursor.rowcount == 0:
-        db.conn.rollback()
         raise RuntimeError(f"Creature with ID {creature_id} not deleted")
-
-    db.conn.commit()

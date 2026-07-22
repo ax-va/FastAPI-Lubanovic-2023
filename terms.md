@@ -247,7 +247,7 @@ of the underlying storage (e.g., SQLite, PostgreSQL, REST API, file system).
     |-- Fake Repository
   ```
 
-#### Python Database Libraries
+#### Python Relational Database Libraries
 
 - *SQLAlchemy* is the de facto standard for working with relational databases in Python.
 
@@ -277,7 +277,6 @@ of the underlying storage (e.g., SQLite, PostgreSQL, REST API, file system).
   - Alembic makes it possible to evolve a database safely without manually editing production schemas.
   
   - It has become the de facto standard for schema migrations in Python projects that use SQLAlchemy.
-
 
 ### Authentication and Authorization
 

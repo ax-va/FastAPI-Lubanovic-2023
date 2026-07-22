@@ -5,7 +5,8 @@ from app.auth import access_tokens
 from app.models.users import UserToCreateRequest, UserResponse, UserToReplaceRequest
 from app.services import users as users_service
 from app.services.errors import LastAdminError, NotFoundError, DuplicateError
-from app.web.deps.auth import get_current_user, get_current_admin, reject_authenticated_user
+from app.web.deps.auth import require_anonymous_user, CurrentUser, CurrentAdmin
+from app.web.deps.database import DatabaseConnection
 from app.web.errors import resource_with_id_not_found
 
 service = users_service
@@ -16,12 +17,15 @@ router = APIRouter(prefix="/users", tags=["Users"])
 # Clients send username and password here to obtain an access token.
 @router.post("/token")
 def create_access_token(
+    connection: DatabaseConnection,
     form_data: OAuth2PasswordRequestForm = Depends(),
 ) -> dict:
     """Authenticates a user and returns a JWT access token."""
 
     is_verified: bool = service.verify_credentials(
-        form_data.username, form_data.password
+        connection,
+        form_data.username,
+        form_data.password
     )
 
     if not is_verified:
@@ -48,7 +52,7 @@ def create_access_token(
 # API for only authenticated users
 @router.get("/me")
 def get_me(
-    user: UserResponse = Depends(get_current_user)
+    user: CurrentUser
 ) -> UserResponse:
     return user
 
@@ -56,14 +60,15 @@ def get_me(
 # API only for authenticated admins
 @router.patch("/{user_id}/grant-admin")
 def grant_admin(
+    connection: DatabaseConnection,
     user_id: int,
-    _: UserResponse = Depends(get_current_admin),
+    _: CurrentAdmin,
 ) -> UserResponse:
     try:
-        user: UserResponse = service.set_admin(user_id, True)
+        user: UserResponse = service.set_admin(connection, user_id, True)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e))
+        raise resource_with_id_not_found(str(e)) from e
 
     return user
 
@@ -71,20 +76,21 @@ def grant_admin(
 # API only for authenticated admins
 @router.patch("/{user_id}/revoke-admin")
 def revoke_admin(
+    connection: DatabaseConnection,
     user_id: int,
-    _: UserResponse = Depends(get_current_admin),
+    _: CurrentAdmin,
 ) -> UserResponse:
     try:
-        user: UserResponse = service.set_admin(user_id, False)
+        user: UserResponse = service.set_admin(connection, user_id, False)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e))
+        raise resource_with_id_not_found(str(e)) from e
 
     except LastAdminError as e:
         raise HTTPException(
             status_code=409,
             detail=str(e),
-        )
+        ) from e
 
     return user
 
@@ -93,9 +99,10 @@ def revoke_admin(
 @router.get("")
 @router.get("/{user_id}")
 def get(
+    connection: DatabaseConnection,
+    _: CurrentAdmin,
     user_id: int | None = None,  # example: `GET /users/1`
     username: str | None = Query(default=None, min_length=1),  # example: `GET /users?useranme=Alice`
-    _: UserResponse = Depends(get_current_admin),
 ) -> UserResponse | list[UserResponse]:
     if user_id is not None and username is not None:
         raise HTTPException(
@@ -104,7 +111,7 @@ def get(
         )
 
     if user_id is not None:
-        user: UserResponse | None = service.get_by_id(user_id)
+        user: UserResponse | None = service.get_by_id(connection, user_id)
 
         if user is None:
             raise resource_with_id_not_found(f"User with ID {user_id} not found")
@@ -112,7 +119,7 @@ def get(
         return user
 
     elif username is not None:
-        user: UserResponse | None = service.get_by_username(username)
+        user: UserResponse | None = service.get_by_username(connection, username)
 
         if user is None:
             raise resource_with_id_not_found(f"User with username {username!r} not found")
@@ -120,7 +127,7 @@ def get(
         return user
 
     else:
-        users: list[UserResponse] = service.get_all()
+        users: list[UserResponse] = service.get_all(connection)
         return users
 
 
@@ -130,17 +137,18 @@ def get(
     status_code=201,  # 201 Created
 )
 def create(
+    connection: DatabaseConnection,
     user: UserToCreateRequest,
-    _: None = Depends(reject_authenticated_user)
+    _: None = Depends(require_anonymous_user)
 ) -> UserResponse:
     try:
-        user: UserResponse = service.create(user)
+        user: UserResponse = service.create(connection, user)
 
     except DuplicateError as e:
         raise HTTPException(
             status_code=409,
             detail=str(e),
-        )
+        ) from e
 
     return user
 
@@ -148,21 +156,22 @@ def create(
 # API only for authenticated admins
 @router.put("/{user_id}")
 def replace(
+    connection: DatabaseConnection,
     user_id: int,
     user: UserToReplaceRequest,
-    _: UserResponse = Depends(get_current_admin),
+    _: CurrentAdmin,
 ) -> UserResponse:
     try:
-        user: UserResponse = service.replace(user_id, user)
+        user: UserResponse = service.replace(connection, user_id, user)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e))
+        raise resource_with_id_not_found(str(e)) from e
 
     except DuplicateError as e:
         raise HTTPException(
             status_code=409,
             detail=str(e),
-        )
+        ) from e
 
     return user
 
@@ -175,35 +184,37 @@ def replace(
 # API for only authenticated users
 @router.delete("/me")
 def delete_me(
-    user: UserResponse = Depends(get_current_user)
+    connection: DatabaseConnection,
+    user: CurrentUser,
 ) -> None:
     try:
-        service.delete(user.id)
+        service.delete(connection, user.id)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e))
+        raise resource_with_id_not_found(str(e)) from e
 
     except LastAdminError as e:
         raise HTTPException(
             status_code=409,
             detail=str(e),
-        )
+        ) from e
 
 
 # API only for authenticated admins
 @router.delete("/{user_id}")
 def delete(
+    connection: DatabaseConnection,
     user_id: int,
-    _: UserResponse = Depends(get_current_admin),
+    _: CurrentAdmin,
 ) -> None:
     try:
-        service.delete(user_id)
+        service.delete(connection, user_id)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e))
+        raise resource_with_id_not_found(str(e)) from e
 
     except LastAdminError as e:
         raise HTTPException(
             status_code=409,
             detail=str(e),
-        )
+        ) from e

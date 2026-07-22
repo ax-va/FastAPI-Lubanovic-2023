@@ -1,26 +1,27 @@
-from fastapi import APIRouter, HTTPException, Depends
-
+from fastapi import APIRouter
 from app.models.explorers import ExplorerRequest, ExplorerResponse
-from app.models.users import UserResponse
 from app.services import explorers
 from app.services.errors import NotFoundError
-from app.web.deps.auth import get_current_user
+from app.web.deps.database import DatabaseConnection
 from app.web.errors import resource_with_id_not_found
 
 service = explorers
 router = APIRouter(prefix="/explorers", tags=["Explorers"])
 
 
-# public API
 @router.get("")
-def get_all() -> list[ExplorerResponse]:
-    return service.get_all()
+def get_all(
+    connection: DatabaseConnection,
+) -> list[ExplorerResponse]:
+    return service.get_all(connection)
 
 
-# public API
 @router.get("/{explorer_id}")
-def get_by_id(explorer_id: int) -> ExplorerResponse:
-    explorer = service.get_by_id(explorer_id)
+def get_by_id(
+    connection: DatabaseConnection,
+    explorer_id: int,
+) -> ExplorerResponse:
+    explorer = service.get_by_id(connection, explorer_id)
 
     if explorer is None:
         raise resource_with_id_not_found(f"Explorer with ID {explorer_id} not found")
@@ -28,24 +29,22 @@ def get_by_id(explorer_id: int) -> ExplorerResponse:
     return explorer
 
 
-# API for only authenticated users
 @router.post("", status_code=201)  # 201 Created
 def create(
+    connection: DatabaseConnection,
     explorer: ExplorerRequest,
-    _: UserResponse = Depends(get_current_user),
 ) -> ExplorerResponse:
-    return service.create(explorer)
+    return service.create(connection, explorer)
 
 
-# API for only authenticated users
 @router.put("/{explorer_id}")
 def replace(
+    connection: DatabaseConnection,
     explorer_id: int,
     explorer: ExplorerRequest,
-    _: UserResponse = Depends(get_current_user),
 ) -> ExplorerResponse:
     try:
-        explorer = service.replace(explorer_id, explorer)
+        explorer = service.replace(connection, explorer_id, explorer)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e))
@@ -58,14 +57,13 @@ def modify(explorer_id: int) -> ExplorerResponse | None:
     raise NotImplementedError()
 
 
-# API for only authenticated users
 @router.delete("/{explorer_id}")
 def delete(
+    connection: DatabaseConnection,
     explorer_id: int,
-    _: UserResponse = Depends(get_current_user),
 ) -> None:
     try:
-        service.delete(explorer_id)
+        service.delete(connection, explorer_id)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e))

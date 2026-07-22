@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
 from app.models.explorers import ExplorerRequest, ExplorerResponse
 from app.services import explorers
 from app.services.errors import NotFoundError
+from app.web.deps.database import DatabaseConnection
 from app.web.errors import resource_with_id_not_found
 
 service = explorers
@@ -10,13 +11,18 @@ router = APIRouter(prefix="/explorers", tags=["Explorers"])
 
 
 @router.get("")
-def get_all() -> list[ExplorerResponse]:
-    return service.get_all()
+def get_all(
+    connection: DatabaseConnection,
+) -> list[ExplorerResponse]:
+    return service.get_all(connection)
 
 
 @router.get("/{explorer_id}")
-def get_by_id(explorer_id: int) -> ExplorerResponse:
-    explorer = service.get_by_id(explorer_id)
+def get_by_id(
+    connection: DatabaseConnection,
+    explorer_id: int,
+) -> ExplorerResponse:
+    explorer = service.get_by_id(connection, explorer_id)
 
     if explorer is None:
         raise resource_with_id_not_found(f"Explorer with ID {explorer_id} not found")
@@ -25,17 +31,24 @@ def get_by_id(explorer_id: int) -> ExplorerResponse:
 
 
 @router.post("", status_code=201)  # 201 Created
-def create(explorer: ExplorerRequest) -> ExplorerResponse:
-    return service.create(explorer)
+def create(
+    connection: DatabaseConnection,
+    explorer: ExplorerRequest,
+) -> ExplorerResponse:
+    return service.create(connection, explorer)
 
 
 @router.put("/{explorer_id}")
-def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
+def replace(
+    connection: DatabaseConnection,
+    explorer_id: int,
+    explorer: ExplorerRequest,
+) -> ExplorerResponse:
     try:
-        explorer = service.replace(explorer_id, explorer)
+        explorer = service.replace(connection, explorer_id, explorer)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e))
+        raise resource_with_id_not_found(str(e)) from e
 
     return explorer
 
@@ -46,9 +59,12 @@ def modify(explorer_id: int) -> ExplorerResponse | None:
 
 
 @router.delete("/{explorer_id}")
-def delete(explorer_id: int) -> None:
+def delete(
+    connection: DatabaseConnection,
+    explorer_id: int,
+) -> None:
     try:
-        service.delete(explorer_id)
+        service.delete(connection, explorer_id)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e))
+        raise resource_with_id_not_found(str(e)) from e

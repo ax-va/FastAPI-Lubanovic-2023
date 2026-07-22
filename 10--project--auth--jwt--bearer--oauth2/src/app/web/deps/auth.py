@@ -1,7 +1,10 @@
+from typing import Annotated
+
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
 from app.models.users import UserResponse
+from app.web.deps.database import DatabaseConnection
 
 # Dependency extracts the Bearer token from the Authorization header
 access_token_scheme = OAuth2PasswordBearer(tokenUrl="/users/token")  # absence of a token -> 401
@@ -10,11 +13,12 @@ optional_access_token_scheme = OAuth2PasswordBearer(tokenUrl="/users/token", aut
 
 # dependency
 def get_current_user(
+    connection: DatabaseConnection,
     token: str = Depends(access_token_scheme),
 ) -> UserResponse:
     from app.web.users import service
 
-    user = service.get_by_token(token)
+    user = service.get_by_token(connection, token)
 
     if user is None:
         raise HTTPException(
@@ -33,7 +37,8 @@ def get_current_user(
 
 
 # dependency
-def reject_authenticated_user(
+def require_anonymous_user(
+    connection: DatabaseConnection,
     token: str | None = Depends(optional_access_token_scheme),
 ) -> None:
     from app.web.users import service
@@ -41,7 +46,7 @@ def reject_authenticated_user(
     if token is None:
         return
 
-    user = service.get_by_token(token)
+    user = service.get_by_token(connection, token)
 
     if user is None:
         raise HTTPException(
@@ -52,7 +57,7 @@ def reject_authenticated_user(
 
     raise HTTPException(
         status_code=403,
-        detail="Authenticated user cannot  register another account",
+        detail="Authenticated user cannot register another account",
     )
 
 
@@ -67,3 +72,13 @@ def get_current_admin(
         )
 
     return user
+
+
+CurrentUser = Annotated[
+    UserResponse,
+    Depends(get_current_user),
+]
+CurrentAdmin = Annotated[
+    UserResponse,
+    Depends(get_current_admin),
+]

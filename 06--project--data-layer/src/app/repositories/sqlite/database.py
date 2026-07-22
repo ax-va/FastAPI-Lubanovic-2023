@@ -1,30 +1,50 @@
 import sqlite3
 from sqlite3 import Connection
+from typing import Generator
 
 from app.config import DATABASE_FILE
 
-conn: Connection
+
+def init(database_file: str = DATABASE_FILE) -> None:
+    connection = sqlite3.connect(
+        database_file,
+        check_same_thread=False,
+    )
+
+    try:
+        create_creatures_table(connection)
+        create_explorers_table(connection)
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    else:
+        connection.commit()
+
+    finally:
+        connection.close()
 
 
-def init() -> None:
-    create_creatures_table()
-    create_explorers_table()
-    conn.commit()
-
-
-def connect(database_file: str = DATABASE_FILE) -> Connection:
-    connection = sqlite3.connect(database_file, check_same_thread=False)
+def get_connection(
+    database_file: str = DATABASE_FILE,
+) -> Generator[Connection, None, None]:
+    """Provides a database connection for a unit of work and close it afterwards."""
+    connection = sqlite3.connect(
+        database_file,
+        check_same_thread=False,
+    )
     connection.row_factory = sqlite3.Row
-    return connection
+
+    try:
+        yield connection
+
+    finally:
+        connection.close()
 
 
-def disconnect() -> None:
-    conn.cursor().close()
-    conn.close()
-
-
-def create_creatures_table() -> None:
-    conn.cursor().execute(
+def create_creatures_table(connection: Connection) -> None:
+    connection.execute(
         "CREATE TABLE IF NOT EXISTS creatures ("
         "   id INTEGER PRIMARY KEY, "
         "   name TEXT NOT NULL, "
@@ -36,8 +56,8 @@ def create_creatures_table() -> None:
     )
 
 
-def create_explorers_table() -> None:
-    conn.cursor().execute(
+def create_explorers_table(connection: Connection) -> None:
+    connection.execute(
         "CREATE TABLE IF NOT EXISTS explorers ("
         "   id INTEGER PRIMARY KEY, "
         "   name TEXT NOT NULL, "
@@ -45,6 +65,3 @@ def create_explorers_table() -> None:
         "   description TEXT"
         ")"
     )
-
-
-conn = connect()

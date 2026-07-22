@@ -1,5 +1,6 @@
+from sqlite3 import Connection
+
 from app.models.explorers import ExplorerRequest, ExplorerResponse
-from . import database as db
 
 
 def to_model(row: tuple) -> ExplorerResponse:
@@ -18,44 +19,51 @@ def to_dict(explorer: ExplorerRequest) -> dict:
     return explorer.model_dump()
 
 
-def get_by_id(explorer_id: int) -> ExplorerResponse | None:
+def get_by_id(
+    connection: Connection,
+    explorer_id: int,
+) -> ExplorerResponse | None:
     query = "SELECT * FROM explorers WHERE id = :id"
     values = {"id": explorer_id}
-    cursor = db.conn.cursor()
+    cursor = connection.cursor()
     cursor.execute(query, values)
     row = cursor.fetchone()
 
     return to_model(row) if row else None
 
 
-def get_all() -> list[ExplorerResponse]:
+def get_all(connection: Connection) -> list[ExplorerResponse]:
     query = "SELECT * FROM explorers"
-    cursor = db.conn.cursor()
+    cursor = connection.cursor()
     cursor.execute(query)
     
     return [to_model(row) for row in cursor.fetchall()]
 
 
-def create(explorer: ExplorerRequest) -> int:
+def create(
+    connection: Connection,
+    explorer: ExplorerRequest,
+) -> int:
     query = (
         "INSERT INTO explorers (name, country, description) "
         "VALUES (:name, :country, :description)"
     )
     values = to_dict(explorer)
-    cursor = db.conn.cursor()
+    cursor = connection.cursor()
     cursor.execute(query, values)
 
     creature_id: int | None = cursor.lastrowid
     if creature_id is None:
-        db.conn.rollback()
         raise RuntimeError(f"Explorer ID was not returned")
-
-    db.conn.commit()
 
     return creature_id
 
 
-def replace(explorer_id: int, explorer: ExplorerRequest) -> None:
+def replace(
+    connection: Connection,
+    explorer_id: int,
+    explorer: ExplorerRequest,
+) -> None:
     query = (
         "UPDATE explorers "
         "SET name=:name, "
@@ -65,24 +73,21 @@ def replace(explorer_id: int, explorer: ExplorerRequest) -> None:
     )
     values = to_dict(explorer)
     values["explorer_id"] = explorer_id
-    cursor = db.conn.cursor()
+    cursor = connection.cursor()
     cursor.execute(query, values)
 
     if cursor.rowcount == 0:
-        db.conn.rollback()
         raise RuntimeError(f"Explorer with ID {explorer_id} not updated")
 
-    db.conn.commit()
 
-
-def delete(explorer_id: int) -> None:
+def delete(
+    connection: Connection,
+    explorer_id: int,
+) -> None:
     query = "DELETE FROM explorers WHERE id = :id"
     values = {"id": explorer_id}
-    cursor = db.conn.cursor()
+    cursor = connection.cursor()
     cursor.execute(query, values)
 
     if cursor.rowcount == 0:
-        db.conn.rollback()
         raise RuntimeError(f"Explorer with ID {explorer_id} not deleted")
-
-    db.conn.commit()
