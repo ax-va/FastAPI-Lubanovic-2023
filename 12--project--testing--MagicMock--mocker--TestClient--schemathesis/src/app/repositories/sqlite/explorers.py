@@ -1,17 +1,11 @@
-from sqlite3 import Connection
+from sqlite3 import Connection, Row
 
-from app.models.explorers import ExplorerRequest, ExplorerResponse
+from app.models.schemas.explorers import ExplorerRequest, ExplorerResponse
 
 
-def to_model(row: tuple) -> ExplorerResponse:
+def to_response(row: Row) -> ExplorerResponse:
     """Converts a tuple returned by a `fetch` function to a model object."""
-    explorer_id, name, country, description = row
-    return ExplorerResponse(
-        id=explorer_id,
-        name=name,
-        country=country,
-        description=description,
-    )
+    return ExplorerResponse(**dict(row))
 
 
 def to_dict(explorer: ExplorerRequest) -> dict:
@@ -20,36 +14,36 @@ def to_dict(explorer: ExplorerRequest) -> dict:
 
 
 def get_by_id(
-    connection: Connection,
+    db_connection: Connection,
     explorer_id: int,
 ) -> ExplorerResponse | None:
     query = "SELECT * FROM explorers WHERE id = :id"
     values = {"id": explorer_id}
-    cursor = connection.cursor()
+    cursor = db_connection.cursor()
     cursor.execute(query, values)
     row = cursor.fetchone()
 
-    return to_model(row) if row else None
+    return to_response(row) if row else None
 
 
-def get_all(connection: Connection) -> list[ExplorerResponse]:
+def get_all(db_connection: Connection) -> list[ExplorerResponse]:
     query = "SELECT * FROM explorers"
-    cursor = connection.cursor()
+    cursor = db_connection.cursor()
     cursor.execute(query)
     
-    return [to_model(row) for row in cursor.fetchall()]
+    return [to_response(row) for row in cursor.fetchall()]
 
 
 def create(
-    connection: Connection,
-    explorer: ExplorerRequest,
+    db_connection: Connection,
+    explorer_request: ExplorerRequest,
 ) -> int:
     query = (
         "INSERT INTO explorers (name, country, description) "
         "VALUES (:name, :country, :description)"
     )
-    values = to_dict(explorer)
-    cursor = connection.cursor()
+    values = to_dict(explorer_request)
+    cursor = db_connection.cursor()
     cursor.execute(query, values)
 
     creature_id: int | None = cursor.lastrowid
@@ -60,9 +54,9 @@ def create(
 
 
 def replace(
-    connection: Connection,
+    db_connection: Connection,
     explorer_id: int,
-    explorer: ExplorerRequest,
+    explorer_request: ExplorerRequest,
 ) -> None:
     query = (
         "UPDATE explorers "
@@ -71,9 +65,9 @@ def replace(
         "    description=:description "
         "WHERE id=:explorer_id"
     )
-    values = to_dict(explorer)
+    values = to_dict(explorer_request)
     values["explorer_id"] = explorer_id
-    cursor = connection.cursor()
+    cursor = db_connection.cursor()
     cursor.execute(query, values)
 
     if cursor.rowcount == 0:
@@ -81,12 +75,12 @@ def replace(
 
 
 def delete(
-    connection: Connection,
+    db_connection: Connection,
     explorer_id: int,
 ) -> None:
     query = "DELETE FROM explorers WHERE id = :id"
     values = {"id": explorer_id}
-    cursor = connection.cursor()
+    cursor = db_connection.cursor()
     cursor.execute(query, values)
 
     if cursor.rowcount == 0:

@@ -3,14 +3,14 @@ from typing import Annotated, Generator
 
 from fastapi import Depends
 
-from app.repositories.sqlite.database import connection_manager
+from app.repositories.sqlite import database as db
 
 
 # dependency
 def get_connection() -> Generator[Connection, None, None]:
     """Provides a database connection for a unit of work and close it afterwards."""
-    with connection_manager() as connection:
-        yield connection
+    with db.connect() as db_connection:
+        yield db_connection
 
 
 DatabaseConnection = Annotated[

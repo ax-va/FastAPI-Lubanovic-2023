@@ -3,7 +3,7 @@ from sqlite3 import Connection
 import pytest
 from fastapi.testclient import TestClient
 
-from app.models.creatures import CreatureRequest, CreatureResponse
+from app.models.schemas.creatures import CreatureRequest, CreatureResponse
 from tests.samples.creatures import (
     yeti_response,
     bigfoot_response,

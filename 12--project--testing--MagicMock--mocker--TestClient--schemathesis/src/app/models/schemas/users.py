@@ -12,14 +12,14 @@ class UserToReplaceRequest(BaseModel):
     is_active: bool
 
 
-class UserToDB(BaseModel):
+class UserToRepo(BaseModel):
     username: str
     password_hash: str
     is_active: bool
     is_admin: bool
 
 
-class UserFromDB(BaseModel):
+class UserFromRepo(BaseModel):
     id: int
     username: str
     password_hash: str

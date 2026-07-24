@@ -1,4 +1,4 @@
-from app.models.errors import NotFoundResponse, UnauthorizedResponse, BadRequestResponse, ConflictResponse
+from app.models.schemas.errors import NotFoundResponse, UnauthorizedResponse, BadRequestResponse, ConflictResponse
 
 BAD_REQUEST = {
     400: {

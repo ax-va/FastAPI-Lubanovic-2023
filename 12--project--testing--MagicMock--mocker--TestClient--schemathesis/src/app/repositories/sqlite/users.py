@@ -1,68 +1,61 @@
-from sqlite3 import IntegrityError, Connection
+from sqlite3 import IntegrityError, Connection, Row
 
-from app.models.users import UserToDB, UserFromDB
+from app.models.schemas.users import UserToRepo, UserFromRepo
 from ..errors import DuplicateError, INTEGRITY_ERROR_UNIQUE
 
 
-def to_model(row: tuple) -> UserFromDB:
-    user_id, username, password_hash, is_active, is_admin = row
-    return UserFromDB(
-        id=user_id,
-        username=username,
-        password_hash=password_hash,
-        is_active=is_active,
-        is_admin=is_admin,
-    )
+def to_from_repo(row: Row) -> UserFromRepo:
+    return UserFromRepo(**dict(row))
 
 
-def to_dict(user: UserToDB | UserFromDB) -> dict:
+def to_dict(user: UserToRepo | UserFromRepo) -> dict:
     return user.model_dump()
 
 
-def get_all(connection: Connection) -> list[UserFromDB]:
+def get_all(db_connection: Connection) -> list[UserFromRepo]:
     query = "SELECT * FROM users"
-    cursor = connection.cursor()
+    cursor = db_connection.cursor()
     cursor.execute(query)
 
-    return [to_model(row) for row in cursor.fetchall()]
+    return [to_from_repo(row) for row in cursor.fetchall()]
 
 
 def get_by_id(
-    connection: Connection,
+    db_connection: Connection,
     user_id: int,
-) -> UserFromDB | None:
+) -> UserFromRepo | None:
     query = "SELECT * FROM users WHERE id = :id"
     values = {"id": user_id}
-    cursor = connection.cursor()
+    cursor = db_connection.cursor()
     cursor.execute(query, values)
     row = cursor.fetchone()
 
-    return to_model(row) if row else None
+    return to_from_repo(row) if row else None
 
 
 def get_by_username(
-    connection: Connection,
+    db_connection: Connection,
     username: str,
-) -> UserFromDB | None:
+) -> UserFromRepo | None:
     query = "SELECT * FROM users WHERE username = :username"
     values = {"username": username}
-    cursor = connection.cursor()
+    cursor = db_connection.cursor()
     cursor.execute(query, values)
     row = cursor.fetchone()
 
-    return to_model(row) if row else None
+    return to_from_repo(row) if row else None
 
 
 def create(
-    connection: Connection,
-    user: UserToDB,
+    db_connection: Connection,
+    user_to_repo: UserToRepo,
 ) -> int:
     query = (
         "INSERT INTO users (username, password_hash, is_active, is_admin) "
         "VALUES (:username, :password_hash, :is_active, :is_admin)"
     )
-    values = to_dict(user)
-    cursor = connection.cursor()
+    values = to_dict(user_to_repo)
+    cursor = db_connection.cursor()
 
     try:
         cursor.execute(query, values)
@@ -70,7 +63,7 @@ def create(
     except IntegrityError as e:
         message = str(e).lower()
         if INTEGRITY_ERROR_UNIQUE in message:
-            raise DuplicateError(f"Username {user.username!r} already exists") from e
+            raise DuplicateError(f"Username {user_to_repo.username!r} already exists") from e
         raise
 
     created_id: int | None = cursor.lastrowid
@@ -81,9 +74,9 @@ def create(
 
 
 def replace(
-    connection: Connection,
+    db_connection: Connection,
     user_id: int,
-    user: UserToDB,
+    user_to_repo: UserToRepo,
 ) -> None:
     query = (
         "UPDATE users "
@@ -93,9 +86,9 @@ def replace(
         "    is_admin = :is_admin "
         "WHERE id = :user_id"
     )
-    values = to_dict(user)
+    values = to_dict(user_to_repo)
     values["user_id"] = user_id
-    cursor = connection.cursor()
+    cursor = db_connection.cursor()
 
     try:
         cursor.execute(query, values)
@@ -103,12 +96,12 @@ def replace(
     except IntegrityError as e:
         message = str(e).lower()
         if INTEGRITY_ERROR_UNIQUE in message:
-            raise DuplicateError(f"Username {user.username!r} already exists") from e
+            raise DuplicateError(f"Username {user_to_repo.username!r} already exists") from e
         raise
 
 
 def delete(
-    connection: Connection,
+    db_connection: Connection,
     user_id: int,
 ) -> None:
     """Soft-delete a user."""
@@ -118,20 +111,20 @@ def delete(
         "WHERE id = :user_id"
     )
     values = {"user_id": user_id}
-    cursor = connection.cursor()
+    cursor = db_connection.cursor()
     cursor.execute(query, values)
 
     if cursor.rowcount == 0:
         raise RuntimeError(f"User with ID {user_id} not deleted")
 
 
-def count_admins(connection: Connection) -> int:
+def count_admins(db_connection: Connection) -> int:
     query = (
         "SELECT COUNT(*)"
         "FROM users "
         "WHERE is_admin = TRUE"
     )
-    cursor = connection.cursor()
+    cursor = db_connection.cursor()
     cursor.execute(query)
     row = cursor.fetchone()
 
@@ -139,7 +132,7 @@ def count_admins(connection: Connection) -> int:
 
 
 def set_admin(
-    connection: Connection,
+    db_connection: Connection,
     user_id: int,
     is_admin: bool,
 ) -> None:
@@ -152,5 +145,5 @@ def set_admin(
         "user_id": user_id,
         "is_admin": is_admin,
     }
-    cursor = connection.cursor()
+    cursor = db_connection.cursor()
     cursor.execute(query, values)

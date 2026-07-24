@@ -5,7 +5,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.models.users import UserResponse
+from app.models.schemas.users import UserResponse
 from app.web import creatures as creatures_web
 from app.web import explorers as explorers_web
 from app.web.deps.auth import get_current_user

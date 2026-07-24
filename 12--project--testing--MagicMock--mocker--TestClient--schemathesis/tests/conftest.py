@@ -4,7 +4,7 @@ from typing import Generator
 
 import pytest
 
-from app.models.users import UserToCreateRequest
+from app.models.schemas.users import UserToCreateRequest
 from app.services import creatures as creatures_service
 from app.services import explorers as explorers_service
 from app.services import users as users_service

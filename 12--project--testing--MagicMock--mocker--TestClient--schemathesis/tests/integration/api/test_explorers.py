@@ -3,7 +3,7 @@ from sqlite3 import Connection
 import pytest
 from fastapi.testclient import TestClient
 
-from app.models.explorers import ExplorerRequest, ExplorerResponse
+from app.models.schemas.explorers import ExplorerRequest, ExplorerResponse
 from tests.samples.explorers import (
     hande_response,
     weiser_response,

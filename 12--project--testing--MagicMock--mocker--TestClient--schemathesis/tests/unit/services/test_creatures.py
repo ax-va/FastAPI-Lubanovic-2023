@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from app.models.creatures import CreatureRequest, CreatureResponse
+from app.models.schemas.creatures import CreatureRequest, CreatureResponse
 from app.services import creatures as service
 from tests.samples.creatures import (
     lubanovic_request,

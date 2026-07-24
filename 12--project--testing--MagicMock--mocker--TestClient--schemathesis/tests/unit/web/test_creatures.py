@@ -5,9 +5,9 @@ import pytest
 from fastapi import HTTPException
 from pytest_mock import MockerFixture
 
-from app.models.users import UserResponse
+from app.models.schemas.users import UserResponse
 from app.web import creatures as web
-from app.models.creatures import CreatureRequest, CreatureResponse
+from app.models.schemas.creatures import CreatureRequest, CreatureResponse
 from tests.samples.creatures import (
     yeti_request,
     yeti_response,
@@ -26,12 +26,12 @@ def test_create(
     mocker: MockerFixture,
 ) -> None:
     connection_mock = MagicMock(spec=Connection)
-    user_mock = MagicMock(spec=UserResponse)
+    user_response_mock = MagicMock(spec=UserResponse)
 
     service_mock = mocker.patch.object(web, 'service', autospec=True)
     service_mock.create.return_value = sample_response
 
-    result = web.create(connection_mock, sample_request, user_mock)
+    result = web.create(connection_mock, sample_request, user_response_mock)
     assert result == sample_response
 
     service_mock.create.assert_called_once_with(connection_mock, sample_request)

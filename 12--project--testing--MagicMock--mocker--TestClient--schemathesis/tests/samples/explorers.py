@@ -1,4 +1,4 @@
-from app.models.explorers import ExplorerRequest, ExplorerResponse
+from app.models.schemas.explorers import ExplorerRequest, ExplorerResponse
 
 hande_request = ExplorerRequest(
     name="Claude Hande",

@@ -2,7 +2,7 @@ from sqlite3 import Connection
 
 import pytest
 
-from app.models.creatures import CreatureRequest, CreatureResponse
+from app.models.schemas.creatures import CreatureRequest, CreatureResponse
 from app.repositories.sqlite import creatures as repository
 from tests.samples.creatures import (
     yeti_response,

@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.auth import access_tokens
-from app.models.users import UserToCreateRequest, UserResponse, UserToReplaceRequest
+from app.models.schemas.users import UserToCreateRequest, UserResponse, UserToReplaceRequest
 from app.services import users as users_service
 from app.services.errors import LastAdminError, NotFoundError, DuplicateError
 from app.web.deps.auth import require_anonymous_user, CurrentUser, CurrentAdmin
@@ -17,13 +17,13 @@ router = APIRouter(prefix="/users", tags=["Users"])
 # Clients send username and password here to obtain an access token.
 @router.post("/token")
 def create_access_token(
-    connection: DatabaseConnection,
+    db_connection: DatabaseConnection,
     form_data: OAuth2PasswordRequestForm = Depends(),
 ) -> dict:
     """Authenticates a user and returns a JWT access token."""
 
     is_verified: bool = service.verify_credentials(
-        connection,
+        db_connection,
         form_data.username,
         form_data.password
     )
@@ -52,36 +52,36 @@ def create_access_token(
 # API for only authenticated users
 @router.get("/me")
 def get_me(
-    user: CurrentUser
+    user_response: CurrentUser
 ) -> UserResponse:
-    return user
+    return user_response
 
 
 # API only for authenticated admins
 @router.patch("/{user_id}/grant-admin")
 def grant_admin(
-    connection: DatabaseConnection,
+    db_connection: DatabaseConnection,
     user_id: int,
     _: CurrentAdmin,
 ) -> UserResponse:
     try:
-        user: UserResponse = service.set_admin(connection, user_id, True)
+        user_response: UserResponse = service.set_admin(db_connection, user_id, True)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e)) from e
 
-    return user
+    return user_response
 
 
 # API only for authenticated admins
 @router.patch("/{user_id}/revoke-admin")
 def revoke_admin(
-    connection: DatabaseConnection,
+    db_connection: DatabaseConnection,
     user_id: int,
     _: CurrentAdmin,
 ) -> UserResponse:
     try:
-        user: UserResponse = service.set_admin(connection, user_id, False)
+        user_response: UserResponse = service.set_admin(db_connection, user_id, False)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e)) from e
@@ -92,14 +92,14 @@ def revoke_admin(
             detail=str(e),
         ) from e
 
-    return user
+    return user_response
 
 
 # API only for authenticated admins
 @router.get("")
 @router.get("/{user_id}")
 def get(
-    connection: DatabaseConnection,
+    db_connection: DatabaseConnection,
     _: CurrentAdmin,
     user_id: int | None = None,  # example: `GET /users/1`
     username: str | None = Query(default=None, min_length=1),  # example: `GET /users?useranme=Alice`
@@ -111,24 +111,24 @@ def get(
         )
 
     if user_id is not None:
-        user: UserResponse | None = service.get_by_id(connection, user_id)
+        user_response: UserResponse | None = service.get_by_id(db_connection, user_id)
 
-        if user is None:
+        if user_response is None:
             raise resource_with_id_not_found(f"User with ID {user_id} not found")
 
-        return user
+        return user_response
 
     elif username is not None:
-        user: UserResponse | None = service.get_by_username(connection, username)
+        user_response: UserResponse | None = service.get_by_username(db_connection, username)
 
-        if user is None:
+        if user_response is None:
             raise resource_with_id_not_found(f"User with username {username!r} not found")
 
-        return user
+        return user_response
 
     else:
-        users: list[UserResponse] = service.get_all(connection)
-        return users
+        user_responses: list[UserResponse] = service.get_all(db_connection)
+        return user_responses
 
 
 # public API
@@ -137,12 +137,12 @@ def get(
     status_code=201,  # 201 Created
 )
 def create(
-    connection: DatabaseConnection,
-    user: UserToCreateRequest,
+    db_connection: DatabaseConnection,
+    user_request: UserToCreateRequest,
     _: None = Depends(require_anonymous_user)
 ) -> UserResponse:
     try:
-        user: UserResponse = service.create(connection, user)
+        user: UserResponse = service.create(db_connection, user_request)
 
     except DuplicateError as e:
         raise HTTPException(
@@ -156,13 +156,13 @@ def create(
 # API only for authenticated admins
 @router.put("/{user_id}")
 def replace(
-    connection: DatabaseConnection,
+    db_connection: DatabaseConnection,
     user_id: int,
-    user: UserToReplaceRequest,
+    user_request: UserToReplaceRequest,
     _: CurrentAdmin,
 ) -> UserResponse:
     try:
-        user: UserResponse = service.replace(connection, user_id, user)
+        user_response: UserResponse = service.replace(db_connection, user_id, user_request)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e)) from e
@@ -173,7 +173,7 @@ def replace(
             detail=str(e),
         ) from e
 
-    return user
+    return user_response
 
 
 # NOTE:
@@ -184,11 +184,11 @@ def replace(
 # API for only authenticated users
 @router.delete("/me")
 def delete_me(
-    connection: DatabaseConnection,
-    user: CurrentUser,
+    db_connection: DatabaseConnection,
+    user_resonse: CurrentUser,
 ) -> None:
     try:
-        service.delete(connection, user.id)
+        service.delete(db_connection, user_resonse.id)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e)) from e
@@ -203,12 +203,12 @@ def delete_me(
 # API only for authenticated admins
 @router.delete("/{user_id}")
 def delete(
-    connection: DatabaseConnection,
+    db_connection: DatabaseConnection,
     user_id: int,
     _: CurrentAdmin,
 ) -> None:
     try:
-        service.delete(connection, user_id)
+        service.delete(db_connection, user_id)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e)) from e

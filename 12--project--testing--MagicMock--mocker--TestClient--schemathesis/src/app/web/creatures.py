@@ -1,24 +1,23 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter
 
-from app.models.creatures import CreatureRequest, CreatureResponse
-from app.models.users import UserResponse
-from app.services import creatures
+from app.models.schemas.creatures import CreatureRequest, CreatureResponse
+from app.services import creatures as creatures_service
 from app.services.errors import NotFoundError
-from app.web.deps.auth import get_current_user, CurrentUser
+from app.web.deps.auth import CurrentUser
 from app.web.deps.database import DatabaseConnection
 from app.web.errors import resource_with_id_not_found
 from app.web.metadata import NOT_FOUND, UNAUTHORIZED
 
-service = creatures
+service = creatures_service
 router = APIRouter(prefix="/creatures", tags=["Creatures"])
 
 
 # public API
 @router.get("")
 def get_all(
-    connection: DatabaseConnection,
+    db_connection: DatabaseConnection,
 ) -> list[CreatureResponse]:
-    return service.get_all(connection)
+    return service.get_all(db_connection)
 
 
 # public API
@@ -27,15 +26,15 @@ def get_all(
     responses=NOT_FOUND,
 )
 def get_by_id(
-    connection: DatabaseConnection,
+    db_connection: DatabaseConnection,
     creature_id: int,
 ) -> CreatureResponse:
-    creature = service.get_by_id(connection, creature_id)
+    creature_response = service.get_by_id(db_connection, creature_id)
 
-    if creature is None:
+    if creature_response is None:
         raise resource_with_id_not_found(f"Creature with ID {creature_id} not found")
 
-    return creature
+    return creature_response
 
 
 # API for only authenticated users
@@ -45,11 +44,11 @@ def get_by_id(
     responses=UNAUTHORIZED,
 )
 def create(
-    connection: DatabaseConnection,
-    creature: CreatureRequest,
+    db_connection: DatabaseConnection,
+    creature_request: CreatureRequest,
     _: CurrentUser,
 ) -> CreatureResponse:
-    return service.create(connection, creature)
+    return service.create(db_connection, creature_request)
 
 
 # API for only authenticated users
@@ -58,13 +57,13 @@ def create(
     responses=UNAUTHORIZED | NOT_FOUND,
 )
 def replace(
-    connection: DatabaseConnection,
+    db_connection: DatabaseConnection,
     creature_id: int,
-    creature: CreatureRequest,
+    creature_request: CreatureRequest,
     _: CurrentUser,
 ) -> CreatureResponse:
     try:
-        creature = service.replace(connection, creature_id, creature)
+        creature = service.replace(db_connection, creature_id, creature_request)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e)) from e
@@ -83,12 +82,12 @@ def modify(creature_id: int) -> CreatureResponse | None:
     responses=UNAUTHORIZED | NOT_FOUND,
 )
 def delete(
-    connection: DatabaseConnection,
+    db_connection: DatabaseConnection,
     creature_id: int,
     _: CurrentUser,
 ) -> None:
     try:
-        service.delete(connection, creature_id)
+        service.delete(db_connection, creature_id)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e)) from e

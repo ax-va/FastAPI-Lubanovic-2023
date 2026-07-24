@@ -7,37 +7,37 @@ from app.config import DATABASE_FILE
 
 
 @contextmanager
-def connection_manager(
+def connect(
     database_file: str = DATABASE_FILE,
 ) -> Generator[Connection, None, None]:
-    connection = sqlite3.connect(
+    db_connection = sqlite3.connect(
         database_file,
         check_same_thread=False,
     )
-    connection.row_factory = sqlite3.Row
+    db_connection.row_factory = sqlite3.Row
 
     try:
-        yield connection
+        yield db_connection
     finally:
-        connection.close()
+        db_connection.close()
 
 
-def init(connection: Connection) -> None:
+def init(db_connection: Connection) -> None:
     try:
-        create_creatures_table(connection)
-        create_explorers_table(connection)
-        create_users_table(connection)
+        create_creatures_table(db_connection)
+        create_explorers_table(db_connection)
+        create_users_table(db_connection)
 
     except Exception:
-        connection.rollback()
+        db_connection.rollback()
         raise
 
     else:
-        connection.commit()
+        db_connection.commit()
 
 
-def create_creatures_table(connection: Connection) -> None:
-    connection.execute(
+def create_creatures_table(db_connection: Connection) -> None:
+    db_connection.execute(
         "CREATE TABLE IF NOT EXISTS creatures ("
         "   id INTEGER PRIMARY KEY, "
         "   name TEXT NOT NULL, "
@@ -49,8 +49,8 @@ def create_creatures_table(connection: Connection) -> None:
     )
 
 
-def create_explorers_table(connection: Connection) -> None:
-    connection.execute(
+def create_explorers_table(db_connection: Connection) -> None:
+    db_connection.execute(
         "CREATE TABLE IF NOT EXISTS explorers ("
         "   id INTEGER PRIMARY KEY, "
         "   name TEXT NOT NULL, "
@@ -60,8 +60,8 @@ def create_explorers_table(connection: Connection) -> None:
     )
 
 
-def create_users_table(connection: Connection) -> None:
-    connection.execute(
+def create_users_table(db_connection: Connection) -> None:
+    db_connection.execute(
         "CREATE TABLE IF NOT EXISTS users ("
         "   id INTEGER PRIMARY KEY, "
         "   username TEXT NOT NULL UNIQUE, "

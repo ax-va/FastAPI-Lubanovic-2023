@@ -1,4 +1,4 @@
-from app.models.creatures import CreatureRequest, CreatureResponse
+from app.models.schemas.creatures import CreatureRequest, CreatureResponse
 
 yeti_request = CreatureRequest(
     name="Yeti",

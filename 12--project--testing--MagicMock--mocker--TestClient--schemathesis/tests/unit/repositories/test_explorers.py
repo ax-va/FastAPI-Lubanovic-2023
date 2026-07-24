@@ -2,7 +2,7 @@ from sqlite3 import Connection
 
 import pytest
 
-from app.models.explorers import ExplorerRequest, ExplorerResponse
+from app.models.schemas.explorers import ExplorerRequest, ExplorerResponse
 from app.repositories.sqlite import explorers as repository
 from tests.samples.explorers import (
     hande_response,

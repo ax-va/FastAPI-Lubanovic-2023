@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from app.models.explorers import ExplorerRequest, ExplorerResponse
+from app.models.schemas.explorers import ExplorerRequest, ExplorerResponse
 from app.services import explorers as service
 from tests.samples.explorers import (
     ax_va_request,
