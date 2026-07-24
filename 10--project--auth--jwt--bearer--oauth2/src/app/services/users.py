@@ -144,12 +144,12 @@ def get_by_token(
     if subject is None:
         return None
 
-    user_from_repo = repository.get_by_username(db_connection, subject)
+    user_response = get_by_username(db_connection, subject)
 
-    if user_from_repo is None or not user_from_repo.is_active:
+    if user_response is None or not user_response.is_active:
         return None
 
-    return to_response(user_from_repo)
+    return to_response(user_response)
 
 
 def count_admins(db_connection: Connection) -> int:

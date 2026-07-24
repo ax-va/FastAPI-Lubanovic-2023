@@ -44,7 +44,7 @@ def replace(
     explorer: ExplorerRequest,
 ) -> ExplorerResponse:
     try:
-        to_update = repository.get_by_id(db_connection, explorer_id)
+        to_update: ExplorerResponse | None = get_by_id(db_connection, explorer_id)
         if to_update is None:
             raise NotFoundError(f"Explorer with ID {explorer_id} not found")
 
@@ -68,7 +68,7 @@ def delete(
     explorer_id: int,
 ) -> None:
     try:
-        to_delete = repository.get_by_id(db_connection, explorer_id)
+        to_delete: ExplorerResponse | None = get_by_id(db_connection, explorer_id)
         if to_delete is None:
             raise NotFoundError(f"Explorer with ID {explorer_id} not found")
 

@@ -68,7 +68,7 @@ def delete(
     creature_id: int,
 ) -> None:
     try:
-        to_delete: CreatureResponse | None = repository.get_by_id(db_connection, creature_id)
+        to_delete: CreatureResponse | None = get_by_id(db_connection, creature_id)
         if to_delete is None:
             raise NotFoundError(f"Creature with ID {creature_id} not found")
 
