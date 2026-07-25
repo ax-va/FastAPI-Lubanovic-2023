@@ -1,45 +1,86 @@
-from app.models.creatures import CreatureRequest, CreatureResponse
-from app.repositories.sqlite import creatures
+from sqlalchemy.orm.session import Session
+
+from app.models.orm.creature import Creature
+from app.models.schemas.creatures import CreatureRequest, CreatureResponse
+from app.repositories.sqlalchemy import creatures as creatures_repository
 from app.services.errors import NotFoundError
 
-repository = creatures
+repository = creatures_repository
 
 
-def get_all() -> list[CreatureResponse]:
-    return repository.get_all()
+def to_response(creature: Creature) -> CreatureResponse:
+    return CreatureResponse.model_validate(creature, from_attributes=True)
 
 
-def get_by_id(creature_id: int) -> CreatureResponse | None:
-    return repository.get_by_id(creature_id)
+def to_dict(creature_request: CreatureRequest) -> dict:
+    return creature_request.model_dump()
 
 
-def create(creature: CreatureRequest) -> CreatureResponse:
-    creature_id: int = repository.create(creature)
-
-    created: CreatureResponse | None = get_by_id(creature_id)
-    if created is None:
-        raise RuntimeError(f"Creature with ID {creature_id} could not be retrieved after creation")
-
-    return created
+def get_all(db_session: Session) -> list[CreatureResponse]:
+    return [to_response(creature) for creature in repository.get_all(db_session)]
 
 
-def replace(creature_id: int, creature: CreatureRequest) -> CreatureResponse:
-    to_update: CreatureResponse | None = get_by_id(creature_id)
-    if to_update is None:
-        raise NotFoundError(f"Creature with ID {creature_id} not found")
+def get_by_id(
+    db_session: Session,
+    creature_id: int,
+) -> CreatureResponse | None:
+    creature = repository.get_by_id(db_session, creature_id)
 
-    repository.replace(creature_id, creature)
-
-    updated: CreatureResponse | None = get_by_id(creature_id)
-    if updated is None:
-        raise RuntimeError(f"Creature with ID {creature_id} could not be retrieved after update")
-
-    return updated
+    return to_response(creature) if creature is not None else None
 
 
-def delete(creature_id: int) -> None:
-    to_delete: CreatureResponse | None = repository.get_by_id(creature_id)
-    if to_delete is None:
-        raise NotFoundError(f"Creature with ID {creature_id} not found")
+def create(
+    db_session: Session,
+    creature_request: CreatureRequest,
+) -> CreatureResponse:
+    creature = Creature(**to_dict(creature_request))
 
-    repository.delete(creature_id)
+    try:
+        created = repository.create(db_session, creature)
+
+    except Exception:
+        db_session.rollback()
+        raise
+
+    db_session.commit()
+
+    return to_response(created)
+
+
+def replace(
+    db_session: Session,
+    creature_id: int,
+    creature_request: CreatureRequest,
+) -> CreatureResponse:
+    try:
+        to_update: Creature | None = repository.get_by_id(db_session, creature_id)
+        if to_update is None:
+            raise NotFoundError(f"Creature with ID {creature_id} not found")
+
+        updated = repository.replace(db_session, to_update, to_dict(creature_request))
+
+    except Exception:
+        db_session.rollback()
+        raise
+
+    db_session.commit()
+
+    return to_response(updated)
+
+
+def delete(
+    db_session: Session,
+    creature_id: int,
+) -> None:
+    try:
+        to_delete: Creature | None = repository.get_by_id(db_session, creature_id)
+        if to_delete is None:
+            raise NotFoundError(f"Creature with ID {creature_id} not found")
+
+        repository.delete(db_session, to_delete)
+
+    except Exception:
+        db_session.rollback()
+        raise
+
+    db_session.commit()

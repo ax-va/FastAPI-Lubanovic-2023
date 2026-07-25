@@ -1,15 +1,10 @@
-from collections.abc import Generator
 from pathlib import Path
 
 from sqlalchemy import create_engine
 from sqlalchemy import Engine
-from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
 from app.config import DATABASE_FILE
-
-
-class Base(DeclarativeBase):
-    """Base class for all SQLAlchemy ORM models."""
 
 
 def make_sqlite_url(database_file: str | Path) -> str:
@@ -43,9 +38,3 @@ SessionFactory = sessionmaker(
     # without lazily reloading their attributes from the database.
     expire_on_commit=False,
 )
-
-
-def get_session() -> Generator[Session, None, None]:
-    """Provides a database session for a unit of work and close it afterwards."""
-    with SessionFactory() as session:
-        yield session

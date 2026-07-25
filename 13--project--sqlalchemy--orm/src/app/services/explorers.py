@@ -1,45 +1,86 @@
-from app.models.explorers import ExplorerRequest, ExplorerResponse
-from app.repositories.sqlite import explorers
+from sqlalchemy.orm.session import Session
+
+from app.models.orm.explorer import Explorer
+from app.models.schemas.explorers import ExplorerRequest, ExplorerResponse
+from app.repositories.sqlalchemy import explorers as explorers_repository
 from app.services.errors import NotFoundError
 
-repository = explorers
+repository = explorers_repository
 
 
-def get_all() -> list[ExplorerResponse]:
-    return repository.get_all()
+def to_response(explorer: Explorer) -> ExplorerResponse:
+    return ExplorerResponse.model_validate(explorer, from_attributes=True)
 
 
-def get_by_id(explorer_id: int) -> ExplorerResponse | None:
-    return repository.get_by_id(explorer_id)
+def to_dict(explorer_request: ExplorerRequest) -> dict:
+    return explorer_request.model_dump()
 
 
-def create(explorer: ExplorerRequest) -> ExplorerResponse:
-    created_id: int = repository.create(explorer)
-
-    created: ExplorerResponse | None = get_by_id(created_id)
-    if created is None:
-        raise RuntimeError(f"Explorer with ID {created_id} could not be retrieved after creation")
-
-    return created
+def get_all(db_session: Session) -> list[ExplorerResponse]:
+    return [to_response(creature) for creature in repository.get_all(db_session)]
 
 
-def replace(explorer_id: int, explorer: ExplorerRequest) -> ExplorerResponse:
-    to_update = repository.get_by_id(explorer_id)
-    if to_update is None:
-        raise NotFoundError(f"Explorer with ID {explorer_id} not found")
+def get_by_id(
+    db_session: Session,
+    explorer_id: int,
+) -> ExplorerResponse | None:
+    explorer = repository.get_by_id(db_session, explorer_id)
 
-    repository.replace(explorer_id, explorer)
-
-    updated: ExplorerResponse | None = get_by_id(explorer_id)
-    if updated is None:
-        raise RuntimeError(f"Explorer with ID {explorer_id} could not be retrieved after update")
-
-    return updated
+    return to_response(explorer) if explorer is not None else None
 
 
-def delete(explorer_id: int) -> None:
-    to_delete = repository.get_by_id(explorer_id)
-    if to_delete is None:
-        raise NotFoundError(f"Explorer with ID {explorer_id} not found")
+def create(
+    db_session: Session,
+    explorer_request: ExplorerRequest,
+) -> ExplorerResponse:
+    explorer = Explorer(**to_dict(explorer_request))
 
-    repository.delete(explorer_id)
+    try:
+        created: Explorer = repository.create(db_session, explorer)
+
+    except Exception:
+        db_session.rollback()
+        raise
+
+    db_session.commit()
+
+    return to_response(created)
+
+
+def replace(
+    db_session: Session,
+    explorer_id: int,
+    explorer_request: ExplorerRequest,
+) -> ExplorerResponse:
+    try:
+        to_update: Explorer | None = repository.get_by_id(db_session, explorer_id)
+        if to_update is None:
+            raise NotFoundError(f"Explorer with ID {explorer_id} not found")
+
+        updated = repository.replace(db_session, to_update, to_dict(explorer_request))
+
+    except Exception:
+        db_session.rollback()
+        raise
+
+    db_session.commit()
+
+    return to_response(updated)
+
+
+def delete(
+    db_session: Session,
+    explorer_id: int,
+) -> None:
+    try:
+        to_delete: Explorer | None = repository.get_by_id(db_session, explorer_id)
+        if to_delete is None:
+            raise NotFoundError(f"Explorer with ID {explorer_id} not found")
+
+        repository.delete(db_session, to_delete)
+
+    except Exception:
+        db_session.rollback()
+        raise
+
+    db_session.commit()
