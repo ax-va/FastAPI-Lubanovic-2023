@@ -60,7 +60,8 @@ def test_get_by_id(
 ):
     got = repository.get_by_id(db_session, sample_id)
 
-    if got is not None and sample_response is not None:
+    if sample_response is not None:
+        assert got is not None
         assert got.id == sample_response.id
         assert got.name == sample_response.name
         assert got.country == sample_response.country
