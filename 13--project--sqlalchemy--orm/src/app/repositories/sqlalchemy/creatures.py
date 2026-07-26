@@ -32,11 +32,11 @@ def create(
 def replace(
     db_session: Session,
     creature: Creature,
-    attr_to_value: dict[str, str | None],
+    field_to_value: dict[str, str | None],
 ) -> Creature:
 
-    for attr, value in attr_to_value.items():
-        setattr(creature, attr, value)
+    for field, value in field_to_value.items():
+        setattr(creature, field, value)
     db_session.flush()
 
     return creature

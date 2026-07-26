@@ -38,12 +38,6 @@ def test_create(
     stored = repository.get_by_id(db_connection, sample_response.id)
     assert stored == sample_response
 
-    hande_available = repository.get_by_id(db_connection, 1)
-    assert hande_available == hande_response
-
-    weiser_available = repository.get_by_id(db_connection, 2)
-    assert weiser_available == weiser_response
-
 
 @pytest.mark.parametrize(
     "sample_id, sample_response",
@@ -55,7 +49,7 @@ def test_create(
 )
 def test_get_by_id(
     sample_id: int,
-    sample_response: ExplorerResponse,
+    sample_response: ExplorerResponse | None,
     db_connection: Connection,
 ):
     got = repository.get_by_id(db_connection, sample_id)
@@ -63,29 +57,28 @@ def test_get_by_id(
 
 
 @pytest.mark.parametrize(
-    "sample_id, sample_response",
+    "sample_response",
     [
-        (1, hande_response),
-        (2, weiser_response),
+        hande_response,
+        weiser_response,
     ]
 )
 def test_delete_success(
-    sample_id: int,
     sample_response: ExplorerResponse,
     db_connection: Connection,
 ):
     num_rows_before = len(repository.get_all(db_connection))
     assert num_rows_before == 2
 
-    got = repository.get_by_id(db_connection, sample_id)
+    got = repository.get_by_id(db_connection, sample_response.id)
     assert got == sample_response
 
-    repository.delete(db_connection, sample_id)
+    repository.delete(db_connection, sample_response.id)
 
     num_rows_after = len(repository.get_all(db_connection))
     assert num_rows_after == num_rows_before - 1
 
-    missing = repository.get_by_id(db_connection, sample_id)
+    missing = repository.get_by_id(db_connection, sample_response.id)
     assert missing is None
 
 

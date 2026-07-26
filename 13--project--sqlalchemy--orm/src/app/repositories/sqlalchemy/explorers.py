@@ -32,11 +32,11 @@ def create(
 def replace(
     db_session: Session,
     explorer: Explorer,
-    attr_to_value: dict[str, str | None]
+    field_to_value: dict[str, str | None]
 ) -> Explorer:
 
-    for attr, value in attr_to_value.items():
-        setattr(explorer, attr, value)
+    for field, value in field_to_value.items():
+        setattr(explorer, field, value)
     db_session.flush()
 
     return explorer

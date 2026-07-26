@@ -7,7 +7,7 @@ from app.web import explorers as explorers_web
 from app.web import users as users_web
 
 with db.connect() as db_connection:
-    db.init(db_connection)
+    db.ensure_tables_exist(db_connection)
     users_service.ensure_admin_exists(db_connection)
 
 app = FastAPI()

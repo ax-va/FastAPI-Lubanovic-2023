@@ -5,7 +5,7 @@ from app.web import creatures as creatures_web
 from app.web import explorers as explorers_web
 
 with db.connect() as db_connection:
-    db.init(db_connection)
+    db.ensure_tables_exist(db_connection)
 
 app = FastAPI()
 app.include_router(creatures_web.router)

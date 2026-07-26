@@ -51,11 +51,11 @@ def create(
 def replace(
     db_session: Session,
     user: User,
-    attr_to_value: dict[str, str | bool],
+    field_to_value: dict[str, str | bool],
 ) -> User:
     try:
-        for attr, value in attr_to_value.items():
-            setattr(user, attr, value)
+        for field, value in field_to_value.items():
+            setattr(user, field, value)
         db_session.flush()
 
     except IntegrityError as e:

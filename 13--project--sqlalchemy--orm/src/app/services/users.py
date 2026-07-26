@@ -1,7 +1,7 @@
 from sqlalchemy.orm.session import Session
 
 from app.auth.jwt import decode_jwt_subject
-from app.auth.passwords import verify_password
+from app.auth.passwords import verify_password, password_hash, hash_password
 from app.models.orm.user import User
 from app.models.schemas.users import UserToCreateRequest, UserToReplaceRequest, UserResponse
 from app.repositories.errors import DuplicateError as RepositoryDuplicateError
@@ -47,7 +47,11 @@ def create(
     user_request: UserToCreateRequest,
     is_admin: bool = False,
 ) -> UserResponse:
-    user = User(**to_dict(user_request), is_admin=is_admin)
+    user = User(
+        username=user_request.username,
+        password_hash=hash_password(user_request.password),
+        is_admin=is_admin,
+    )
 
     try:
         created = repository.create(db_session, user)

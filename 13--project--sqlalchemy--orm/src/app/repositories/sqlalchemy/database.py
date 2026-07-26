@@ -5,6 +5,7 @@ from sqlalchemy import Engine
 from sqlalchemy.orm import sessionmaker
 
 from app.config import DATABASE_FILE
+from app.models.orm.base import Base
 
 
 def make_sqlite_url(database_file: str | Path) -> str:
@@ -23,6 +24,9 @@ engine: Engine = create_engine(
     DATABASE_URL,
     connect_args={"check_same_thread": False},
 )
+
+# Create tables if they don't exist
+Base.metadata.create_all(engine)
 
 # SQLAlchemy Session Factory:
 # 1) Stores the configuration for creating sessions;

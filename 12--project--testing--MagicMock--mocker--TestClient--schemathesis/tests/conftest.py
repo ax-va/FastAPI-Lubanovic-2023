@@ -1,10 +1,8 @@
-import sqlite3
 from sqlite3 import Connection
 from typing import Generator
 
 import pytest
 
-from app.models.schemas.users import UserToCreateRequest
 from app.services import creatures as creatures_service
 from app.services import explorers as explorers_service
 from app.services import users as users_service
@@ -15,30 +13,18 @@ from tests.samples.explorers import hande_request, weiser_request
 
 @pytest.fixture
 def db_connection() -> Generator[Connection, None, None]:
-    connection = sqlite3.connect(
-    ":memory:",
-        check_same_thread=False,
-    )
-    connection.row_factory = sqlite3.Row
-
-    db.init(connection)
-
-    users_service.create(
-        connection,
-        UserToCreateRequest(
+    with db.connect(":memory:") as connection:
+        db.ensure_tables_exist(connection)
+        users_service.create_admin(
+            connection,
             username="admin",
             password="admin",
-        ),
-        is_admin = True,
-    )
+        )
 
-    creatures_service.create(connection, yeti_request)
-    creatures_service.create(connection, bigfoot_request)
+        creatures_service.create(connection, yeti_request)
+        creatures_service.create(connection, bigfoot_request)
 
-    explorers_service.create(connection, hande_request)
-    explorers_service.create(connection, weiser_request)
+        explorers_service.create(connection, hande_request)
+        explorers_service.create(connection, weiser_request)
 
-    try:
         yield connection
-    finally:
-        connection.close()

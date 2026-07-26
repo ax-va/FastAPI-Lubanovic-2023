@@ -1,14 +1,13 @@
 from fastapi import FastAPI
 
-from app.repositories.sqlite import database as db
+from app.repositories.sqlalchemy import database as db
 from app.services import users as users_service
 from app.web import creatures as creatures_web
 from app.web import explorers as explorers_web
 from app.web import users as users_web
 
-with db.connect() as db_connection:
-    db.ensure_tables_exist(db_connection)
-    users_service.ensure_admin_exists(db_connection)
+with db.SessionFactory() as db_session:
+    users_service.ensure_admin_exists(db_session)
 
 app = FastAPI()
 app.include_router(creatures_web.router)
