@@ -31,6 +31,7 @@ def test_create(
     assert num_rows_before == 2
 
     created = repository.create(db_session, Creature(**sample_request.model_dump()))
+    assert isinstance(created, Creature)
     assert created.id == sample_response.id
     assert created.name == sample_response.name
     assert created.country == sample_response.country
@@ -62,6 +63,7 @@ def test_get_by_id(
 
     if sample_response is not None:
         assert got is not None
+        assert isinstance(got, Creature)
         assert got.id == sample_response.id
         assert got.name == sample_response.name
         assert got.country == sample_response.country
@@ -89,12 +91,6 @@ def test_delete_success(
 
     got = repository.get_by_id(db_session, sample_response.id)
     assert got is not None
-    assert got.id == sample_response.id
-    assert got.name == sample_response.name
-    assert got.country == sample_response.country
-    assert got.area == sample_response.area
-    assert got.description == sample_response.description
-    assert got.aka == sample_response.aka
 
     repository.delete(db_session, got)
 

@@ -44,7 +44,7 @@ def test_create(
 
 
 @pytest.mark.parametrize(
-    "sample_id, expected",
+    "sample_id, sample_response",
     [
         (1, lubanovic_response),
         (100, None),
@@ -52,15 +52,15 @@ def test_create(
 )
 def test_get_by_id(
     sample_id: int,
-    expected: CreatureResponse,
+    sample_response: CreatureResponse,
     mocker: MockerFixture,
 ) -> None:
     connection_mock = MagicMock(spec=Connection)
 
     repository_mock = mocker.patch.object(service, "repository", autospec=True)
-    repository_mock.get_by_id.return_value = expected
+    repository_mock.get_by_id.return_value = sample_response
 
     result = service.get_by_id(connection_mock, sample_id)
-    assert result == expected
+    assert result == sample_response
 
     repository_mock.get_by_id.assert_called_once_with(connection_mock, sample_id)
