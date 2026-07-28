@@ -4,6 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy import Engine
 from sqlalchemy.orm import sessionmaker
 
+# Import all ORM models to create tables by `create_all` later
+import app.models.orm  # noqa: F401
 from app.config import DATABASE_FILE
 from app.models.orm.base import Base
 
