@@ -27,20 +27,20 @@ def test_create(
     # Use it when you want to isolate the unit under test and verify interactions
     #  (`assert_called_once_with()`, `call_count`, `call_args`, etc.).
 
-    connection_mock = MagicMock(spec=Connection)
+    db_connection_mock = MagicMock(spec=Connection)
 
     repository_mock = mocker.patch.object(service, "repository", autospec=True)
     repository_mock.create.return_value = sample_response.id
     repository_mock.get_by_id.return_value = sample_response
 
-    result = service.create(connection_mock, sample_request)
+    result = service.create(db_connection_mock, sample_request)
     assert result == sample_response
 
-    repository_mock.create.assert_called_once_with(connection_mock, sample_request)
-    repository_mock.get_by_id.assert_called_once_with(connection_mock, sample_response.id)
+    repository_mock.create.assert_called_once_with(db_connection_mock, sample_request)
+    repository_mock.get_by_id.assert_called_once_with(db_connection_mock, sample_response.id)
 
-    connection_mock.commit.assert_called_once_with()
-    connection_mock.rollback.assert_not_called()
+    db_connection_mock.commit.assert_called_once_with()
+    db_connection_mock.rollback.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -56,12 +56,12 @@ def test_get_by_id(
     sample_response: ExplorerResponse | None,
     mocker: MockerFixture,
 ) -> None:
-    connection_mock = MagicMock(spec=Connection)
+    db_connection_mock = MagicMock(spec=Connection)
 
     repository_mock = mocker.patch.object(service, "repository", autospec=True)
     repository_mock.get_by_id.return_value = sample_response
 
-    result = service.get_by_id(connection_mock, sample_id)
+    result = service.get_by_id(db_connection_mock, sample_id)
     assert result == sample_response
 
-    repository_mock.get_by_id.assert_called_once_with(connection_mock, sample_id)
+    repository_mock.get_by_id.assert_called_once_with(db_connection_mock, sample_id)
