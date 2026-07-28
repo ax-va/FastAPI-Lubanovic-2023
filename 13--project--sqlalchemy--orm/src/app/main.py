@@ -147,4 +147,60 @@ $ http -b PATCH localhost:8000/users/2/revoke-admin "Authorization:Bearer eyJhbG
     "username": "ax-va"
 }
 
+$  http -b localhost:8000/creatures \
+"Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc4MzY4NTAzMn0.QVoCxpJpkZ3iYrtswJisIYOvYaWTo9MA_f-Somg06rI" \
+name="Lubanovic" \
+country="US" \
+area="North America" \
+description="Python creature" aka="Author"
+{
+    "aka": "Author",
+    "area": "North America",
+    "country": "US",
+    "description": "Python creature",
+    "id": 1,
+    "name": "Lubanovic"
+}
+
+$ http -b POST localhost:8000/explorers/1/creatures/1 \
+"Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc4MzY4NTAzMn0.QVoCxpJpkZ3iYrtswJisIYOvYaWTo9MA_f-Somg06rI"
+[
+    {
+        "aka": "Author",
+        "area": "North America",
+        "country": "US",
+        "description": "Python creature",
+        "id": 1,
+        "name": "Lubanovic"
+    }
+]
+
+$ http -b localhost:8000/explorers/1/creatures
+[
+    {
+        "aka": "Author",
+        "area": "North America",
+        "country": "US",
+        "description": "Python creature",
+        "id": 1,
+        "name": "Lubanovic"
+    }
+]
+
+$ http -b localhost:8000/creatures/1/explorers
+[
+    {
+        "country": "DE",
+        "description": "FastAPI explorer",
+        "id": 1,
+        "name": "Ax-Va"
+    }
+]
+
+$ http -b POST localhost:8000/explorers/1/creatures/1 \
+"Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc4MzY4NTAzMn0.QVoCxpJpkZ3iYrtswJisIYOvYaWTo9MA_f-Somg06rI"
+{
+    "detail": "Explorer with ID 1 is already bound to creature with ID 1"
+}
+
 """
