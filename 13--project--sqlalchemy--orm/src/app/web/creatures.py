@@ -1,7 +1,9 @@
 from fastapi import APIRouter
 
 from app.models.schemas.creatures import CreatureRequest, CreatureResponse
+from app.models.schemas.explorers import ExplorerResponse
 from app.services import creatures as creatures_service
+from app.services import explorer_creature as explorer_creature_service
 from app.services.errors import NotFoundError
 from app.web.deps.auth import CurrentUser
 from app.web.deps.database import DatabaseSession
@@ -91,3 +93,32 @@ def delete(
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e)) from e
+
+
+# public API
+@router.get(
+    "/{creature_id}/explorers",
+    responses=NOT_FOUND,
+)
+def get_explorers(
+    db_session: DatabaseSession,
+    creature_id: int,
+) -> list[ExplorerResponse]:
+    return explorer_creature_service.get_explorers(db_session, creature_id)
+
+
+# API for only authenticated users
+@router.post(
+    "/{creature_id}/explorers/{explorer_id}",
+    status_code=201,  # 201 Created
+    responses=UNAUTHORIZED | NOT_FOUND,
+)
+def bind_explorer(
+    db_session: DatabaseSession,
+    explorer_id: int,
+    creature_id: int,
+    _: CurrentUser,
+) -> list[ExplorerResponse]:
+    explorer_creature_service.bind(db_session, explorer_id, creature_id)
+
+    return explorer_creature_service.get_explorers(db_session, creature_id)
