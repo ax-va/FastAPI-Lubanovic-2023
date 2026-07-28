@@ -1,7 +1,9 @@
 from sqlalchemy import select, insert
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.models.orm import Creature, Explorer, explorer_creature
+from app.repositories.errors import DuplicateBindingError
 
 
 def bind(
@@ -13,8 +15,14 @@ def bind(
         explorer_id=explorer.id,
         creature_id=creature.id,
     )
-    db_session.execute(statement)
-    db_session.flush()
+    try:
+        db_session.execute(statement)
+        db_session.flush()
+
+    except IntegrityError as e:
+        raise DuplicateBindingError(
+            f"Explorer with ID {explorer.id} is already bound to creature with ID {creature.id}"
+        ) from e
 
 
 def get_creatures(

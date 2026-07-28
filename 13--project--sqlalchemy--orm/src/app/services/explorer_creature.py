@@ -4,12 +4,15 @@ from app.models.orm.creature import Creature
 from app.models.orm.explorer import Explorer
 from app.models.schemas.creatures import CreatureResponse
 from app.models.schemas.explorers import ExplorerResponse
+from app.repositories.errors import DuplicateBindingError as RepositoryDuplicateBindingError
 from app.repositories.sqlalchemy import creatures as creatures_repository
 from app.repositories.sqlalchemy import explorer_creature as explorer_creature_repository
 from app.repositories.sqlalchemy import explorers as explorers_repository
 from app.services.creatures import to_response as to_creature_response
 from app.services.explorers import to_response as to_explorer_response
+from app.services.errors import DuplicateBindingError as ServiceDuplicateBindingError
 from app.services.errors import NotFoundError
+
 
 repository = explorer_creature_repository
 
@@ -30,6 +33,10 @@ def bind(
             raise NotFoundError(f"Creature with ID {creature_id} not found")
 
         repository.bind(db_session, explorer, creature)
+
+    except RepositoryDuplicateBindingError as e:
+        db_session.rollback()
+        raise ServiceDuplicateBindingError(e)
 
     except Exception:
         db_session.rollback()

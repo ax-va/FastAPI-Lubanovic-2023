@@ -1,14 +1,14 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from app.models.schemas.creatures import CreatureRequest, CreatureResponse
 from app.models.schemas.explorers import ExplorerResponse
 from app.services import creatures as creatures_service
 from app.services import explorer_creature as explorer_creature_service
-from app.services.errors import NotFoundError
+from app.services.errors import NotFoundError, DuplicateBindingError
 from app.web.deps.auth import CurrentUser
 from app.web.deps.database import DatabaseSession
 from app.web.errors import resource_with_id_not_found
-from app.web.metadata import NOT_FOUND, UNAUTHORIZED
+from app.web.metadata import NOT_FOUND, UNAUTHORIZED, CONFLICT
 
 service = creatures_service
 router = APIRouter(prefix="/creatures", tags=["Creatures"])
@@ -111,7 +111,7 @@ def get_explorers(
 @router.post(
     "/{creature_id}/explorers/{explorer_id}",
     status_code=201,  # 201 Created
-    responses=UNAUTHORIZED | NOT_FOUND,
+    responses=UNAUTHORIZED | NOT_FOUND | CONFLICT,
 )
 def bind_explorer(
     db_session: DatabaseSession,
@@ -119,6 +119,17 @@ def bind_explorer(
     creature_id: int,
     _: CurrentUser,
 ) -> list[ExplorerResponse]:
-    explorer_creature_service.bind(db_session, explorer_id, creature_id)
+    try:
+        explorer_creature_service.bind(
+            db_session,
+            explorer_id,
+            creature_id,
+        )
+
+    except DuplicateBindingError as e:
+        raise HTTPException(
+            status_code=409,
+            detail=str(e),
+        )
 
     return explorer_creature_service.get_explorers(db_session, creature_id)
