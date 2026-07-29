@@ -1,5 +1,6 @@
+from collections.abc import Generator
 from sqlite3 import Connection
-from typing import Annotated, Generator
+from typing import Annotated
 
 from fastapi import Depends
 

@@ -1,5 +1,5 @@
+from collections.abc import Generator
 from sqlite3 import Connection
-from typing import Generator
 
 import pytest
 

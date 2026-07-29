@@ -1,7 +1,7 @@
 import sqlite3
+from collections.abc import Generator
 from contextlib import contextmanager
 from sqlite3 import Connection
-from typing import Generator
 
 from app.config import DATABASE_FILE
 
