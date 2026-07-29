@@ -11,6 +11,8 @@ class Creature(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
     country: Mapped[str | None]
+    # SQLAlchemy will automatically infer:
+    # `country: Mapped[str | None] = mapped_column(nullable=True)`
     area: Mapped[str | None]
     description: Mapped[str | None]
     aka: Mapped[str | None]

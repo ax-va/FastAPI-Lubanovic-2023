@@ -3,8 +3,8 @@ from pydantic import BaseModel
 
 class ExplorerRequest(BaseModel):
     name: str
-    country: str | None
-    description: str | None
+    country: str | None = None
+    description: str | None = None
 
 
 class ExplorerResponse(ExplorerRequest):

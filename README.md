@@ -103,7 +103,16 @@ JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=15
 ```
 
-### Database
-```shell
-$ pip install SQLAlchemy
-```
+### Relational Database
+
+- SQLAlchemy
+
+  ```shell
+  $ pip install SQLAlchemy
+  ```
+
+- SQLModel
+
+  ```shell
+  $ pip install sqlmodel
+  ```
