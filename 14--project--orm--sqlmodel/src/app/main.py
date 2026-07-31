@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from sqlmodel import Session
 
 from app.repositories.sqlalchemy import database as db
 from app.services import users as users_service
@@ -6,7 +7,7 @@ from app.web import creatures as creatures_web
 from app.web import explorers as explorers_web
 from app.web import users as users_web
 
-with db.SessionFactory() as db_session:
+with Session(db.engine) as db_session:
     users_service.ensure_admin_exists(db_session)
 
 app = FastAPI()
