@@ -92,6 +92,7 @@ def bind(
     creature_id: int,
 ) -> list[CreatureResponse]:
     from app.repositories.sqlalchemy import creatures as creatures_repository
+    from app.services.creatures import to_response as to_creatures_response
 
     try:
         explorer: Explorer | None = explorers_repository.get_by_id(db_session, explorer_id)
@@ -103,7 +104,7 @@ def bind(
             raise NotFoundError(f"Creature with ID {creature_id} not found")
 
         repository.bind(db_session, explorer, creature)
-        creature_responses: list[CreatureResponse] = get_creatures(db_session, explorer.id)
+        creatures: list[Creature] = explorers_repository.get_creatures(db_session, explorer.id)
         db_session.commit()
 
     except RepositoryDuplicateBindingError as e:
@@ -114,7 +115,7 @@ def bind(
         db_session.rollback()
         raise
 
-    return creature_responses
+    return [to_creatures_response(creature) for creature in creatures]
 
 
 def get_creatures(
