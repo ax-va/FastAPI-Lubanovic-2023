@@ -120,7 +120,7 @@ def bind(
     return [to_creature_response(explorer) for explorer in creature.explorers]
 
 
-def get_explorers(
+def get_creatures(
     db_session: Session,
     explorer_id: int,
 ) -> list[CreatureResponse]:
