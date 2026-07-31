@@ -112,7 +112,7 @@ def get_creatures(
     status_code=201,  # 201 Created
     responses=UNAUTHORIZED | NOT_FOUND | CONFLICT,
 )
-def bind_creature(
+def bind(
     db_session: DatabaseSession,
     explorer_id: int,
     creature_id: int,

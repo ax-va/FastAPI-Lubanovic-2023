@@ -42,7 +42,7 @@ def create(
     except IntegrityError as e:
         message = str(e.orig).lower()
         if INTEGRITY_ERROR_UNIQUE in message:
-            raise DuplicateError(f"Username {user.username!r} already exists") from e
+            raise DuplicateError() from e
         raise
 
     return user
@@ -61,7 +61,7 @@ def replace(
     except IntegrityError as e:
         message = str(e.orig).lower()
         if INTEGRITY_ERROR_UNIQUE in message:
-            raise DuplicateError(f"Username {user.username!r} already exists") from e
+            raise DuplicateError() from e
         raise
 
     return user

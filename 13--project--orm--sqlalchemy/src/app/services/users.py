@@ -59,7 +59,9 @@ def create(
 
     except RepositoryDuplicateError as e:
         db_session.rollback()
-        raise ServiceDuplicateError(str(e)) from e
+        raise ServiceDuplicateError(
+            f"Username {user_request.username!r} already exists"
+        ) from e
 
     except Exception:
         db_session.rollback()
@@ -83,7 +85,9 @@ def replace(
 
     except RepositoryDuplicateError as e:
         db_session.rollback()
-        raise ServiceDuplicateError(str(e)) from e
+        raise ServiceDuplicateError(
+            f"Username {user_request.username!r} already exists"
+        ) from e
 
     except Exception:
         db_session.rollback()

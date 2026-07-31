@@ -147,7 +147,7 @@ $ http -b PATCH localhost:8000/users/2/revoke-admin "Authorization:Bearer eyJhbG
     "username": "ax-va"
 }
 
-$  http -b localhost:8000/creatures \
+$ http -b localhost:8000/creatures \
 "Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc4MzY4NTAzMn0.QVoCxpJpkZ3iYrtswJisIYOvYaWTo9MA_f-Somg06rI" \
 name="Lubanovic" \
 country="US" \

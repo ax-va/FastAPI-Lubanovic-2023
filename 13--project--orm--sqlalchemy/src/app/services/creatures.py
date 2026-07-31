@@ -109,7 +109,9 @@ def bind(
 
     except RepositoryDuplicateBindingError as e:
         db_session.rollback()
-        raise ServiceDuplicateBindingError(e)
+        raise ServiceDuplicateBindingError(
+            f"Creature with ID {creature_id} is already bound to explorer with ID {explorer_id}"
+        ) from e
 
     except Exception:
         db_session.rollback()

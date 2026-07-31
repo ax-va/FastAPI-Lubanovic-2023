@@ -67,9 +67,7 @@ def bind(
         db_session.flush()
 
     except IntegrityError as e:
-        raise DuplicateBindingError(
-            f"Explorer with ID {explorer.id} is already bound to creature with ID {creature.id}"
-        ) from e
+        raise DuplicateBindingError() from e
 
 
 def get_creatures(
