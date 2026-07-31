@@ -1,8 +1,11 @@
 from sqlalchemy.orm.session import Session
 
-from app.models.orm.creature import Creature
+from app.models.orm import Creature, Explorer
 from app.models.schemas.creatures import CreatureRequest, CreatureResponse
+from app.models.schemas.explorers import ExplorerResponse
+from app.repositories.errors import DuplicateBindingError as RepositoryDuplicateBindingError
 from app.repositories.sqlalchemy import creatures as creatures_repository
+from app.services.errors import DuplicateBindingError as ServiceDuplicateBindingError
 from app.services.errors import NotFoundError
 
 repository = creatures_repository
@@ -81,3 +84,49 @@ def delete(
     except Exception:
         db_session.rollback()
         raise
+
+
+def bind(
+    db_session: Session,
+    creature_id: int,
+    explorer_id: int,
+) -> list[ExplorerResponse]:
+    from app.repositories.sqlalchemy import explorers as explorers_repository
+
+    try:
+        creature: Creature | None = creatures_repository.get_by_id(db_session, creature_id)
+        if creature is None:
+            raise NotFoundError(f"Creature with ID {creature_id} not found")
+
+        explorer: Explorer | None = explorers_repository.get_by_id(db_session, explorer_id)
+        if explorer is None:
+            raise NotFoundError(f"Explorer with ID {explorer_id} not found")
+
+        repository.bind(db_session, creature, explorer)
+        explorer_responses: list[ExplorerResponse] = get_explorers(db_session, explorer.id)
+        db_session.commit()
+
+    except RepositoryDuplicateBindingError as e:
+        db_session.rollback()
+        raise ServiceDuplicateBindingError(e)
+
+    except Exception:
+        db_session.rollback()
+        raise
+
+    return explorer_responses
+
+
+def get_explorers(
+    db_session: Session,
+    creature_id: int,
+) -> list[ExplorerResponse]:
+    from app.services.explorers import to_response as to_explorer_response
+
+    creature: Creature | None = creatures_repository.get_by_id(db_session, creature_id)
+    if creature is None:
+        raise NotFoundError(f"Creature with ID {creature_id} not found")
+
+    explorers: list[Explorer] = repository.get_explorers(db_session, creature)
+
+    return [to_explorer_response(explorer) for explorer in explorers]

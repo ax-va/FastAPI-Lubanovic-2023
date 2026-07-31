@@ -2,7 +2,6 @@ from fastapi import APIRouter, HTTPException
 
 from app.models.schemas.creatures import CreatureResponse
 from app.models.schemas.explorers import ExplorerRequest, ExplorerResponse
-from app.services import explorer_creature as explorer_creature_service
 from app.services import explorers as explorers_service
 from app.services.errors import NotFoundError, DuplicateBindingError
 from app.web.deps.auth import CurrentUser
@@ -104,7 +103,7 @@ def get_creatures(
     db_session: DatabaseSession,
     explorer_id: int,
 ) -> list[CreatureResponse]:
-    return explorer_creature_service.get_creatures(db_session, explorer_id)
+    return service.get_creatures(db_session, explorer_id)
 
 
 # API for only authenticated users
@@ -113,14 +112,14 @@ def get_creatures(
     status_code=201,  # 201 Created
     responses=UNAUTHORIZED | NOT_FOUND | CONFLICT,
 )
-def bind_creature(
+def bind(
     db_session: DatabaseSession,
     explorer_id: int,
     creature_id: int,
      _: CurrentUser,
 ) -> list[CreatureResponse]:
     try:
-        explorer_creature_service.bind(
+        creature_responses: list[CreatureResponse] = service.bind(
             db_session,
             explorer_id,
             creature_id,
@@ -132,4 +131,4 @@ def bind_creature(
             detail=str(e),
         )
 
-    return explorer_creature_service.get_creatures(db_session, creature_id)
+    return creature_responses

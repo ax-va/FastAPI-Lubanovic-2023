@@ -1,7 +1,9 @@
-from sqlalchemy import select
+from sqlalchemy import select, insert
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.models.orm.creature import Creature
+from app.models.orm import Creature, Explorer, explorer_creature
+from app.repositories.errors import DuplicateBindingError
 
 
 def get_all(db_session: Session) -> list[Creature]:
@@ -48,3 +50,40 @@ def delete(
 ) -> None:
     db_session.delete(creature)
     db_session.flush()
+
+
+def bind(
+    db_session: Session,
+    creature: Creature,
+    explorer: Explorer,
+
+) -> None:
+    statement = insert(explorer_creature).values(
+        creature_id=creature.id,
+        explorer_id=explorer.id,
+    )
+    db_session.execute(statement)
+
+    try:
+        db_session.flush()
+
+    except IntegrityError as e:
+        raise DuplicateBindingError(
+            f"Creature with ID {creature.id} is already bound to explorer with ID {explorer.id}"
+        ) from e
+
+
+def get_explorers(
+    db_session: Session,
+    creature: Creature,
+) -> list[Explorer]:
+    statement = (
+        select(Explorer).join(
+            explorer_creature,
+            Explorer.id == explorer_creature.c.explorer_id,
+        ).where(
+            explorer_creature.c.creature_id == creature.id,
+        ).order_by(Explorer.id)
+    )
+
+    return list(db_session.scalars(statement).all())
