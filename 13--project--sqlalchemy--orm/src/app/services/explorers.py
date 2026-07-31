@@ -37,12 +37,11 @@ def create(
 
     try:
         created: Explorer = repository.create(db_session, explorer)
+        db_session.commit()
 
     except Exception:
         db_session.rollback()
         raise
-
-    db_session.commit()
 
     return to_response(created)
 
@@ -58,12 +57,11 @@ def replace(
             raise NotFoundError(f"Explorer with ID {explorer_id} not found")
 
         updated = repository.replace(db_session, to_update, to_dict(explorer_request))
+        db_session.commit()
 
     except Exception:
         db_session.rollback()
         raise
-
-    db_session.commit()
 
     return to_response(updated)
 
@@ -78,9 +76,8 @@ def delete(
             raise NotFoundError(f"Explorer with ID {explorer_id} not found")
 
         repository.delete(db_session, to_delete)
+        db_session.commit()
 
     except Exception:
         db_session.rollback()
         raise
-
-    db_session.commit()

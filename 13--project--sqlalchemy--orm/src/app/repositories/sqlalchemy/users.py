@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import cast
 
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
@@ -8,9 +8,9 @@ from app.models.orm.user import User
 from ..errors import DuplicateError, INTEGRITY_ERROR_UNIQUE
 
 
-def get_all(db_session: Session) -> Sequence[User]:
+def get_all(db_session: Session) -> list[User]:
     statement = select(User).order_by(User.id)
-    return db_session.scalars(statement).all()
+    return list(db_session.scalars(statement).all())
 
 
 def get_by_id(
@@ -70,7 +70,8 @@ def replace(
 def count_admins(db_session: Session) -> int:
     statement = select(func.count(User.id)).where(User.is_admin)
 
-    return db_session.scalar(statement) or 0
+    # SQLAlchemy cannot infer that `COUNT()` always returns an `int`
+    return cast(int, db_session.scalar(statement))
 
 
 def delete(

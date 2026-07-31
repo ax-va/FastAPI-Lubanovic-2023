@@ -55,6 +55,7 @@ def create(
 
     try:
         created = repository.create(db_session, user)
+        db_session.commit()
 
     except RepositoryDuplicateError as e:
         db_session.rollback()
@@ -63,8 +64,6 @@ def create(
     except Exception:
         db_session.rollback()
         raise
-
-    db_session.commit()
 
     return to_response(created)
 
@@ -80,6 +79,7 @@ def replace(
             raise NotFoundError(f"User with ID {user_id} not found")
 
         updated = repository.replace(db_session, to_update, to_dict(user_request))
+        db_session.commit()
 
     except RepositoryDuplicateError as e:
         db_session.rollback()
@@ -88,8 +88,6 @@ def replace(
     except Exception:
         db_session.rollback()
         raise
-
-    db_session.commit()
 
     return to_response(updated)
 
@@ -167,12 +165,11 @@ def delete(
             raise LastAdminError("Deleting the last admin is not allowed")
 
         deleted = repository.delete(db_session, to_delete)
+        db_session.commit()
 
     except Exception:
         db_session.rollback()
         raise
-
-    db_session.commit()
 
     return to_response(deleted)
 
@@ -191,11 +188,10 @@ def set_admin(
             raise LastAdminError("Revoking the last admin is not allowed")
 
         updated = repository.set_admin(db_session, to_update, is_admin)
+        db_session.commit()
 
     except Exception:
         db_session.rollback()
         raise
-
-    db_session.commit()
 
     return to_response(updated)

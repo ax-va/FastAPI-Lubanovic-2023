@@ -23,7 +23,7 @@ def create(
     explorer: Explorer,
 ) -> Explorer:
     db_session.add(explorer)
-    # Calling `flush` creates `id` for `creature`
+    # Calling `flush` creates `id` for `explorer`
     db_session.flush()
 
     return explorer

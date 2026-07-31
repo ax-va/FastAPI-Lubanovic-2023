@@ -15,8 +15,9 @@ def bind(
         explorer_id=explorer.id,
         creature_id=creature.id,
     )
+    db_session.execute(statement)
+
     try:
-        db_session.execute(statement)
         db_session.flush()
 
     except IntegrityError as e:

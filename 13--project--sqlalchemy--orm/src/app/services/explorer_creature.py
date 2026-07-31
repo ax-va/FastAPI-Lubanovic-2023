@@ -33,6 +33,7 @@ def bind(
             raise NotFoundError(f"Creature with ID {creature_id} not found")
 
         repository.bind(db_session, explorer, creature)
+        db_session.commit()
 
     except RepositoryDuplicateBindingError as e:
         db_session.rollback()
@@ -42,24 +43,17 @@ def bind(
         db_session.rollback()
         raise
 
-    db_session.commit()
-
 
 def get_creatures(
     db_session: Session,
     explorer_id: int,
 ) -> list[CreatureResponse]:
-    try:
 
-        explorer: Explorer | None = explorers_repository.get_by_id(db_session, explorer_id)
-        if explorer is None:
-            raise NotFoundError(f"Explorer with ID {explorer_id} not found")
+    explorer: Explorer | None = explorers_repository.get_by_id(db_session, explorer_id)
+    if explorer is None:
+        raise NotFoundError(f"Explorer with ID {explorer_id} not found")
 
-        creatures: list[Creature] = repository.get_creatures(db_session, explorer)
-
-    except Exception:
-        db_session.rollback()
-        raise
+    creatures: list[Creature] = repository.get_creatures(db_session, explorer)
 
     return [to_creature_response(creature) for creature in creatures]
 
@@ -68,16 +62,11 @@ def get_explorers(
     db_session: Session,
     creature_id: int,
 ) -> list[ExplorerResponse]:
-    try:
 
-        creature: Creature | None = creatures_repository.get_by_id(db_session, creature_id)
-        if creature is None:
-            raise NotFoundError(f"Creature with ID {creature_id} not found")
+    creature: Creature | None = creatures_repository.get_by_id(db_session, creature_id)
+    if creature is None:
+        raise NotFoundError(f"Creature with ID {creature_id} not found")
 
-        explorers: list[Explorer] = repository.get_explorers(db_session, creature)
-
-    except Exception:
-        db_session.rollback()
-        raise
+    explorers: list[Explorer] = repository.get_explorers(db_session, creature)
 
     return [to_explorer_response(explorer) for explorer in explorers]

@@ -67,6 +67,8 @@ def create(
         if created is None:
             raise RuntimeError(f"User with ID {created_id} could not be retrieved after creation")
 
+        db_connection.commit()
+
     except RepositoryDuplicateError as e:
         db_connection.rollback()
         raise ServiceDuplicateError(str(e)) from e
@@ -74,8 +76,6 @@ def create(
     except Exception:
         db_connection.rollback()
         raise
-
-    db_connection.commit()
 
     return created
 
@@ -103,6 +103,8 @@ def replace(
         if updated is None:
             raise RuntimeError(f"Updated user with ID {user_id} could not be retrieved after update")
 
+        db_connection.commit()
+
     except RepositoryDuplicateError as e:
         db_connection.rollback()
         raise ServiceDuplicateError(str(e)) from e
@@ -110,8 +112,6 @@ def replace(
     except Exception:
         db_connection.rollback()
         raise
-
-    db_connection.commit()
 
     return updated
 
@@ -188,12 +188,11 @@ def delete(
             raise LastAdminError("Deleting the last admin is not allowed")
 
         repository.delete(db_connection, user_id)
+        db_connection.commit()
 
     except Exception:
         db_connection.rollback()
         raise
-
-    db_connection.commit()
 
 
 def set_admin(
@@ -215,10 +214,10 @@ def set_admin(
         if updated is None:
             raise RuntimeError(f"Updated user with ID {user_id} could not be retrieved after update")
 
+        db_connection.commit()
+
     except Exception:
         db_connection.rollback()
         raise
-
-    db_connection.commit()
 
     return updated

@@ -29,11 +29,11 @@ def create(
         if created is None:
             raise RuntimeError(f"Creature with ID {creature_id} could not be retrieved after creation")
 
+        db_connection.commit()
+
     except Exception:
         db_connection.rollback()
         raise
-
-    db_connection.commit()
 
     return created
 
@@ -54,11 +54,11 @@ def replace(
         if updated is None:
             raise RuntimeError(f"Creature with ID {creature_id} could not be retrieved after update")
 
+        db_connection.commit()
+
     except Exception:
         db_connection.rollback()
         raise
-
-    db_connection.commit()
 
     return updated
 
@@ -73,9 +73,8 @@ def delete(
             raise NotFoundError(f"Creature with ID {creature_id} not found")
 
         repository.delete(db_connection, creature_id)
+        db_connection.commit()
 
     except Exception:
         db_connection.rollback()
         raise
-
-    db_connection.commit()
