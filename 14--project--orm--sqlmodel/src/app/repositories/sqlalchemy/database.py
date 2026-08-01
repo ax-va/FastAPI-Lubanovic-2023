@@ -8,7 +8,7 @@ from app.config import DATABASE_FILE
 
 DATABASE_URL = f"sqlite:///{DATABASE_FILE}"
 
-# SQLAlchemy Engine:
+# SQLAlchemy engine:
 # 1) Stores the database configuration and connection URL;
 # 2) Creates and manages database connections;
 # 3) Reuses connections through a connection pool;
