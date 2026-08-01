@@ -1,13 +1,11 @@
 from collections.abc import Generator
 
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool.impl import StaticPool
+from sqlmodel import Session, SQLModel, create_engine
 
 # Import all ORM models to create tables by `create_all` later
 import app.models.orm  # noqa: F401
-from app.models.orm.base import Base
 from app.services import creatures as creatures_service
 from app.services import explorers as explorers_service
 from app.services import users as users_service
@@ -25,15 +23,9 @@ def db_session() -> Generator[Session, None, None]:
         poolclass=StaticPool,
     )
 
-    Base.metadata.create_all(engine)
+    SQLModel.metadata.create_all(engine)
 
-    SessionFactory = sessionmaker(
-        bind=engine,
-        autoflush=False,
-        expire_on_commit=False,
-    )
-
-    with SessionFactory() as session:
+    with Session(engine) as session:
         users_service.create_admin(
             session,
             username="admin",
