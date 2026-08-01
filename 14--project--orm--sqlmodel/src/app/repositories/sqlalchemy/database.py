@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from sqlalchemy import Engine
 from sqlmodel import SQLModel, create_engine
 
@@ -8,12 +6,7 @@ import app.models.orm  # noqa: F401
 from app.config import DATABASE_FILE
 
 
-def make_sqlite_url(database_file: str | Path) -> str:
-    """Builds a SQLAlchemy URL for a SQLite database."""
-    return f"sqlite:///{Path(database_file)}"
-
-
-DATABASE_URL = make_sqlite_url(DATABASE_FILE)
+DATABASE_URL = f"sqlite:///{DATABASE_FILE}"
 
 # SQLAlchemy Engine:
 # 1) Stores the database configuration and connection URL;

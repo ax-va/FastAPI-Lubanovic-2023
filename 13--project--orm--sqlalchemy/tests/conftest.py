@@ -27,13 +27,13 @@ def db_session() -> Generator[Session, None, None]:
 
     Base.metadata.create_all(engine)
 
-    SessionFactory = sessionmaker(
+    session_factory = sessionmaker(
         bind=engine,
         autoflush=False,
         expire_on_commit=False,
     )
 
-    with SessionFactory() as session:
+    with session_factory() as session:
         users_service.create_admin(
             session,
             username="admin",

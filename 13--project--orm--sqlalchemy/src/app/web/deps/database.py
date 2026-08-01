@@ -10,7 +10,7 @@ from app.repositories.sqlalchemy import database as db
 # dependency
 def get_session() -> Generator[Session, None, None]:
     """Provides a database session for a unit of work and close it afterwards."""
-    with db.SessionFactory() as db_session:
+    with db.session_factory() as db_session:
         yield db_session
 
 

@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from sqlalchemy import create_engine
 from sqlalchemy import Engine
 from sqlalchemy.orm import sessionmaker
@@ -10,12 +8,7 @@ from app.config import DATABASE_FILE
 from app.models.orm.base import Base
 
 
-def make_sqlite_url(database_file: str | Path) -> str:
-    """Builds a SQLAlchemy URL for a SQLite database."""
-    return f"sqlite:///{Path(database_file)}"
-
-
-DATABASE_URL = make_sqlite_url(DATABASE_FILE)
+DATABASE_URL = f"sqlite:///{DATABASE_FILE}"
 
 # SQLAlchemy Engine:
 # 1) Stores the database configuration and connection URL;
@@ -30,11 +23,11 @@ engine: Engine = create_engine(
 # Create tables if they don't exist
 Base.metadata.create_all(engine)
 
-# SQLAlchemy Session Factory:
+# SQLAlchemy session factory:
 # 1) Stores the configuration for creating sessions;
 # 2) Creates a new independent `Session` object on each call;
 # 3) Binds every session to the configured Engine.
-SessionFactory = sessionmaker(
+session_factory = sessionmaker(
     bind=engine,
     # Doesn't automatically flush pending changes before SQL queries.
     # Pending changes remain only in the session
