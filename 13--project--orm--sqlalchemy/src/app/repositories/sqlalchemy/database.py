@@ -20,7 +20,7 @@ engine: Engine = create_engine(
     connect_args={"check_same_thread": False},
 )
 
-# Create tables if they don't exist
+# Create database tables once during application startup if they don't exist
 Base.metadata.create_all(engine)
 
 # SQLAlchemy session factory:

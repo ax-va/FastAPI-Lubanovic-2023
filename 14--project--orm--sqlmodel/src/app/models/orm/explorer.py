@@ -26,6 +26,8 @@ class Explorer(SQLModel, table=True):
     # If an `Creature` is added to this collection,
     # the corresponding `Explorer` is automatically added to the `Creature`'s `explorers` collection,
     # and vice versa.
+    # Not a table column, but a lazily loading relationship.
+    # SQLAlchemy loads it from the link table `ExplorerCreature` when accessed.
     creatures: list["Creature"] = Relationship(
         # `back_populates` specifies the name of
         # the matching relationship attribute on the opposite model.
