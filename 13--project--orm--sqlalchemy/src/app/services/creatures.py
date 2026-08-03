@@ -39,7 +39,7 @@ def create(
     creature = Creature(**to_dict(creature_request))
 
     try:
-        created = repository.create(db_session, creature)
+        created: Creature = repository.create(db_session, creature)
         db_session.commit()
 
     except Exception:
