@@ -74,7 +74,7 @@ def count_admins(db_session: Session) -> int:
     return cast(int, db_session.scalar(statement))
 
 
-def delete(
+def soft_delete(
     db_session: Session,
     user: User,
 ) -> User:

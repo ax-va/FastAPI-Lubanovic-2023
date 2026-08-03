@@ -162,7 +162,7 @@ def create(
     _: None = Depends(require_anonymous_user)
 ) -> UserResponse:
     try:
-        user_response: UserResponse = service.create(db_session, user_request)
+        created: UserResponse = service.create(db_session, user_request)
 
     except DuplicateError as e:
         raise HTTPException(
@@ -170,7 +170,7 @@ def create(
             detail=str(e),
         ) from e
 
-    return user_response
+    return created
 
 
 # API only for authenticated admins
@@ -185,7 +185,7 @@ def replace(
     _: CurrentAdmin,
 ) -> UserResponse:
     try:
-        user_response: UserResponse = service.replace(db_session, user_id, user_request)
+        updated: UserResponse = service.replace(db_session, user_id, user_request)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e)) from e
@@ -196,7 +196,7 @@ def replace(
             detail=str(e),
         ) from e
 
-    return user_response
+    return updated
 
 
 # NOTE:
@@ -207,14 +207,14 @@ def replace(
 # API for only authenticated users
 @router.delete(
     "/me",
-    responses=UNAUTHORIZED | CONFLICT,
+    responses=UNAUTHORIZED | NOT_FOUND | CONFLICT,
 )
-def delete_me(
+def soft_delete_me(
     db_session: DatabaseSession,
     user_response: CurrentUser,
-) -> None:
+) -> UserResponse:
     try:
-        service.delete(db_session, user_response.id)
+        soft_deleted: UserResponse = service.soft_delete(db_session, user_response.id)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e)) from e
@@ -224,6 +224,8 @@ def delete_me(
             status_code=409,
             detail=str(e),
         ) from e
+
+    return soft_deleted
 
 
 # API only for authenticated admins
@@ -231,12 +233,13 @@ def delete_me(
     "/{user_id}",
     responses=UNAUTHORIZED | NOT_FOUND | CONFLICT,
 )
-def delete_me(
+def soft_delete(
     db_session: DatabaseSession,
-    user_response: CurrentUser,
-) -> None:
+    user_id: int,
+    _: CurrentAdmin,
+) -> UserResponse:
     try:
-        service.delete(db_session, user_response.id)
+        soft_deleted: UserResponse = service.soft_delete(db_session, user_id)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e)) from e
@@ -246,3 +249,5 @@ def delete_me(
             status_code=409,
             detail=str(e),
         ) from e
+
+    return soft_deleted

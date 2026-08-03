@@ -100,7 +100,7 @@ def replace(
         raise
 
 
-def delete(
+def soft_delete(
     db_connection: Connection,
     user_id: int,
 ) -> None:

@@ -82,7 +82,12 @@ $ http -b localhost:8000/users/2 "Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5c
 }
 
 $ http -b DELETE localhost:8000/users/me "Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJheC12YSIsImV4cCI6MTc4MzY3OTA1OX0.EPeryjWN5RfcBc3SR9z3tlQ__mtIROVQXfGegSLdeIc"
-null
+{
+    "id": 2,
+    "is_active": false,
+    "is_admin": false,
+    "username": "ax-va"
+}
 
 $ http -b localhost:8000/explorers
 [

@@ -175,10 +175,10 @@ def ensure_admin_exists(db_connection: Connection) -> None:
     create_admin(db_connection, username, password)
 
 
-def delete(
+def soft_delete(
     db_connection: Connection,
     user_id: int,
-) -> None:
+) -> UserResponse:
     try:
         to_delete: UserResponse | None = get_by_id(db_connection, user_id)
         if to_delete is None:
@@ -187,12 +187,19 @@ def delete(
         if to_delete.is_admin and count_admins(db_connection) == 1:
             raise LastAdminError("Deleting the last admin is not allowed")
 
-        repository.delete(db_connection, user_id)
+        repository.soft_delete(db_connection, user_id)
+
+        deleted: UserResponse | None = get_by_id(db_connection, user_id)
+        if deleted is None:
+            raise RuntimeError(f"Soft-deleted user with ID {user_id} could not be retrieved after soft delete")
+
         db_connection.commit()
 
     except Exception:
         db_connection.rollback()
         raise
+
+    return deleted
 
 
 def set_admin(

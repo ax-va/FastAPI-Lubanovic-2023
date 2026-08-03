@@ -156,7 +156,7 @@ def ensure_admin_exists(db_session: Session) -> None:
     create_admin(db_session, username, password)
 
 
-def delete(
+def soft_delete(
     db_session: Session,
     user_id: int,
 ) -> UserResponse:
@@ -168,14 +168,14 @@ def delete(
         if to_delete.is_admin and count_admins(db_session) == 1:
             raise LastAdminError("Deleting the last admin is not allowed")
 
-        deleted = repository.delete(db_session, to_delete)
+        soft_deleted: User = repository.soft_delete(db_session, to_delete)
         db_session.commit()
 
     except Exception:
         db_session.rollback()
         raise
 
-    return to_response(deleted)
+    return to_response(soft_deleted)
 
 
 def set_admin(
