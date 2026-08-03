@@ -69,9 +69,10 @@ def replace(
 
 def count_admins(db_session: Session) -> int:
     statement = select(func.count(User.id)).where(User.is_admin)
+    result = db_session.exec(statement)
 
-    # SQLAlchemy cannot infer that `COUNT()` always returns an `int`
-    return cast(int, db_session.exec(statement).one())
+    # SQLModel typing cannot infer the scalar type `int` returned by `one()`
+    return cast(int, result.one())
 
 
 def delete(
