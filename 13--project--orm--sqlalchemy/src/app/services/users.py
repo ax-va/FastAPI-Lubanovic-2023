@@ -54,7 +54,7 @@ def create(
     )
 
     try:
-        created = repository.create(db_session, user)
+        created: User = repository.create(db_session, user)
         db_session.commit()
 
     except RepositoryDuplicateError as e:

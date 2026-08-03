@@ -54,7 +54,8 @@ def create(
     )
 
     try:
-        created = repository.create(db_session, user)
+        created: User = repository.create(db_session, user)
+        db_session.commit()
 
     except RepositoryDuplicateError as e:
         db_session.rollback()
@@ -65,8 +66,6 @@ def create(
     except Exception:
         db_session.rollback()
         raise
-
-    db_session.commit()
 
     return to_response(created)
 
