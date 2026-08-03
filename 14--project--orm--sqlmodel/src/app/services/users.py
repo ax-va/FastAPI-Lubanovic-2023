@@ -191,12 +191,11 @@ def set_admin(
         if not is_admin and to_update.is_admin and count_admins(db_session) == 1:
             raise LastAdminError("Revoking the last admin is not allowed")
 
-        updated = repository.set_admin(db_session, to_update, is_admin)
+        updated: User = repository.set_admin(db_session, to_update, is_admin)
+        db_session.commit()
 
     except Exception:
         db_session.rollback()
         raise
-
-    db_session.commit()
 
     return to_response(updated)

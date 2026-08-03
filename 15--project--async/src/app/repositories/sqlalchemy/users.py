@@ -76,7 +76,7 @@ async def count_admins(db_session: AsyncSession) -> int:
     return result.scalar_one()
 
 
-async def delete(
+async def soft_delete(
     db_session: AsyncSession,
     user: User,
 ) -> User:
