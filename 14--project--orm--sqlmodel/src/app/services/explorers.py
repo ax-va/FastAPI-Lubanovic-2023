@@ -80,12 +80,11 @@ def delete(
             raise NotFoundError(f"Explorer with ID {explorer_id} not found")
 
         repository.delete(db_session, to_delete)
+        db_session.commit()
 
     except Exception:
         db_session.rollback()
         raise
-
-    db_session.commit()
 
 
 def bind(
