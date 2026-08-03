@@ -8,8 +8,8 @@ from app.models.orm.creature import Creature
 from app.repositories.errors import DuplicateBindingError
 
 
-async def get_all(db_session: AsyncSession) -> list[Creature]:
-    statement = select(Creature).order_by(Creature.id)
+async def get_all(db_session: AsyncSession) -> list[Explorer]:
+    statement = select(Explorer).order_by(Explorer.id)
     result = await db_session.execute(statement)
 
     return list(result.scalars().all())
@@ -17,41 +17,41 @@ async def get_all(db_session: AsyncSession) -> list[Creature]:
 
 async def get_by_id(
     db_session: AsyncSession,
-    creature_id: int,
-) -> Creature | None:
+    explorer_id: int,
+) -> Explorer | None:
     # noinspection PyTypeChecker
-    return await db_session.get(Creature, creature_id)
+    return await db_session.get(Explorer, explorer_id)
 
 
 async def create(
     db_session: AsyncSession,
-    creature: Creature,
-) -> Creature:
-    db_session.add(creature)
-    # Calling `flush` creates `id` for `creature`
+    explorer: Explorer,
+) -> Explorer:
+    db_session.add(explorer)
+    # Calling `flush` creates `id` for `explorer`
     await db_session.flush()
 
-    return creature
+    return explorer
 
 
 async def replace(
     db_session: AsyncSession,
-    creature: Creature,
-    field_to_value: dict[str, str | None],
-) -> Creature:
+    explorer: Explorer,
+    field_to_value: dict[str, str | None]
+) -> Explorer:
 
     for field, value in field_to_value.items():
-        setattr(creature, field, value)
+        setattr(explorer, field, value)
     await db_session.flush()
 
-    return creature
+    return explorer
 
 
 async def delete(
     db_session: AsyncSession,
-    creature: Creature,
+    explorer: Explorer,
 ) -> None:
-    await db_session.delete(creature)
+    await db_session.delete(explorer)
     await db_session.flush()
 
 
@@ -59,10 +59,10 @@ async def delete(
 # the many-to-many relationship between creatures and explorers.
 async def bind(
     db_session: AsyncSession,
-    creature: Creature,
     explorer: Explorer,
-) -> list[Explorer]:
-    creature.explorers.append(explorer)
+    creature: Creature,
+) -> list[Creature]:
+    explorer.creatures.append(creature)
 
     try:
         await db_session.flush()
@@ -79,17 +79,17 @@ async def bind(
     # unless they have been explicitly expired or deferred.
 
     await db_session.refresh(
-        creature,
-        attribute_names=["explorers"],
+        explorer,
+        attribute_names=["creatures"],
     )
 
-    return creature.explorers
+    return explorer.creatures
 
 
-async def get_explorers(
+async def get_creatures(
     db_session: AsyncSession,
-    creature: Creature,
-) -> list[Explorer]:
+    explorer: Explorer,
+) -> list[Creature]:
 
     # Rule:
     # In `AsyncSession`, always explicitly load
@@ -101,11 +101,11 @@ async def get_explorers(
 
     # noinspection PyTypeChecker
     statement = (
-        select(Creature)
-        .options(selectinload(Creature.explorers))
-        .where(Creature.id == creature.id)
+        select(Explorer)
+        .options(selectinload(Explorer.creatures))
+        .where(Explorer.id == explorer.id)
     )
     result = await db_session.execute(statement)
-    creature = result.scalar_one()
+    explorer = result.scalar_one()
 
-    return creature.explorers
+    return explorer.creatures
