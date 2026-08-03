@@ -80,7 +80,7 @@ def replace(
         if to_update is None:
             raise NotFoundError(f"User with ID {user_id} not found")
 
-        updated = repository.replace(db_session, to_update, to_dict(user_request))
+        updated: User = repository.replace(db_session, to_update, to_dict(user_request))
         db_session.commit()
 
     except RepositoryDuplicateError as e:
@@ -101,7 +101,7 @@ def verify_credentials(
     username: str,
     password: str,
 ) -> bool:
-    user = repository.get_by_username(db_session, username)
+    user: User | None = repository.get_by_username(db_session, username)
 
     if user is None:
         return False
@@ -124,7 +124,7 @@ def get_by_token(
     if subject is None:
         return None
 
-    user = repository.get_by_username(db_session, subject)
+    user: User | None = repository.get_by_username(db_session, subject)
 
     if user is None or not user.is_active:
         return None
