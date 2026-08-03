@@ -184,7 +184,10 @@ def soft_delete(
         if to_delete is None:
             raise NotFoundError(f"User with ID {user_id} not found")
 
-        if to_delete.is_admin and count_admins(db_connection) == 1:
+        if (
+            to_delete.is_admin
+            and count_admins(db_connection) == 1
+        ):
             raise LastAdminError("Deleting the last admin is not allowed")
 
         repository.soft_delete(db_connection, user_id)
@@ -212,7 +215,11 @@ def set_admin(
         if to_update is None:
             raise NotFoundError(f"User with ID {user_id} not found")
 
-        if not is_admin and to_update.is_admin and count_admins(db_connection) == 1:
+        if (
+            not is_admin
+            and to_update.is_admin
+            and count_admins(db_connection) == 1
+        ):
             raise LastAdminError("Revoking the last admin is not allowed")
 
         repository.set_admin(db_connection, user_id, is_admin)
