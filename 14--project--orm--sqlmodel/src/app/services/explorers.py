@@ -61,12 +61,11 @@ def replace(
             raise NotFoundError(f"Explorer with ID {explorer_id} not found")
 
         updated = repository.replace(db_session, to_update, to_dict(explorer_request))
+        db_session.commit()
 
     except Exception:
         db_session.rollback()
         raise
-
-    db_session.commit()
 
     return to_response(updated)
 
