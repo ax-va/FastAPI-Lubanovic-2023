@@ -41,12 +41,11 @@ def create(
 
     try:
         created: Explorer = repository.create(db_session, explorer)
+        db_session.commit()
 
     except Exception:
         db_session.rollback()
         raise
-
-    db_session.commit()
 
     return to_response(created)
 
