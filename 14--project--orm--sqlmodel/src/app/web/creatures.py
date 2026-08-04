@@ -114,15 +114,15 @@ def get_explorers(
 )
 def bind(
     db_session: DatabaseSession,
-    explorer_id: int,
     creature_id: int,
+    explorer_id: int,
     _: CurrentUser,
 ) -> list[ExplorerResponse]:
     try:
         explorer_responses: list[ExplorerResponse] = service.bind(
             db_session,
-            explorer_id,
             creature_id,
+            explorer_id,
         )
 
     except DuplicateBindingError as e:
