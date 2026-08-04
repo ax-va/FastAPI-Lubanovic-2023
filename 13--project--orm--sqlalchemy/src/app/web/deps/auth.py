@@ -18,7 +18,7 @@ def get_current_user(
 ) -> UserResponse:
     from app.web.users import service
 
-    user_response = service.get_by_token(db_session, token)
+    user_response: UserResponse | None = service.get_by_token(db_session, token)
 
     if user_response is None:
         raise HTTPException(
@@ -46,7 +46,7 @@ def require_anonymous_user(
     if token is None:
         return
 
-    user_response = service.get_by_token(db_session, token)
+    user_response: UserResponse | None = service.get_by_token(db_session, token)
 
     if user_response is None:
         raise HTTPException(

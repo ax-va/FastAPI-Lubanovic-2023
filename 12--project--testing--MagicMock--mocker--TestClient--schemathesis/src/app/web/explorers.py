@@ -29,7 +29,7 @@ def get_by_id(
     db_connection: DatabaseConnection,
     explorer_id: int,
 ) -> ExplorerResponse:
-    explorer_response = service.get_by_id(db_connection, explorer_id)
+    explorer_response: ExplorerResponse | None = service.get_by_id(db_connection, explorer_id)
 
     if explorer_response is None:
         raise resource_with_id_not_found(f"Explorer with ID {explorer_id} not found")
@@ -63,7 +63,7 @@ def replace(
     _: CurrentUser,
 ) -> ExplorerResponse:
     try:
-        explorer_response = service.replace(db_connection, explorer_id, explorer)
+        explorer_response: ExplorerResponse = service.replace(db_connection, explorer_id, explorer)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e))

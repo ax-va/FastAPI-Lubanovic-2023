@@ -12,13 +12,13 @@ optional_access_token_scheme = OAuth2PasswordBearer(tokenUrl="/users/token", aut
 
 
 # dependency
-def get_current_user(
+async def get_current_user(
     db_session: DatabaseSession,
     token: str = Depends(access_token_scheme),
 ) -> UserResponse:
     from app.web.users import service
 
-    user_response = service.get_by_token(db_session, token)
+    user_response: UserResponse | None = await service.get_by_token(db_session, token)
 
     if user_response is None:
         raise HTTPException(
@@ -37,7 +37,7 @@ def get_current_user(
 
 
 # dependency
-def require_anonymous_user(
+async def require_anonymous_user(
     db_session: DatabaseSession,
     token: str | None = Depends(optional_access_token_scheme),
 ) -> None:
@@ -46,7 +46,7 @@ def require_anonymous_user(
     if token is None:
         return
 
-    user_response = service.get_by_token(db_session, token)
+    user_response: UserResponse | None = await service.get_by_token(db_session, token)
 
     if user_response is None:
         raise HTTPException(
@@ -62,7 +62,7 @@ def require_anonymous_user(
 
 
 # dependency
-def get_current_admin(
+async def get_current_admin(
     user_response: UserResponse = Depends(get_current_user),
 ) -> UserResponse:
     if not user_response.is_admin:

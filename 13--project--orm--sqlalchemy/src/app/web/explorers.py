@@ -30,7 +30,7 @@ def get_by_id(
     db_session: DatabaseSession,
     explorer_id: int,
 ) -> ExplorerResponse:
-    explorer_response = service.get_by_id(db_session, explorer_id)
+    explorer_response: ExplorerResponse | None = service.get_by_id(db_session, explorer_id)
 
     if explorer_response is None:
         raise resource_with_id_not_found(f"Explorer with ID {explorer_id} not found")
@@ -64,7 +64,7 @@ def replace(
     _: CurrentUser,
 ) -> ExplorerResponse:
     try:
-        explorer_response = service.replace(db_session, explorer_id, explorer)
+        explorer_response: ExplorerResponse = service.replace(db_session, explorer_id, explorer)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e))
@@ -94,18 +94,6 @@ def delete(
         raise resource_with_id_not_found(str(e))
 
 
-# public API
-@router.get(
-    "/{explorer_id}/creatures",
-    responses=NOT_FOUND,
-)
-def get_creatures(
-    db_session: DatabaseSession,
-    explorer_id: int,
-) -> list[CreatureResponse]:
-    return service.get_creatures(db_session, explorer_id)
-
-
 # API for only authenticated users
 @router.post(
     "/{explorer_id}/creatures/{creature_id}",
@@ -132,3 +120,15 @@ def bind(
         )
 
     return creature_responses
+
+
+# public API
+@router.get(
+    "/{explorer_id}/creatures",
+    responses=NOT_FOUND,
+)
+def get_creatures(
+    db_session: DatabaseSession,
+    explorer_id: int,
+) -> list[CreatureResponse]:
+    return service.get_creatures(db_session, explorer_id)

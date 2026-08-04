@@ -29,7 +29,7 @@ def get_by_id(
     db_connection: DatabaseConnection,
     creature_id: int,
 ) -> CreatureResponse:
-    creature_response = service.get_by_id(db_connection, creature_id)
+    creature_response: CreatureResponse | None = service.get_by_id(db_connection, creature_id)
 
     if creature_response is None:
         raise resource_with_id_not_found(f"Creature with ID {creature_id} not found")
@@ -63,7 +63,7 @@ def replace(
     _: CurrentUser,
 ) -> CreatureResponse:
     try:
-        creature = service.replace(db_connection, creature_id, creature_request)
+        creature: CreatureResponse = service.replace(db_connection, creature_id, creature_request)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e)) from e
