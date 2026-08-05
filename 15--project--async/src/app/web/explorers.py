@@ -131,4 +131,10 @@ async def get_creatures(
     db_session: DatabaseSession,
     explorer_id: int,
 ) -> list[CreatureResponse]:
-    return await service.get_creatures(db_session, explorer_id)
+    try:
+        creatures: list[CreatureResponse] = await service.get_creatures(db_session, explorer_id)
+
+    except NotFoundError as e:
+        raise resource_with_id_not_found(str(e))
+
+    return creatures

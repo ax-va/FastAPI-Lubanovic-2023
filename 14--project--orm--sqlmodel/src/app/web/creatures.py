@@ -131,4 +131,10 @@ def get_explorers(
     db_session: DatabaseSession,
     creature_id: int,
 ) -> list[ExplorerResponse]:
-    return service.get_explorers(db_session, creature_id)
+    try:
+        explorers: list[ExplorerResponse] = service.get_explorers(db_session, creature_id)
+
+    except NotFoundError as e:
+        raise resource_with_id_not_found(str(e)) from e
+
+    return explorers
