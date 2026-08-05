@@ -5,7 +5,7 @@ from app.services import explorers
 from app.services.errors import NotFoundError
 from app.web.deps.auth import CurrentUser
 from app.web.deps.database import DatabaseConnection
-from app.web.errors import resource_with_id_not_found
+from app.web.errors import not_found
 from app.web.metadata import NOT_FOUND, UNAUTHORIZED
 
 service = explorers
@@ -32,7 +32,7 @@ def get_by_id(
     explorer_response: ExplorerResponse | None = service.get_by_id(db_connection, explorer_id)
 
     if explorer_response is None:
-        raise resource_with_id_not_found(f"Explorer with ID {explorer_id} not found")
+        raise not_found(f"Explorer with ID {explorer_id} not found")
 
     return explorer_response
 
@@ -66,7 +66,7 @@ def replace(
         explorer_response: ExplorerResponse = service.replace(db_connection, explorer_id, explorer)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e))
+        raise not_found(str(e))
 
     return explorer_response
 
@@ -90,4 +90,4 @@ def delete(
         service.delete(db_connection, explorer_id)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e))
+        raise not_found(str(e))

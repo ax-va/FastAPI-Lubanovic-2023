@@ -6,7 +6,7 @@ from app.services import explorers as explorers_service
 from app.services.errors import NotFoundError, DuplicateBindingError
 from app.web.deps.auth import CurrentUser
 from app.web.deps.database import DatabaseSession
-from app.web.errors import resource_with_id_not_found
+from app.web.errors import duplicate_binding, not_found
 from app.web.metadata import NOT_FOUND, UNAUTHORIZED, CONFLICT
 
 service = explorers_service
@@ -33,7 +33,7 @@ async def get_by_id(
     explorer_response: ExplorerResponse | None = await service.get_by_id(db_session, explorer_id)
 
     if explorer_response is None:
-        raise resource_with_id_not_found(f"Explorer with ID {explorer_id} not found")
+        raise not_found(f"Explorer with ID {explorer_id} not found")
 
     return explorer_response
 
@@ -67,7 +67,7 @@ async def replace(
         explorer_response: ExplorerResponse = await service.replace(db_session, explorer_id, explorer)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e))
+        raise not_found(str(e))
 
     return explorer_response
 
@@ -91,7 +91,7 @@ async def delete(
         await service.delete(db_session, explorer_id)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e))
+        raise not_found(str(e))
 
 
 # API for only authenticated users
@@ -113,11 +113,11 @@ async def bind(
             creature_id,
         )
 
+    except NotFoundError as e:
+        raise not_found(str(e)) from e
+
     except DuplicateBindingError as e:
-        raise HTTPException(
-            status_code=409,
-            detail=str(e),
-        )
+        raise duplicate_binding(str(e)) from e
 
     return creature_responses
 
@@ -135,6 +135,6 @@ async def get_creatures(
         creatures: list[CreatureResponse] = await service.get_creatures(db_session, explorer_id)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e))
+        raise not_found(str(e)) from e
 
     return creatures

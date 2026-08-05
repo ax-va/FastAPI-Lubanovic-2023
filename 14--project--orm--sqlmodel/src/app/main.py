@@ -7,6 +7,7 @@ from app.web import creatures as creatures_web
 from app.web import explorers as explorers_web
 from app.web import users as users_web
 
+db.create_schema(db.engine)
 with Session(db.engine) as db_session:
     users_service.ensure_admin_exists(db_session)
 

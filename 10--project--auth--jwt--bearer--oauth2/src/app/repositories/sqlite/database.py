@@ -18,6 +18,7 @@ def connect(
 
     try:
         yield db_connection
+
     finally:
         db_connection.close()
 

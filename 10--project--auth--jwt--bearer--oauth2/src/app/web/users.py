@@ -7,7 +7,7 @@ from app.services import users as users_service
 from app.services.errors import LastAdminError, NotFoundError, DuplicateError
 from app.web.deps.auth import require_anonymous_user, CurrentUser, CurrentAdmin
 from app.web.deps.database import DatabaseConnection
-from app.web.errors import resource_with_id_not_found
+from app.web.errors import not_found
 
 service = users_service
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -68,7 +68,7 @@ def grant_admin(
         user_response: UserResponse = service.set_admin(db_connection, user_id, True)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e)) from e
+        raise not_found(str(e)) from e
 
     return user_response
 
@@ -84,7 +84,7 @@ def revoke_admin(
         user_response: UserResponse = service.set_admin(db_connection, user_id, False)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e)) from e
+        raise not_found(str(e)) from e
 
     except LastAdminError as e:
         raise HTTPException(
@@ -114,7 +114,7 @@ def get(
         user_response: UserResponse | None = service.get_by_id(db_connection, user_id)
 
         if user_response is None:
-            raise resource_with_id_not_found(f"User with ID {user_id} not found")
+            raise not_found(f"User with ID {user_id} not found")
 
         return user_response
 
@@ -122,7 +122,7 @@ def get(
         user_response: UserResponse | None = service.get_by_username(db_connection, username)
 
         if user_response is None:
-            raise resource_with_id_not_found(f"User with username {username!r} not found")
+            raise not_found(f"User with username {username!r} not found")
 
         return user_response
 
@@ -165,7 +165,7 @@ def replace(
         updated: UserResponse = service.replace(db_connection, user_id, user_request)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e)) from e
+        raise not_found(str(e)) from e
 
     except DuplicateError as e:
         raise HTTPException(
@@ -191,7 +191,7 @@ def soft_delete_me(
         soft_deleted: UserResponse = service.soft_delete(db_connection, user_response.id)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e)) from e
+        raise not_found(str(e)) from e
 
     except LastAdminError as e:
         raise HTTPException(
@@ -213,7 +213,7 @@ def soft_delete(
         soft_deleted: UserResponse = service.soft_delete(db_connection, user_id)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e)) from e
+        raise not_found(str(e)) from e
 
     except LastAdminError as e:
         raise HTTPException(

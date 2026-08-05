@@ -6,7 +6,8 @@ from app.web import creatures as creatures_web
 from app.web import explorers as explorers_web
 from app.web import users as users_web
 
-with db.SessionFactory() as db_session:
+db.create_schema(db.engine)
+with db.session_factory() as db_session:
     users_service.ensure_admin_exists(db_session)
 
 app = FastAPI()

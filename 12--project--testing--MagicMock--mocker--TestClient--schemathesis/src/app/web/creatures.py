@@ -5,7 +5,7 @@ from app.services import creatures as creatures_service
 from app.services.errors import NotFoundError
 from app.web.deps.auth import CurrentUser
 from app.web.deps.database import DatabaseConnection
-from app.web.errors import resource_with_id_not_found
+from app.web.errors import not_found
 from app.web.metadata import NOT_FOUND, UNAUTHORIZED
 
 service = creatures_service
@@ -32,7 +32,7 @@ def get_by_id(
     creature_response: CreatureResponse | None = service.get_by_id(db_connection, creature_id)
 
     if creature_response is None:
-        raise resource_with_id_not_found(f"Creature with ID {creature_id} not found")
+        raise not_found(f"Creature with ID {creature_id} not found")
 
     return creature_response
 
@@ -66,7 +66,7 @@ def replace(
         creature: CreatureResponse = service.replace(db_connection, creature_id, creature_request)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e)) from e
+        raise not_found(str(e)) from e
 
     return creature
 
@@ -90,4 +90,4 @@ def delete(
         service.delete(db_connection, creature_id)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e)) from e
+        raise not_found(str(e)) from e

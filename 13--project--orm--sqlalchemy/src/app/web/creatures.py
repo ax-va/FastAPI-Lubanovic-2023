@@ -6,7 +6,7 @@ from app.services import creatures as creatures_service
 from app.services.errors import NotFoundError, DuplicateBindingError
 from app.web.deps.auth import CurrentUser
 from app.web.deps.database import DatabaseSession
-from app.web.errors import resource_with_id_not_found
+from app.web.errors import duplicate_binding, not_found
 from app.web.metadata import NOT_FOUND, UNAUTHORIZED, CONFLICT
 
 service = creatures_service
@@ -33,7 +33,7 @@ def get_by_id(
     creature_response: CreatureResponse | None = service.get_by_id(db_session, creature_id)
 
     if creature_response is None:
-        raise resource_with_id_not_found(f"Creature with ID {creature_id} not found")
+        raise not_found(f"Creature with ID {creature_id} not found")
 
     return creature_response
 
@@ -67,7 +67,7 @@ def replace(
         creature: CreatureResponse = service.replace(db_session, creature_id, creature_request)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e)) from e
+        raise not_found(str(e)) from e
 
     return creature
 
@@ -91,7 +91,7 @@ def delete(
         service.delete(db_session, creature_id)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e)) from e
+        raise not_found(str(e)) from e
 
 
 # API for only authenticated users
@@ -112,12 +112,12 @@ def bind(
             creature_id,
             explorer_id,
         )
+    
+    except NotFoundError as e:
+        raise not_found(str(e)) from e
 
     except DuplicateBindingError as e:
-        raise HTTPException(
-            status_code=409,
-            detail=str(e),
-        )
+        raise duplicate_binding(str(e)) from e
 
     return explorer_responses
 
@@ -135,6 +135,6 @@ def get_explorers(
         explorers: list[ExplorerResponse] = service.get_explorers(db_session, creature_id)
 
     except NotFoundError as e:
-        raise resource_with_id_not_found(str(e)) from e
+        raise not_found(str(e)) from e
 
     return explorers
