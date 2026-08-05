@@ -116,3 +116,10 @@ ACCESS_TOKEN_EXPIRE_MINUTES=15
   ```shell
   $ pip install sqlmodel
   ```
+
+### Async
+
+- Async for SQLite
+  ```shell
+  $ pip install aiosqlite
+  ```

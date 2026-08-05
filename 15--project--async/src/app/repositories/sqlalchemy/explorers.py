@@ -62,19 +62,12 @@ async def bind(
     explorer: Explorer,
     creature: Creature,
 ) -> list[Creature]:
-    explorer.creatures.append(creature)
-
-    try:
-        await db_session.flush()
-
-    except IntegrityError as e:
-        raise DuplicateBindingError() from e
 
     # Rule:
-    # In `AsyncSession`, always explicitly load
-    # a relationship before using or returning it.
-    # Implicit lazy loading of relationships is
-    # error-prone; use `refresh()` or `selectinload()`.
+    # In `AsyncSession`, always explicitly load a relationship
+    # before using, modifying, or returning it.
+    # Implicit lazy loading of relationships is error-prone;
+    # use `refresh()` or `selectinload()`.
     # Scalar columns are normally already loaded
     # unless they have been explicitly expired or deferred.
 
@@ -82,6 +75,14 @@ async def bind(
         explorer,
         attribute_names=["creatures"],
     )
+
+    explorer.creatures.append(creature)
+
+    try:
+        await db_session.flush()
+
+    except IntegrityError as e:
+        raise DuplicateBindingError() from e
 
     return explorer.creatures
 
@@ -92,10 +93,10 @@ async def get_creatures(
 ) -> list[Creature]:
 
     # Rule:
-    # In `AsyncSession`, always explicitly load
-    # a relationship before using or returning it.
-    # Implicit lazy loading of relationships is
-    # error-prone; use `refresh()` or `selectinload()`.
+    # In `AsyncSession`, always explicitly load a relationship
+    # before using, modifying, or returning it.
+    # Implicit lazy loading of relationships is error-prone;
+    # use `refresh()` or `selectinload()`.
     # Scalar columns are normally already loaded
     # unless they have been explicitly expired or deferred.
 

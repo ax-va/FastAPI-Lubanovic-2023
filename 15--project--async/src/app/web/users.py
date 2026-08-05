@@ -212,9 +212,9 @@ async def replace(
 async def soft_delete_me(
     db_session: DatabaseSession,
     user_response: CurrentUser,
-) -> None:
+) -> UserResponse:
     try:
-        await service.soft_delete(db_session, user_response.id)
+        soft_deleted: UserResponse = await service.soft_delete(db_session, user_response.id)
 
     except NotFoundError as e:
         raise resource_with_id_not_found(str(e)) from e
@@ -224,6 +224,8 @@ async def soft_delete_me(
             status_code=409,
             detail=str(e),
         ) from e
+
+    return soft_deleted
 
 
 # API only for authenticated admins
