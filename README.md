@@ -123,3 +123,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES=15
   ```shell
   $ pip install aiosqlite
   ```
+
+- Async for Pytest
+  ```shell
+  $ pip install pytest-asyncio
+  ```
