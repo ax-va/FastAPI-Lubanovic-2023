@@ -56,6 +56,7 @@ def test_get_by_id(
     assert got == sample_response
 
 
+@pytest.mark.positive
 @pytest.mark.parametrize(
     "sample_response",
     [
@@ -82,6 +83,7 @@ def test_delete_success(
     assert missing is None
 
 
+@pytest.mark.negative
 @pytest.mark.parametrize(
     "sample_id", [None]
 )

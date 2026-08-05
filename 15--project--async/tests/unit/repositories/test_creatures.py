@@ -75,6 +75,7 @@ async def test_get_by_id(
         assert got is None
 
 
+@pytest.mark.positive
 @pytest.mark.parametrize(
     "sample_response",
     [
@@ -101,6 +102,7 @@ async def test_delete_success(
     assert missing is None
 
 
+@pytest.mark.negative
 @pytest.mark.parametrize(
     "sample_response", [lubanovic_response]
 )
