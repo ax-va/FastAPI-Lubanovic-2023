@@ -13,6 +13,8 @@ from app.web import users as users_web
 # and once when it shuts down.
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncGenerator[None, None]:
+    await db.create_schema(db.async_engine)
+
     async with db.async_session_factory() as db_session:
         await users_service.ensure_admin_exists(db_session)
 
