@@ -1,6 +1,8 @@
-# FastAPI-Lubanovic-2023
+# FastAPI-Web-Applications-2026
 
-## Packages to use
+## Used Packages for Python 3.12.5
+
+See `requirements.txt`.
 
 ### The FastAPI framework
 ```shell
