@@ -128,3 +128,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES=15
   ```shell
   $ pip install pytest-asyncio
   ```
+
+### Alembic
+
+```shell
+$ pip install alembic
+```

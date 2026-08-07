@@ -7,7 +7,7 @@ DATABASE_URL = f"sqlite:///{DATABASE_FILE}"
 
 
 def create_schema(engine: Engine):
-    # Import all ORM models to create tables by `create_all`
+    # Import all ORM models before calling `create_all`
     import app.models.orm  # noqa: F401
 
     # Create database tables once during application startup if they don't exist

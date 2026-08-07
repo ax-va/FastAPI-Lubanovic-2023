@@ -11,7 +11,7 @@ DATABASE_URL = f"sqlite+aiosqlite:///{DATABASE_FILE}"
 
 
 async def create_schema(engine: AsyncEngine) -> None:
-    # Import all ORM models to create tables by `create_all`
+    # Import all ORM models before calling `create_all`
     import app.models.orm  # noqa: F401
 
     # Create database schema
