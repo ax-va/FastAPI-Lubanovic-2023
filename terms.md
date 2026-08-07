@@ -677,7 +677,7 @@ Browser
 Traefik
 ```
 
-### 9. TLS Termination
+#### 9. TLS Termination
 
 In a common deployment, Traefik handles TLS instead of FastAPI or Uvicorn:
 
