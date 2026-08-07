@@ -23,7 +23,7 @@ def connect(
         db_connection.close()
 
 
-def ensure_tables_exist(db_connection: Connection) -> None:
+def ensure_schema_exists(db_connection: Connection) -> None:
     try:
         db_connection.execute(
             "CREATE TABLE IF NOT EXISTS creatures ("

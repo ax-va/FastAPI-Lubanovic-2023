@@ -14,7 +14,7 @@ from tests.samples.explorers import hande_request, weiser_request
 @pytest.fixture
 def db_connection() -> Generator[Connection, None, None]:
     with db.connect(":memory:") as connection:
-        db.ensure_tables_exist(connection)
+        db.ensure_schema_exists(connection)
         users_service.create_admin(
             connection,
             username="admin",

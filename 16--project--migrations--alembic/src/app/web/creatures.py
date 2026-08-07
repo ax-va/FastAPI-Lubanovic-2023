@@ -1,0 +1,140 @@
+from fastapi import APIRouter, HTTPException
+
+from app.models.schemas.creatures import CreatureRequest, CreatureResponse
+from app.models.schemas.explorers import ExplorerResponse
+from app.services import creatures as creatures_service
+from app.services.errors import NotFoundError, DuplicateBindingError
+from app.web.deps.auth import CurrentUser
+from app.web.deps.database import DatabaseSession
+from app.web.errors import duplicate_binding, not_found
+from app.web.metadata import NOT_FOUND, UNAUTHORIZED, CONFLICT
+
+service = creatures_service
+router = APIRouter(prefix="/creatures", tags=["Creatures"])
+
+
+# public API
+@router.get("")
+async def get_all(
+    db_session: DatabaseSession,
+) -> list[CreatureResponse]:
+    return await service.get_all(db_session)
+
+
+# public API
+@router.get(
+    "/{creature_id}",
+    responses=NOT_FOUND,
+)
+async def get_by_id(
+    db_session: DatabaseSession,
+    creature_id: int,
+) -> CreatureResponse:
+    creature_response: CreatureResponse | None = await service.get_by_id(db_session, creature_id)
+
+    if creature_response is None:
+        raise not_found(f"Creature with ID {creature_id} not found")
+
+    return creature_response
+
+
+# API for only authenticated users
+@router.post(
+    "",
+    status_code=201,  # 201 Created
+    responses=UNAUTHORIZED,
+)
+async def create(
+    db_session: DatabaseSession,
+    creature_request: CreatureRequest,
+    _: CurrentUser,
+) -> CreatureResponse:
+    return await service.create(db_session, creature_request)
+
+
+# API for only authenticated users
+@router.put(
+    "/{creature_id}",
+    responses=UNAUTHORIZED | NOT_FOUND,
+)
+async def replace(
+    db_session: DatabaseSession,
+    creature_id: int,
+    creature_request: CreatureRequest,
+    _: CurrentUser,
+) -> CreatureResponse:
+    try:
+        creature: CreatureResponse = await service.replace(db_session, creature_id, creature_request)
+
+    except NotFoundError as e:
+        raise not_found(str(e)) from e
+
+    return creature
+
+
+@router.patch("/{creature_id}")
+async def modify(creature_id: int) -> CreatureResponse | None:
+    raise NotImplementedError()
+
+
+# API for only authenticated users
+@router.delete(
+    "/{creature_id}",
+    responses=UNAUTHORIZED | NOT_FOUND,
+)
+async def delete(
+    db_session: DatabaseSession,
+    creature_id: int,
+    _: CurrentUser,
+) -> None:
+    try:
+        await service.delete(db_session, creature_id)
+
+    except NotFoundError as e:
+        raise not_found(str(e)) from e
+
+
+# API for only authenticated users
+@router.post(
+    "/{creature_id}/explorers/{explorer_id}",
+    status_code=201,  # 201 Created
+    responses=UNAUTHORIZED | NOT_FOUND | CONFLICT,
+)
+async def bind(
+    db_session: DatabaseSession,
+    creature_id: int,
+    explorer_id: int,
+    _: CurrentUser,
+) -> list[ExplorerResponse]:
+    try:
+        explorer_responses: list[ExplorerResponse] = await service.bind(
+            db_session,
+            creature_id,
+            explorer_id,
+        )
+
+    except NotFoundError as e:
+        raise not_found(str(e)) from e
+
+    except DuplicateBindingError as e:
+        raise duplicate_binding(str(e)) from e
+
+    return explorer_responses
+
+
+# public API
+@router.get(
+    "/{creature_id}/explorers",
+    responses=NOT_FOUND,
+)
+async def get_explorers(
+    db_session: DatabaseSession,
+    creature_id: int,
+) -> list[ExplorerResponse]:
+    try:
+        explorers: list[ExplorerResponse] = await service.get_explorers(db_session, creature_id)
+
+    except NotFoundError as e:
+        raise not_found(str(e)) from e
+
+    return explorers
