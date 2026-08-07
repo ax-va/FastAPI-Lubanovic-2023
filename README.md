@@ -58,23 +58,6 @@ $ pip install httpx
 $ pip install httpx2
 ```
 
-### Testing
-```shell
-$ pip install pytest
-$ pip install pytest-mock
-````
-
-Run tests
-```shell
-$ pytest -v
-```
-
-### Property-Based Testing
-```shell
-$ pip install hypothesis
-$ pip install schemathesis
-```
-
 ### Authentication
 
 - JWT
@@ -103,6 +86,23 @@ Add ".env" to `.gitignore` and store the following in `.env`
 JWT_SECRET_KEY=<secret-key>
 JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=15
+```
+
+### Testing
+```shell
+$ pip install pytest
+$ pip install pytest-mock
+````
+
+Run tests
+```shell
+$ pytest -v
+```
+
+### Property-Based Testing
+```shell
+$ pip install hypothesis
+$ pip install schemathesis
 ```
 
 ### Relational Database
