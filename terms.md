@@ -1,4 +1,8 @@
-#### REST = Representational State Transfer 
+# Terms
+
+## Web
+
+### REST = Representational State Transfer 
 
 - REST is s an architecture style for distributed systems, especially web APIs.
 It is not a protocol, framework, or data format.
@@ -38,11 +42,11 @@ It is not a protocol, framework, or data format.
     
     The server may send executable code to the client, such aas JavaScript.
 
-#### RESTful API
+### RESTful API
 
 A RESTful API is an API designed according to the REST architectural constraints.
 
-#### HTTP = HyperText Transfer Protocol
+### HTTP = HyperText Transfer Protocol
 
 - HTTP is an application-layer protocol.
 
@@ -55,23 +59,23 @@ A RESTful API is an API designed according to the REST architectural constraints
 
 - HTTP runs over TCP. HTTPS runs over TLS over TCP.
 
-#### TCP = Transmission Control Protocol
+### TCP = Transmission Control Protocol
 
 - TCP is a transport-layer protocol that provides reliable, ordered, and error-checked delivery of data between two hosts.
 
 - TCP establishes a connection between the client and the server before exchanging data.
 
-#### TLS = Transport Layer Security
+### TLS = Transport Layer Security
 
 - TLS is a cryptographic protocol that provides secure communication over a network.
 
-#### HTTP vs HTTPS
+### HTTP vs HTTPS
 
 - HTTP sends data in plain text: `HTTP (Application Layer) → TCP (Transport Layer)`
 
 - HTTPS is simply HTTP running over a TLS-encrypted TCP connection: `HTTP (Application Layer) → TLS → TCP (Transport Layer)`
 
-#### Layers and Protocols
+### Layers and Protocols
 
 | Layer       | Protocols    |
 |-------------|--------------|
@@ -80,7 +84,7 @@ A RESTful API is an API designed according to the REST architectural constraints
 | Transport   | TCP          |
 | Internet    | IP           |
 
-#### HTTP Methods (Verbs)
+### HTTP Methods (Verbs)
 
 - `GET`: Retrieve a resource
 
@@ -114,7 +118,9 @@ Examples:
 
 - `DELETE /users/25`: Delete the user with ID 25
 
-#### Three-Tier Model
+## Software Design
+
+### Three-Tier Model
 
 - Presentation Layer / Web Layer (FastAPI)
 
@@ -122,35 +128,37 @@ Examples:
 
 - Data Layer (SQLAlchemy or SQLModel) ↔ Database (PostgreSQL)
 
-#### Server Gateway Interface
+## Server Gateway Interface
 
-- WSGI = Web Server Gateway Interface
+### WSGI = Web Server Gateway Interface
 
-    - Python standard for communication between web servers and web applications
+- Python standard for communication between web servers and web applications
 
-    - Synchronous (one request per worker at a time)
+- Synchronous (one request per worker at a time)
 
-    - Used by frameworks such as Django and Flask
+- Used by frameworks such as Django and Flask
 
-    - Example: Browser ↔ Nginx (web server) ↔ Gunicorn (WSGI server) ↔ Flask App (web application)
-  
-    - https://wsgi.readthedocs.io/en/latest/
+- Example: Browser ↔ Nginx (web server) ↔ Gunicorn (WSGI server) ↔ Flask App (web application)
 
-- ASGI = Asynchronous Sever Gateway Interface
+- https://wsgi.readthedocs.io/en/latest/
 
-    - Successor to WSGI
+## ASGI = Asynchronous Sever Gateway Interface
 
-    - Support `async` / `await`
+- Successor to WSGI
 
-    - Handles many concurrent connections efficiently
-  
-    - Used by FastAPI and Starlette
-  
-    - Example: Browser ↔ Nginx (web server) ↔ Uvicorn (ASGI server) ↔ FastAPI App (web application)
-  
-    - https://asgi.readthedocs.io/en/latest/
+- Support `async` / `await`
 
-#### Dependency Injection
+- Handles many concurrent connections efficiently
+
+- Used by FastAPI and Starlette
+
+- Example: Browser ↔ Nginx (web server) ↔ Uvicorn (ASGI server) ↔ FastAPI App (web application)
+
+- https://asgi.readthedocs.io/en/latest/
+
+## Patterns
+
+### Dependency Injection
 
 - *Dependency Injection* (DI) is a design pattern in which an object or function receives its dependencies from the outside 
 instead of creating them itself.
@@ -168,9 +176,34 @@ and documentation generation as path operation functions.
 
 - In FastAPI, there are dependencies on three levels: endpoint, router, and application.
 
-### Data Layer
+### Repository Pattern
 
-#### DB-API
+- The *Repository Pattern* is a design pattern that provides a layer between 
+the business logic (service layer) and the data source.
+
+- The repository encapsulates all data access logic and hides implementation details
+of the underlying storage (e.g., SQLite, PostgreSQL, REST API, file system).
+
+- The service works only with the repository interface and does not know where or how the data is stored.
+
+- Benefits:
+  - Separation of concerns.
+  - Easier testing: the repository can be replaced with a fake and a mock.
+  - The data source can be changed without modifying the business logic.
+  - Works well with Dependency Injection.
+
+- Example:
+  ```
+  Data Layer: Repository
+    |-- SQLite
+    |-- PostgreSQL
+    |-- In-memory
+    |-- Fake Repository
+  ```
+
+## Data Layer
+
+### DB-API
 
 Python DB-API is a standard interface between Python code and relational database drivers.
 
@@ -222,32 +255,7 @@ Database drivers like sqlite3 (SQLite), psycopg (PostgreSQL), PyMySQL (MySQL), a
 
 SQLAlchemy works on top of DB-API drivers.
 
-#### Repository Pattern
-
-- The *Repository Pattern* is a design pattern that provides a layer between 
-the business logic (service layer) and the data source.
-
-- The repository encapsulates all data access logic and hides implementation details
-of the underlying storage (e.g., SQLite, PostgreSQL, REST API, file system).
-
-- The service works only with the repository interface and does not know where or how the data is stored.
-
-- Benefits:
-  - Separation of concerns.
-  - Easier testing: the repository can be replaced with a fake and a mock.
-  - The data source can be changed without modifying the business logic.
-  - Works well with Dependency Injection.
-
-- Example:
-  ```
-  Data Layer: Repository
-    |-- SQLite
-    |-- PostgreSQL
-    |-- In-memory
-    |-- Fake Repository
-  ```
-
-#### Python Relational Database Libraries
+### Python Relational Database Libraries
 
 - *SQLAlchemy* is the de facto standard for working with relational databases in Python.
 
@@ -278,9 +286,9 @@ of the underlying storage (e.g., SQLite, PostgreSQL, REST API, file system).
   
   - It has become the de facto standard for schema migrations in Python projects that use SQLAlchemy.
 
-### Authentication and Authorization
+## Authentication and Authorization
 
-#### Authentication: Who Are You?
+### Authentication: Who Are You?
 
 - Authentication is the process of verifying a user's identity.
 
@@ -355,7 +363,7 @@ Examples:
   - *OAuth 2.1* is a simplified and more secure revision of OAuth 2.0 
     that removes deprecated features and follows current security best practices. 
 
-#### Authorization: What Are You Allowed To Do?
+### Authorization: What Are You Allowed To Do?
 
 - Authorization is the process of determining what an authenticated user is allowed to do.
 
@@ -363,24 +371,26 @@ Examples:
 
 - If the user does not have sufficient permissions, the server returns `403 Forbidden`.
 
-#### FastAPI Security
+## Security
+
+### FastAPI Security
 
 https://fastapi.tiangolo.com/tutorial/security/
 
-#### DDoS = Distributed Denial-of-Service
+## DDoS = Distributed Denial-of-Service
 
 *Distributed Denial-of-Service (DDoS)* is an attack 
 in which a large number of compromised computers or devices simultaneously send requests to a server.
 The goal is to overwhelm the server's resources and make the service unavailable to legitimate users.
 
-#### Middleware
+## Middleware
 
 *Middleware* is a component that intercepts HTTP requests and responses.
 It runs before and after an endpoint, allowing cross-cutting functionality
 such as logging, authentication, cross-origin resource sharing (CORS), compression, and request timing.
 Unlike FastAPI's dependencies, FastAPI's middleware is typically applied to all requests in the application.
 
-#### CORS = Cross-Origin Resource Sharing
+## CORS = Cross-Origin Resource Sharing
 
 *CORS* is browser security mechanism that controls 
 whether a web page from one origin can access resources from another origin.
@@ -392,16 +402,16 @@ CORS protects the browser, not the API.
 JWT (or another authentication mechanism) protects the API by proving the client's identity.
 They solve different security problems and are often used together.
 
-### Testing
+## Testing
 
-#### Monkeypatch
+### Monkeypatch
 
 - Monkeypatch replaces a real object with another real object.
 
 - Use it when the code should continue working normally, but with a different implementation
   (e.g., an in-memory SQLite database).
 
-#### Mocker
+### Mocker
 
 - Mocker replaces an object with a `Mock`.
 
@@ -409,12 +419,12 @@ They solve different security problems and are often used together.
   (`assert_called_once_with()`, `call_count`, `call_args`, etc.).
 
 
-#### TestClient
+### TestClient
 
 *TestClient* allows testing a FastAPI application without starting a server or opening a real TCP connection.
 HTTP requests are sent directly to the ASGI application in memory, making integration tests fast and isolated.
 
-#### Property-Based Testing
+### Property-Based Testing
 
 Property-based testing complements traditional testing rather than replacing it.
 
@@ -466,7 +476,7 @@ Replay a test case
 $ st replay <test_case_id>
 ```
 
-#### Load Testing
+### Load Testing
 
 - *Locust*:
     
@@ -489,7 +499,7 @@ $ st replay <test_case_id>
   - https://github.com/alteryx/locust-grasshopper
 
 
-### Uvicorn
+## Uvicorn
 
 #### Uvicorn Workers
 
@@ -516,7 +526,7 @@ each running in its own process with its own event loop.
 
 ### Deployment Overview
 
-#### 1. Local Development
+### 1. Local Development
 
 During development, the application usually runs directly on the local machine.
 
@@ -529,7 +539,7 @@ $ uvicorn app.main:app --reload
 The application is available at `http://localhost:8000`.
 No public IP adress, domain, DNS, or TLS certificate is required.
 
-#### 2. VPS = Virtual Private Server
+### 2. VPS = Virtual Private Server
 
 A *Virtual Private Server (VPS)* is a virtual machine running on a physical server in a data center.
 
@@ -550,7 +560,7 @@ Some providers treat public addresses as separate resources that must be assigne
 A FastAPI application can be made available directly through the VPS address, e.g, `http://203.0.113.10:8000`.
 However, exposing Uvicorn directly is usually not the preffered production configuration.
 
-#### 3. VPS and Cloud
+### 3. VPS and Cloud
 
 A VPS can be considered a basic cloud infrastructure service.
 
@@ -571,7 +581,7 @@ The term *cloud* is broader. It can include:
 Therefore, a VPS is one type of cloud resource,
 while a cloud platform provides a wider collection of infrastructures and managed services.
 
-#### 4. Public IP Address
+### 4. Public IP Address
 
 A public IP address identifies a server on the Internet: 
 
@@ -587,7 +597,7 @@ An application can be accesed directly through this address without DNS.
 This is sufficient for testing or a simple deployment, 
 but IP addresses are less convenient than domain names.
 
-#### 5. Domain; DNS = Domain Name System
+### 5. Domain; DNS = Domain Name System
 
 A *domain name* is a human-readable name such as `api.example.com`.
 
@@ -603,7 +613,7 @@ api.example.com
 203.0.113.10
 ```
 
-#### 6. HTTPS and TLS
+### 6. HTTPS and TLS
 
 HTTPS is HTTP protected by TLS.
 
@@ -616,7 +626,7 @@ TLS provides:
 To provide HTTPS, the server needs a TLS certificate.
 The certificate proves that the server is authorized to use a particular domain name or IP address.
 
-#### 7. CA = Certificate Authority: Let's Encrypt
+### 7. CA = Certificate Authority: Let's Encrypt
 
 *Let's Encrypt* is a free, automated, public *Certificate Authority (CA)*.
 
@@ -634,7 +644,7 @@ These certificates are short-lived (about six days).
 However,  a domain remains the usual and more convenient production choice 
 because it provides a stable public name independent of the underlying server address.
 
-#### 8. Traefik
+### 8. Traefik
 
 *Traefik* is an application reverse proxy and load balancer.
 
@@ -677,7 +687,7 @@ Browser
 Traefik
 ```
 
-#### 9. TLS Termination
+### 9. TLS Termination
 
 In a common deployment, Traefik handles TLS instead of FastAPI or Uvicorn:
 
@@ -700,7 +710,7 @@ As a result, the FastAPI application usually requires no TLS-specific applicatio
 Proxy headers may still need to be trusted and processed 
 so that FastAPI knows the original client protocol, host, and address.
 
-#### 10. Docker Containers
+### 10. Docker Containers
 
 Traefik and FastAPI commonly run in separate containers:
 
@@ -722,7 +732,7 @@ This separates responsibilities:
 *Docker Compose* normally creates a project network and connects the services to it.
 Containers on that network can communicate through service names rather than fixed container IP addresses.
 
-#### 11. Load Balancing
+### 11. Load Balancing
 
 Traefik can distribute requests among several FastAPI containers.
 The application instances should therefore be mostly stateless.
@@ -734,7 +744,7 @@ Use shared external storage instead:
 - object storage,
 - message brokers.
 
-#### 12. Complete Production Flow
+### 12. Complete Production Flow
 
 A typical small production deployment looks like this:
 
@@ -802,7 +812,7 @@ Responsibilities:
   
   Stores shared persistent data
 
-#### 13. See Also
+### 13. See Also
 
 - https://fastapi.tiangolo.com/deployment/docker/
 
@@ -814,21 +824,21 @@ Responsibilities:
 
 - https://sumanta9090.medium.com/deploying-a-fastapi-application-on-kubernetes-a-step-by-step-guide-for-production-d74faac4ca36
 
-### Links
+## Links
 
-#### SQLite Query Optimizer
+### SQLite Query Optimizer
 
 - https://www.sqlite.org/optoverview.html
 
-#### Celery: Distributed Task Queue
+### Celery: Distributed Task Queue
 
 - https://docs.celeryq.dev/en/stable/
 
-#### Mojo
+### Mojo
 
 - https://mojolang.org/
 
-#### Prometheus + FastAPI
+### Prometheus + FastAPI
 
 - https://prometheus.io/
 
@@ -836,13 +846,13 @@ Responsibilities:
 
 - https://dev.to/ken_mwaura1/getting-started-monitoring-a-fastapi-app-with-grafana-and-prometheus-a-step-by-step-guide-3fbn
 
-#### Grafana + FastAPI
+### Grafana + FastAPI
 
 - https://grafana.com/
 
 - https://grafana.com/grafana/dashboards/16110-fastapi-observability/
 
-#### OpenTelemetry + FastAPI
+### OpenTelemetry + FastAPI
 
 - https://opentelemetry.io/
 
