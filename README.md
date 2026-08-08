@@ -1,5 +1,19 @@
 # FastAPI-Web-Applications-2026
 
+**FastAPI Web Applications** is a comprehensive educational repository dedicated to Python web development with FastAPI.
+It provides both the theoretical background and a step-by-step implementation of a complete web application.
+
+Throughout the project, new technologies and concepts are introduced incrementally, 
+including Pydantic, Pytest, SQLAlchemy, SQLModel, asynchronous programming, and database migrations with Alembic.
+
+The repository was originally created while studying 
+the book *"FastAPI: Modern Python Web Development"* by Bill Lubanovic (O'Reilly Media, 2023).
+During learning, however, the project evolved far beyond the original material.
+The codebase has been substantially redesigned, and many essential topics have been
+expanded into comprehensive chapters with detailed explanations 
+that provide a deeper understanding of modern FastAPI application development.
+You can think of this repository as **"Bill Lubanovic on steroids"**.
+
 ## Used Packages for Python 3.12.5
 
 See `requirements.txt`.
