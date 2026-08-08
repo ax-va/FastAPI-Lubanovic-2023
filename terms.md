@@ -524,7 +524,7 @@ $ uvicorn app.main:app --workers 4
 This starts four independent FastAPI application instances,
 each running in its own process with its own event loop.
 
-### Deployment Overview
+## Deployment Overview
 
 ### 1. Local Development
 
